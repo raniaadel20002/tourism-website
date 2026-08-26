@@ -14,7 +14,7 @@ const filterTabs = [
   "Over day",
 ];
 
-export const bestSellingToursData: BestSellingTour[] = [
+const bestSellingToursData: BestSellingTour[] = [
   {
     id: "island-trip",
     title: "Island Trip",

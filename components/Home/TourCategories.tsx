@@ -10,7 +10,7 @@ export interface TourCategoryItem {
   rotation: string;
 }
 
-export const categoryItems: TourCategoryItem[] = [
+const categoryItems: TourCategoryItem[] = [
   {
     id: "diving",
     name: "Diving",

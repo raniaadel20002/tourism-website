@@ -1,6 +1,6 @@
 import type { Tour, Category } from "@/types/tour";
 
-export const categories: Category[] = [
+const categories: Category[] = [
   {
     id: "1",
     name: "Diving",
@@ -31,7 +31,7 @@ export const categories: Category[] = [
   },
 ];
 
-export const tours: Tour[] = [
+const tours: Tour[] = [
   {
     id: "luxor-day-tour",
     slug: "luxor-day-tour",
@@ -502,7 +502,7 @@ export const tours: Tour[] = [
   },
 ];
 
-export const bestSellingTours: Tour[] = tours.filter((t) => t.isBestSeller);
+const bestSellingTours: Tour[] = tours.filter((t) => t.isBestSeller);
 
 export function getTourBySlug(slug: string): Tour {
   const normalized = slug?.toLowerCase() || "";

@@ -39,7 +39,7 @@ export interface ActiveBooking {
   totalAmount: number;
 }
 
-export interface ConfirmedBooking {
+interface ConfirmedBooking {
   bookingId: string;
   tripTitle: string;
   tripImage: string;
@@ -118,7 +118,7 @@ const DEFAULT_CART_ITEMS: CartItem[] = [
   },
 ];
 
-export const AVAILABLE_EXTRAS: ExtraServiceItem[] = [
+const AVAILABLE_EXTRAS: ExtraServiceItem[] = [
   { id: "health-insurance-30", name: "Health Insurance ( $ 30 )", price: 30 },
   { id: "medical-insurance-50", name: "Medical Insurance ( $ 50 )", price: 50 },
   { id: "medical-insurance-20", name: "Medical insurance", price: 20 },

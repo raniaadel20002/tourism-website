@@ -11,7 +11,7 @@ export interface Destination {
   href: string;
 }
 
-export const destinationsData: Destination[] = [
+const destinationsData: Destination[] = [
   {
     id: "hurghada",
     name: "Hurghada",
