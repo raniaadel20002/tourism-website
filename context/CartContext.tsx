@@ -18,7 +18,7 @@ export interface CartItem {
   slug?: string;
 }
 
-export interface ExtraServiceItem {
+interface ExtraServiceItem {
   id: string;
   name: string;
   price: number;

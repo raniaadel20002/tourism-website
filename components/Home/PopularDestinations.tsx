@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 
-export interface Destination {
+interface Destination {
   id: string;
   name: string;
   image: string;
