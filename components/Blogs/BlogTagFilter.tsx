@@ -1,3 +1,7 @@
+"use client";
+
+import { useLanguage } from "@/context/LanguageContext";
+
 const popularTags = ["All", "Sea", "Safari", "History"] as const;
 
 interface BlogTagFilterProps {
@@ -6,13 +10,16 @@ interface BlogTagFilterProps {
 }
 
 export default function BlogTagFilter({ activeTag, onTagChange }: BlogTagFilterProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full max-w-4xl flex flex-wrap items-center gap-2.5 sm:gap-3 mb-10 sm:mb-12">
-      <span className="font-roboto font-normal text-xs sm:text-sm text-[#030811] mr-1">
+      <span className="font-roboto font-normal text-xs sm:text-sm text-[#030811] mr-1 rtl:mr-0 rtl:ml-1">
         Popular tags:
       </span>
       {popularTags.map((tag) => {
         const isActive = activeTag === tag;
+        const tagLabel = tag === "All" ? t("blogs.allTags", "All") : tag;
         return (
           <button
             key={tag}
@@ -24,7 +31,7 @@ export default function BlogTagFilter({ activeTag, onTagChange }: BlogTagFilterP
                 : "bg-[#E2E8F0] text-[#5B6472] hover:bg-gray-300"
             }`}
           >
-            {tag}
+            {tagLabel}
           </button>
         );
       })}

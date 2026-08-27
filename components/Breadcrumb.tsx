@@ -29,7 +29,11 @@ export default function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
       >
         {items.map((item, idx) => (
           <span key={idx} className="inline-flex items-center gap-2">
-            {idx > 0 && <span className="text-[#5B6472]">&gt;</span>}
+            {idx > 0 && (
+              <span className="text-[#5B6472] rtl:rotate-180 inline-block font-sans text-xs">
+                &gt;
+              </span>
+            )}
             {item.href ? (
               <Link
                 href={item.href}

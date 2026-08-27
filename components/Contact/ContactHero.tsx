@@ -1,26 +1,42 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function ContactHero() {
+  const { t } = useLanguage();
+
   return (
-    <section className="relative w-full bg-[#003853] pt-24 pb-2 sm:pt-28 sm:pb-16 lg:pt-16 lg:pb-0 overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-10 lg:gap-8">
+    <section className="relative w-full bg-[#003853] pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-12 lg:pb-12 min-h-[360px] sm:min-h-[400px] lg:min-h-[420px] flex items-center overflow-hidden">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 lg:gap-10 w-full">
 
         {/* Hero Left: Text Content */}
-        <div className="w-full md:w-[60%] lg:w-[55%] flex flex-col items-start text-left">
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="w-full md:w-[60%] lg:w-[55%] flex flex-col items-start text-left rtl:text-right"
+        >
           <span className="font-montez text-[#69DD84] text-3xl sm:text-4xl md:text-5xl font-normal leading-tight mb-2 tracking-wide">
-            Get in Touch
+            {t("contact.heroSubtitle", "Get in Touch")}
           </span>
-          <h1 className="font-roboto font-bold text-white text-3xl sm:text-4xl md:text-5xl lg:text-[48px] leading-tight tracking-tight drop-shadow-sm mb-4">
-            Let&apos;s Start Your Next Adventure
+          <h1 className="font-roboto font-bold text-white text-3xl sm:text-4xl md:text-5xl lg:text-[48px] leading-tight tracking-tight drop-shadow-sm mb-3">
+            {t("contact.heroTitle", "Let's Start Your Next Adventure")}
           </h1>
-          <p className="font-roboto font-normal text-white/90 text-sm sm:text-base md:text-[15px] leading-relaxed max-w-xl">
-            Whether you&apos;re planning your dream vacation, looking for the perfect tour, or simply have a question, our team is here to help. Reach out to us, and let&apos;s create unforgettable memories together.
+          <p className="font-roboto font-normal text-white/90 text-sm sm:text-base leading-relaxed max-w-xl">
+            {t("contact.heroText", "Whether you're planning your dream vacation, looking for the perfect tour, or simply have a question, our team is here to help. Reach out to us, and let's create unforgettable memories together.")}
           </p>
-        </div>
+        </motion.div>
 
         {/* Hero Right: Phone Image + Soundwave Squiggles */}
-        <div className="md:w-[40%] lg:w-[35%] flex justify-center items-end md:justify-end relative">
-          <div className="relative sm:w-44 md:w-48 lg:w-40">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          className="w-full md:w-[35%] lg:w-[32%] flex justify-center items-center md:justify-end relative select-none"
+        >
+          <div className="relative w-28 sm:w-36 md:w-40 lg:w-36 flex justify-center">
 
             {/* Green Telephone Handset with Cord */}
             <Image
@@ -33,7 +49,7 @@ export default function ContactHero() {
             />
 
             {/* Soundwaves Squiggles positioned to the left of the mouthpiece */}
-            <div className="absolute -left-22 sm:bottom-12 md:bottom-14 lg:w-[60%] sm:w-10 md:w-12">
+            <div className="absolute -left-16 sm:-left-20 bottom-8 sm:bottom-12 w-12 sm:w-16">
               <Image
                 src="/images/contact/Group 13.png"
                 alt=""
@@ -44,7 +60,7 @@ export default function ContactHero() {
             </div>
 
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>

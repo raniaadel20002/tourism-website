@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 interface TripDetailGalleryProps {
   mainImage: string;
@@ -12,7 +15,12 @@ export default function TripDetailGallery({
   galleryImages,
 }: TripDetailGalleryProps) {
   return (
-    <div className="flex flex-col lg:flex-row items-stretch gap-4 sm:gap-6 w-full">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex flex-col lg:flex-row items-stretch gap-4 sm:gap-6 w-full"
+    >
       {/* Main Large Image (Left) */}
       <div className="w-full lg:w-[60%] relative h-[280px] sm:h-[380px] md:h-[460px] lg:h-[500px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm">
         <Image
@@ -40,6 +48,6 @@ export default function TripDetailGallery({
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

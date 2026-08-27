@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Destination {
   id: string;
@@ -31,8 +33,46 @@ const destinations: Destination[] = [
   },
 ];
 
+/* ─── Framer Motion Animation Variants ─── */
+const textContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const textItemVariants: Variants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+const sliderEntranceVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      delay: 0.3,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { t } = useLanguage();
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev - 1 + destinations.length) % destinations.length);
@@ -66,65 +106,96 @@ export default function Hero() {
         <div className="flex-1 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-10 lg:gap-8">
           
           {/* Left: Typography & CTA */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-xl self-center lg:self-center">
+          <motion.div
+            className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-xl self-center lg:self-center"
+            variants={textContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {/* Small Title */}
-            <span className="font-montez text-[#39CA5B] text-4xl sm:text-5xl lg:text-6xl font-normal leading-tight mb-2 tracking-wide drop-shadow">
-              Explore
-            </span>
+            <motion.span
+              variants={textItemVariants}
+              className="font-montez text-[#39CA5B] text-4xl sm:text-5xl lg:text-6xl font-normal leading-tight mb-2 tracking-wide drop-shadow"
+            >
+              {t("hero.explore", "Explore")}
+            </motion.span>
 
             {/* Main Title */}
-            <h1 className="font-roboto text-[#FFF8F8] text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold leading-[1.12] mb-4 sm:mb-5 tracking-tight drop-shadow-md">
-              Every Journey Has a Story.
+            <motion.h1
+              variants={textItemVariants}
+              className="font-roboto text-[#FFF8F8] text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold leading-[1.12] mb-4 sm:mb-5 tracking-tight drop-shadow-md"
+            >
+              {t("hero.titleLine1", "Every Journey Has a Story.")}
               <br className="hidden sm:inline" />
-              {" "}Start Yours in Egypt.
-            </h1>
+              {" "}
+              {t("hero.titleLine2", "Start Yours in Egypt.")}
+            </motion.h1>
 
             {/* Description */}
-            <p className="font-roboto text-[#FFF8F8] text-sm sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8 max-w-md drop-shadow">
-              From the golden dunes of the Sahara to the vibrant coral reefs of
-              the Red Sea, discover unforgettable adventures crafted for every
-              traveler.
-            </p>
+            <motion.p
+              variants={textItemVariants}
+              className="font-roboto text-[#FFF8F8] text-sm sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8 max-w-md drop-shadow"
+            >
+              {t("hero.desc", "From the golden dunes of the Sahara to the vibrant coral reefs of the Red Sea, discover unforgettable adventures crafted for every traveler.")}
+            </motion.p>
 
             {/* CTA Button */}
-            <Link
-              href="/trips"
-              className="inline-flex items-center justify-center bg-[#F5FCFF] text-[#00266D] font-roboto font-semibold text-sm sm:text-base px-8 sm:px-10 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300"
+            <motion.div
+              variants={textItemVariants}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
-              Explore Trips
-            </Link>
-          </div>
+              <Link
+                href="/trips"
+                className="inline-flex items-center justify-center bg-[#F5FCFF] text-[#00266D] font-roboto font-semibold text-sm sm:text-base px-8 sm:px-10 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:bg-white transition-shadow duration-300"
+              >
+                {t("hero.exploreTrips", "Explore Trips")}
+              </Link>
+            </motion.div>
+          </motion.div>
 
           {/* Right: Destination Cards Slider & Navigation */}
-          <div className="flex flex-col items-center lg:items-end gap-3 sm:gap-4 w-full lg:w-auto">
+          <motion.div
+            className="flex flex-col items-center lg:items-end gap-3 sm:gap-4 w-full lg:w-auto"
+            variants={sliderEntranceVariants}
+            initial="hidden"
+            animate="visible"
+          >
             
             {/* Previous / Next Arrow Buttons positioned above cards */}
-            <div className="flex items-center justify-center lg:justify-end gap-3 sm:gap-4 ">
-              <button
+            <div className="flex items-center justify-center lg:justify-end gap-3 sm:gap-4">
+              <motion.button
                 type="button"
                 onClick={handlePrev}
                 aria-label="Previous destination"
-                className="group rounded-full cursor-pointer hover:scale-110 active:scale-90 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-[#39CA5B]"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                className="group rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#39CA5B]"
               >
                 <img
                   src="/images/home/hero/⬅.png"
                   alt="Previous"
-                  className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md group-hover:brightness-110"
+                  className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md group-hover:brightness-110 transition-[filter] duration-200"
                 />
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
                 type="button"
                 onClick={handleNext}
                 aria-label="Next destination"
-                className="group rounded-full cursor-pointer hover:scale-110 active:scale-90 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-[#39CA5B]"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                className="group rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#39CA5B]"
               >
                 <img
                   src="/images/home/hero/➡.png"
                   alt="Next"
-                  className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md group-hover:brightness-110"
+                  className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md group-hover:brightness-110 transition-[filter] duration-200"
                 />
-              </button>
+              </motion.button>
             </div>
 
             {/* Destination Cards Row (Horizontal Flex) */}
@@ -132,16 +203,19 @@ export default function Hero() {
               {destinations.map((dest, index) => {
                 const isActive = activeIndex === index;
                 return (
-                  <button
+                  <motion.button
                     key={dest.id}
                     type="button"
                     onClick={() => setActiveIndex(index)}
                     onMouseEnter={() => setActiveIndex(index)}
                     aria-label={`Select ${dest.name}`}
+                    whileHover={!isActive ? { scale: 1.05, opacity: 1 } : {}}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 350, damping: 25 }}
                     className={`relative rounded-[20px] sm:rounded-[24px] overflow-hidden cursor-pointer flex-shrink-0 transition-all duration-500 ease-out focus:outline-none ${
                       isActive
-                        ? "w-40 sm:w-48 lg:w-56 h-60 sm:h-72 lg:h-[340px] shadow-2xl ring-2 ring-white/70 scale-100 z-10"
-                        : "w-28 sm:w-36 lg:w-44 h-44 sm:h-56 lg:h-[260px] opacity-80 hover:opacity-100 hover:scale-105 shadow-lg"
+                        ? "w-40 sm:w-48 lg:w-56 h-60 sm:h-72 lg:h-[340px] shadow-2xl ring-2 ring-white/70 z-10"
+                        : "w-28 sm:w-36 lg:w-44 h-44 sm:h-56 lg:h-[260px] opacity-80 shadow-lg"
                     }`}
                   >
                     <img
@@ -149,12 +223,12 @@ export default function Hero() {
                       alt={dest.name}
                       className="w-full h-full object-cover transition-transform duration-700 ease-out"
                     />
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
 
-          </div>
+          </motion.div>
 
         </div>
       </div>

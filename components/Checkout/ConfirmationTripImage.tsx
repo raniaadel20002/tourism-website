@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ConfirmationTripImageProps {
   src: string;
@@ -13,6 +16,8 @@ export default function ConfirmationTripImage({
   tourDate,
   totalAmount,
 }: ConfirmationTripImageProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full flex-1 flex flex-col items-center justify-center my-4 sm:my-6">
       <div className="relative w-full max-w-lg h-56 sm:h-72 md:h-80 rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-slate-100 bg-slate-50 group">
@@ -28,13 +33,13 @@ export default function ConfirmationTripImage({
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4 sm:p-6">
           <div className="text-white">
             <span className="text-xs uppercase tracking-wider font-semibold bg-emerald-600/90 backdrop-blur-xs px-2.5 py-1 rounded-full inline-block mb-1.5 font-roboto">
-              Confirmed Experience
+              {t("confirmation.confirmedBadge", "Confirmed Experience")}
             </span>
             <p className="font-roboto font-bold text-base sm:text-lg drop-shadow-md">
               {tripTitle}
             </p>
             <p className="font-roboto text-xs sm:text-sm text-gray-200">
-              Date: {tourDate} • Total: ${totalAmount}
+              {t("trips.date", "Date")}: {tourDate} • {t("cart.total", "Total")}: ${totalAmount}
             </p>
           </div>
         </div>

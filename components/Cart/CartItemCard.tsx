@@ -2,14 +2,26 @@
 
 import React from "react";
 import Image from "next/image";
+import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import { CartItem, useCart } from "@/context/CartContext";
 
 interface CartItemCardProps {
   item: CartItem;
 }
 
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
 export default function CartItemCard({ item }: CartItemCardProps) {
   const { removeItem } = useCart();
+  const { t } = useLanguage();
 
   const getBadgeStyle = (category: string, type?: string) => {
     const norm = (type || category).toLowerCase();
@@ -26,7 +38,10 @@ export default function CartItemCard({ item }: CartItemCardProps) {
   };
 
   return (
-    <div className="bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5 transition-all duration-200 hover:shadow-sm">
+    <motion.div
+      variants={cardVariants}
+      className="bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5 transition-all duration-200 hover:shadow-sm"
+    >
       {/* Tour Thumbnail */}
       <div className="w-full sm:w-48 md:w-52 h-44 sm:h-36 shrink-0 relative rounded-xl overflow-hidden bg-slate-100">
         <Image
@@ -64,7 +79,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                 />
               </svg>
-              <span>Remove</span>
+              <span>{t("cart.remove", "Remove")}</span>
             </button>
           </div>
 
@@ -135,7 +150,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
                   d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>
-              <span>{item.adults} Adults</span>
+              <span>{item.adults} {t("booking.adults", "Adults")}</span>
             </div>
           </div>
         </div>
@@ -143,13 +158,13 @@ export default function CartItemCard({ item }: CartItemCardProps) {
         {/* Pricing block */}
         <div className="mt-3 sm:mt-2">
           <p className="text-xs text-gray-500 font-normal font-roboto">
-            ${item.pricePerPerson} per person
+            ${item.pricePerPerson} {t("cart.perPerson", "per person")}
           </p>
           <p className="text-xl sm:text-2xl font-bold text-slate-800 font-roboto mt-0.5">
             ${item.totalPrice}
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

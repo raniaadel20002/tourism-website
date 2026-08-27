@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import type { TourCategoryItem } from "@/components/Home/TourCategories";
 
 interface CategoryCardProps {
@@ -21,6 +22,8 @@ const cardVariants: Variants = {
 };
 
 export default function CategoryCard({ item }: CategoryCardProps) {
+  const { t } = useLanguage();
+
   return (
     <motion.div
       variants={cardVariants}
@@ -43,7 +46,7 @@ export default function CategoryCard({ item }: CategoryCardProps) {
 
       {/* Category Name */}
       <span className="font-roboto font-semibold text-[#16181E] text-base sm:text-lg lg:text-xl mt-4 sm:mt-5 text-center transition-colors duration-200 group-hover:text-[#006993]">
-        {item.name}
+        {t(`categories.${item.id}`, item.name)}
       </span>
     </motion.div>
   );

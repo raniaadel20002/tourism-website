@@ -5,8 +5,11 @@ import Breadcrumb from "@/components/Breadcrumb";
 import ContactForm from "@/components/Contact/ContactForm";
 import ContactMapAndSocials from "@/components/Contact/ContactMapAndSocials";
 import ContactInfoBar from "@/components/Contact/ContactInfoBar";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function ContactPage() {
+  const { t } = useLanguage();
+
   return (
     <main className="min-h-screen bg-white flex flex-col overflow-x-clip">
 
@@ -14,7 +17,7 @@ export default function ContactPage() {
       <ContactHero />
 
       {/* ── Breadcrumb ───────────────────────────────────────────── */}
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact Us" }]} />
+      <Breadcrumb items={[{ label: t("nav.home", "Home"), href: "/" }, { label: t("nav.contact", "Contact Us") }]} />
 
       {/* ── Main Content ─────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16 w-full flex-1 flex flex-col">

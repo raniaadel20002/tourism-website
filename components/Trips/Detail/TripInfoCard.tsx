@@ -1,3 +1,8 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
+
 interface TripInfoCardProps {
   location: string;
   duration: string;
@@ -42,27 +47,35 @@ const ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function TripInfoCard({ location, duration, transportation, availability, language, groupSize }: TripInfoCardProps) {
+  const { t } = useLanguage();
+
   const items = [
-    { label: "Location", value: location },
-    { label: "Duration", value: duration },
-    { label: "Transportation", value: transportation },
-    { label: "Availability", value: availability },
-    { label: "Language", value: language },
-    { label: "Group", value: groupSize },
+    { key: "Location", label: t("contact.locationLabel", "Location"), value: location },
+    { key: "Duration", label: t("trips.duration", "Duration"), value: duration },
+    { key: "Transportation", label: t("trips.transportation", "Transportation"), value: transportation },
+    { key: "Availability", label: t("trips.availability", "Availability"), value: availability },
+    { key: "Language", label: t("trips.language", "Language"), value: language },
+    { key: "Group", label: t("trips.groupSize", "Group"), value: groupSize },
   ];
 
   return (
-    <div className="relative w-full border border-gray-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 bg-white shadow-xs">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="relative w-full border border-gray-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 bg-white shadow-xs"
+    >
       <div className="mb-6">
         <span className="bg-[#006993] text-white font-roboto font-semibold text-xs px-4 py-1.5 rounded-full inline-block">
-          Trip Info
+          {t("trips.tripInfo", "Trip Info")}
         </span>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 font-roboto text-xs sm:text-sm">
-        {items.map(({ label, value }) => (
-          <div key={label} className="flex items-center gap-3.5">
+        {items.map(({ key, label, value }) => (
+          <div key={key} className="flex items-center gap-3.5">
             <div className="w-9 h-9 rounded-full bg-[#F3F8FB] flex items-center justify-center flex-shrink-0">
-              {ICONS[label]}
+              {ICONS[key]}
             </div>
             <div className="flex flex-col">
               <span className="text-gray-500 text-xs">{label}</span>
@@ -71,6 +84,6 @@ export default function TripInfoCard({ location, duration, transportation, avail
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

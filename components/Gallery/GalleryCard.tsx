@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion, Variants } from "framer-motion";
 import { GalleryImage } from "@/data/gallery";
 
 interface GalleryCardProps {
@@ -6,9 +9,23 @@ interface GalleryCardProps {
   onExpand: (image: GalleryImage) => void;
 }
 
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
 export default function GalleryCard({ image, onExpand }: GalleryCardProps) {
   return (
-    <div className="w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] flex flex-col bg-white rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group relative border border-gray-100">
+    <motion.div
+      variants={cardVariants}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 300, damping: 22 }}
+      className="w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] flex flex-col bg-white rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 group relative border border-gray-100"
+    >
       {/* Card Image */}
       <div className="relative h-72 sm:h-80 lg:h-[340px] w-full overflow-hidden">
         <Image
@@ -41,6 +58,6 @@ export default function GalleryCard({ image, onExpand }: GalleryCardProps) {
           />
         </svg>
       </button>
-    </div>
+    </motion.div>
   );
 }

@@ -1,26 +1,38 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import { LocationIcon, PhoneCallIcon, MailIcon } from "./ContactIcons";
 
-const contactItems = [
-  {
-    Icon: LocationIcon,
-    label: "Location",
-    value: "Hurghada, Red Sea, Egypt",
-  },
-  {
-    Icon: PhoneCallIcon,
-    label: "Call Us",
-    value: "+20 123 456 7890",
-  },
-  {
-    Icon: MailIcon,
-    label: "Email",
-    value: "info@example.com",
-  },
-];
-
 export default function ContactInfoBar() {
+  const { t } = useLanguage();
+
+  const contactItems = [
+    {
+      Icon: LocationIcon,
+      label: t("contact.locationLabel", "Location"),
+      value: t("contact.locationValue", "Hurghada, Red Sea, Egypt"),
+    },
+    {
+      Icon: PhoneCallIcon,
+      label: t("contact.callUs", "Call Us"),
+      value: "+20 123 456 7890",
+    },
+    {
+      Icon: MailIcon,
+      label: t("contact.emailLabel", "Email"),
+      value: "info@example.com",
+    },
+  ];
+
   return (
-    <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 border border-gray-200/90 shadow-sm">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 border border-gray-200/90 shadow-sm"
+    >
       <div className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap items-start sm:items-center justify-between gap-6 sm:gap-8 lg:gap-12">
         {contactItems.map(({ Icon, label, value }) => (
           <div key={label} className="flex items-center gap-4">
@@ -38,6 +50,6 @@ export default function ContactInfoBar() {
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

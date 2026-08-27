@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { BlogItem } from "@/data/blogs";
 
 interface BlogArticleProps {
@@ -12,7 +15,12 @@ export default function BlogArticle({ blog }: BlogArticleProps) {
   const remainingTitle = titleWords.slice(1).join(" ");
 
   return (
-    <article className="w-full lg:w-[68%] flex flex-col">
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="w-full lg:w-[68%] flex flex-col"
+    >
 
       {/* 1. Featured Article Main Image */}
       <div className="relative w-full h-[280px] sm:h-[380px] md:h-[460px] lg:h-[500px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm mb-4">
@@ -73,6 +81,6 @@ export default function BlogArticle({ blog }: BlogArticleProps) {
         ))}
       </div>
 
-    </article>
+    </motion.article>
   );
 }

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 /* ─── Image pools (Exact assets from public/images/home/Gallery/) ─── */
 const leftImages = [
@@ -116,6 +117,8 @@ function MarqueeColumn({
 }
 
 export default function Gallery() {
+  const { t } = useLanguage();
+
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
@@ -151,12 +154,12 @@ export default function Gallery() {
             >
               {/* Small Title */}
               <span className="font-montez text-[#39CA5B] text-xl sm:text-3xl md:text-4xl lg:text-4xl font-normal leading-tight mb-0.5 sm:mb-1">
-                Moments Worth Remembering
+                {t("gallery.subtitle", "Moments Worth Remembering")}
               </span>
 
               {/* Main Title */}
               <h2 className="font-roboto text-[#006993] text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-bold tracking-tight mb-1.5 sm:mb-2.5">
-                Our Gallery
+                {t("gallery.title", "Our Gallery")}
               </h2>
 
               {/* Decorative Underline */}

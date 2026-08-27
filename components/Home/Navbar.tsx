@@ -4,25 +4,42 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-
-const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Destinations", href: "/destinations", hasDropdown: true },
-  { label: "Trips", href: "/trips" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Blogs", href: "/blogs" },
-  { label: "About Us", href: "/about" },
-  { label: "Contact Us", href: "/contact" },
-];
+import { useLanguage } from "@/context/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const { itemCount } = useCart();
+  const { t } = useLanguage();
   const isActive = (href: string) => pathname === href;
 
+  const navLinks = [
+    { label: t("nav.home", "Home"), href: "/" },
+    { label: t("nav.destinations", "Destinations"), href: "/destinations", hasDropdown: true },
+    { label: t("nav.trips", "Trips"), href: "/trips" },
+    { label: t("nav.gallery", "Gallery"), href: "/gallery" },
+    { label: t("nav.blogs", "Blogs"), href: "/blogs" },
+    { label: t("nav.about", "About Us"), href: "/about" },
+    { label: t("nav.contact", "Contact Us"), href: "/contact" },
+  ];
+
+  const { scrollY } = useScroll();
+  const navShadow = useTransform(
+    scrollY,
+    [0, 60],
+    ["0 0px 0px rgba(0,0,0,0)", "0 2px 12px rgba(0,0,0,0.10)"]
+  );
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+    <motion.nav
+      className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm"
+      style={{ boxShadow: navShadow }}
+      initial={{ y: -64, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 280, damping: 28, mass: 0.8 }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -38,7 +55,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
-                key={link.label}
+                key={link.href}
                 href={link.href}
                 className={`text-sm font-medium transition-colors hover:text-emerald-600 flex items-center gap-1 ${
                   isActive(link.href)
@@ -66,12 +83,12 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Icons */}
+          {/* Icons & Language Switcher */}
           <div className="hidden md:flex items-center gap-4">
             <Link
               href="/cart"
               className="text-gray-600 hover:text-emerald-600 transition-colors relative p-1"
-              aria-label="View booking cart"
+              aria-label={t("nav.viewCart", "View booking cart")}
             >
               <svg
                 className="w-5 h-5"
@@ -92,21 +109,9 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-            <button className="text-gray-600 hover:text-emerald-600 transition-colors">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </button>
+
+            {/* Language Switcher Dropdown */}
+            <LanguageSwitcher variant="desktop" />
           </div>
 
           {/* Mobile menu button */}
@@ -135,8 +140,9 @@ export default function Navbar() {
               )}
             </Link>
             <button
-              className="text-gray-600"
+              className="text-gray-600 cursor-pointer"
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle mobile menu"
             >
               <svg
                 className="w-6 h-6"
@@ -166,11 +172,16 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-2">
+      <motion.div
+        className="md:hidden overflow-hidden"
+        initial={false}
+        animate={mobileOpen ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+      >
+        <div className="bg-white border-t border-gray-100 px-4 py-3 space-y-2">
           {navLinks.map((link) => (
             <Link
-              key={link.label}
+              key={link.href}
               href={link.href}
               className="block text-sm text-gray-700 hover:text-emerald-600 py-1"
               onClick={() => setMobileOpen(false)}
@@ -183,10 +194,13 @@ export default function Navbar() {
             className="block text-sm text-emerald-600 font-medium py-1"
             onClick={() => setMobileOpen(false)}
           >
-            Booking Cart ({itemCount})
+            {t("nav.cart", "Booking Cart")} ({itemCount})
           </Link>
+
+          {/* Mobile Language Switcher Row */}
+          <LanguageSwitcher variant="mobile" onSelect={() => setMobileOpen(false)} />
         </div>
-      )}
-    </nav>
+      </motion.div>
+    </motion.nav>
   );
 }

@@ -1,27 +1,30 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function DestinationsHero() {
+  const { t } = useLanguage();
+
   return (
-    <section className="relative w-full bg-[#00384D] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 min-h-[360px] sm:min-h-[420px]">
+    <section className="relative w-full bg-[#00384D] pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-12 lg:pb-12 min-h-[360px] sm:min-h-[400px] lg:min-h-[420px] flex items-center overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-10 relative z-10 w-full">
         
         {/* ── Left Content (Text) ─────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="w-full lg:w-1/2 flex flex-col items-start z-10"
+          className="w-full lg:w-[50%] flex flex-col items-start text-left rtl:text-right z-10"
         >
           {/* Subtitle / Script font */}
           <span className="font-montez text-[#69DD84] text-3xl sm:text-4xl md:text-5xl font-normal leading-tight mb-2 tracking-wide">
-            Explore Egypt
+            {t("destinations.subtitle", "Explore Egypt")}
           </span>
 
           {/* Main Headline */}
-          <h1 className="font-roboto font-semibold text-white text-3xl sm:text-4xl md:text-5xl lg:text-[46px] leading-[1.2] tracking-tight max-w-lg">
-            Discover Destinations That Inspire Every Journey
+          <h1 className="font-roboto font-semibold text-white text-3xl sm:text-4xl md:text-5xl lg:text-[48px] leading-tight tracking-tight max-w-lg drop-shadow-md">
+            {t("destinations.heroTitle", "Discover Destinations That Inspire Every Journey")}
           </h1>
         </motion.div>
 
@@ -30,7 +33,7 @@ export default function DestinationsHero() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="w-full lg:w-1/2 flex items-center justify-center lg:justify-end select-none"
+          className="w-full lg:w-[48%] flex items-center justify-center lg:justify-end select-none"
         >
           <div className="relative w-full max-w-[460px] sm:max-w-[500px]">
             <svg

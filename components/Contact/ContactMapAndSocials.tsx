@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -7,7 +10,13 @@ import {
 
 export default function ContactMapAndSocials() {
   return (
-    <div className="w-full lg:w-[48%] flex flex-col justify-between gap-6">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+      className="w-full lg:w-[48%] flex flex-col justify-between gap-6"
+    >
 
       {/* Interactive Google Maps Iframe */}
       <div className="relative w-full h-[360px] sm:h-[420px] md:h-[460px] rounded-3xl overflow-hidden shadow-md border border-gray-200/80 bg-gray-100">
@@ -44,6 +53,6 @@ export default function ContactMapAndSocials() {
         </div>
       </div>
 
-    </div>
+    </motion.div>
   );
 }

@@ -1,5 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import { BlogItem } from "@/data/blogs";
 
 interface BlogSidebarProps {
@@ -10,8 +14,15 @@ interface BlogSidebarProps {
 }
 
 export default function BlogSidebar({ toc, activeToc, onTocClick, recentPosts }: BlogSidebarProps) {
+  const { t } = useLanguage();
+
   return (
-    <aside className="w-full lg:w-[28%] flex flex-col gap-8 lg:sticky lg:top-24">
+    <motion.aside
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+      className="w-full lg:w-[28%] flex flex-col gap-8 lg:sticky lg:top-24"
+    >
 
       {/* 1. Table of Contents Stepper Card */}
       <div className="bg-[#F3F8FB] rounded-2xl p-6 sm:p-7 border border-blue-50/60 shadow-xs">
@@ -25,14 +36,14 @@ export default function BlogSidebar({ toc, activeToc, onTocClick, recentPosts }:
 
                 {/* Vertical Connecting Line */}
                 {!isLast && (
-                  <div className="absolute left-[8px] top-[18px] bottom-[-6px] w-[1.5px] bg-[#D2E4EE]" />
+                  <div className="absolute left-[8px] rtl:left-auto rtl:right-[8px] top-[18px] bottom-[-6px] w-[1.5px] bg-[#D2E4EE]" />
                 )}
 
                 {/* Step Indicator Dot */}
                 <button
                   type="button"
                   onClick={() => onTocClick(item.id)}
-                  className="flex items-center gap-3.5 pb-6 text-left w-full cursor-pointer z-10"
+                  className="flex items-center gap-3.5 pb-6 text-left rtl:text-right w-full cursor-pointer z-10"
                 >
                   {/* Dot Container */}
                   <div className="flex-shrink-0 w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#F3F8FB]">
@@ -66,7 +77,7 @@ export default function BlogSidebar({ toc, activeToc, onTocClick, recentPosts }:
       {/* 2. Recent Posts List */}
       <div className="flex flex-col">
         <h3 className="font-roboto font-bold text-[#000C09] text-base sm:text-lg mb-4">
-          Recent Posts
+          {t("blogs.recentPosts", "Recent Posts")}
         </h3>
 
         <div className="flex flex-col gap-4">
@@ -98,7 +109,7 @@ export default function BlogSidebar({ toc, activeToc, onTocClick, recentPosts }:
                     <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
                   </svg>
                   <span className="font-roboto text-[11px] sm:text-xs">
-                    {post.commentsCount} Comments
+                    {post.commentsCount} {t("blogs.comments", "Comments")}
                   </span>
                 </div>
               </div>
@@ -107,6 +118,6 @@ export default function BlogSidebar({ toc, activeToc, onTocClick, recentPosts }:
         </div>
       </div>
 
-    </aside>
+    </motion.aside>
   );
 }

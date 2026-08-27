@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 import TourCard, { BestSellingTour } from "@/components/Home/TourCard";
 
 const filterTabs = [
@@ -89,6 +90,7 @@ const headerVariants = {
 
 export default function BestSellingTours() {
   const [activeTab, setActiveTab] = useState("All Tours");
+  const { t } = useLanguage();
 
   const filteredTours =
     activeTab === "All Tours"
@@ -130,12 +132,12 @@ export default function BestSellingTours() {
         >
           {/* Small Title */}
           <span className="font-montez text-[#69DD84] text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-1 tracking-wide">
-            Explore Tours
+            {t("bestselling.subtitle", "Explore Tours")}
           </span>
 
           {/* Main Title */}
           <h2 className="font-roboto text-[#FDFEFF] text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-tight mb-3">
-            Best-Selling Tours
+            {t("bestselling.title", "Best-Selling Tours")}
           </h2>
 
           {/* Decorative Underline */}
@@ -170,7 +172,7 @@ export default function BestSellingTours() {
             href="/trips"
             className="flex-shrink-0 border border-[#FDFEFF] text-[#FDFEFF] hover:bg-white hover:text-[#003A5A] font-roboto font-medium text-xs sm:text-sm px-6 py-2 sm:py-2.5 rounded-full transition-all duration-300"
           >
-            View More
+            {t("bestselling.moreTours", "View More")}
           </Link>
         </div>
 

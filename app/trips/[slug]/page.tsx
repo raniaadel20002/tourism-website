@@ -22,7 +22,10 @@ import TripHighlightsAndFAQ from "@/components/Trips/Detail/TripHighlightsAndFAQ
 import TripReviews from "@/components/Trips/Detail/TripReviews";
 import TripAddReview from "@/components/Trips/Detail/TripAddReview";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function TripDetailsPage() {
+  const { t } = useLanguage();
   const params = useParams();
   const slug =
     typeof params?.slug === "string"
@@ -45,9 +48,9 @@ export default function TripDetailsPage() {
       <Breadcrumb
         className="pt-20 sm:pt-24"
         items={[
-          { label: "Home", href: "/" },
-          { label: "Trips", href: "/trips" },
-          { label: "Trip details", activeColor: "text-[#006993]" },
+          { label: t("nav.home", "Home"), href: "/" },
+          { label: t("nav.trips", "Trips"), href: "/trips" },
+          { label: t("trips.tripDetails", "Trip details"), activeColor: "text-[#006993]" },
         ]}
       />
 

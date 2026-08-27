@@ -9,7 +9,10 @@ import BlogArticle from "@/components/Blogs/BlogArticle";
 import BlogComments from "@/components/Blogs/BlogComments";
 import BlogSidebar from "@/components/Blogs/BlogSidebar";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function BlogDetailsPage() {
+  const { t } = useLanguage();
   const params = useParams();
   const slug =
     typeof params?.slug === "string"
@@ -45,9 +48,9 @@ export default function BlogDetailsPage() {
       {/* ── Breadcrumb Navigation ─────────────────────────────────── */}
       <Breadcrumb
         items={[
-          { label: "Home", href: "/" },
-          { label: "Blogs", href: "/blogs" },
-          { label: "Blog details" },
+          { label: t("nav.home", "Home"), href: "/" },
+          { label: t("nav.blogs", "Blogs"), href: "/blogs" },
+          { label: t("blogs.blogDetails", "Blog details") },
         ]}
       />
 

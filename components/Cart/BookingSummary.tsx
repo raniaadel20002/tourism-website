@@ -2,21 +2,18 @@
 
 import React from "react";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 
 export default function BookingSummary() {
   const { cartItems, removeItem, cartTotalAmount } = useCart();
-
-  const packageTotal = cartItems.reduce(
-    (sum, item) => sum + item.adults * item.pricePerPerson,
-    0
-  );
+  const { t } = useLanguage();
 
   return (
     <div className="bg-[#f4f9fd] rounded-[24px] p-5 sm:p-6 border border-blue-50/60 sticky top-24">
       {/* Title */}
       <h2 className="font-roboto font-bold text-slate-800 text-lg mb-4">
-        Booking summary
+        {t("cart.bookingSummary", "Booking summary")}
       </h2>
 
       {/* Selected Items Mini Cards List */}
@@ -38,7 +35,7 @@ export default function BookingSummary() {
             </div>
 
             {/* Info */}
-            <div className="flex-1 min-w-0 pr-5">
+            <div className="flex-1 min-w-0 pr-5 rtl:pr-0 rtl:pl-5">
               <p className="font-roboto font-semibold text-slate-800 text-xs sm:text-[13px] truncate">
                 {item.summaryTitle || item.title}
               </p>
@@ -63,7 +60,7 @@ export default function BookingSummary() {
             {/* Remove X Button */}
             <button
               onClick={() => removeItem(item.id)}
-              className="absolute top-2.5 right-2.5 text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer rounded-full hover:bg-red-50"
+              className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer rounded-full hover:bg-red-50"
               aria-label={`Remove ${item.title}`}
             >
               <svg
@@ -85,7 +82,7 @@ export default function BookingSummary() {
 
         {cartItems.length === 0 && (
           <div className="py-6 text-center text-xs text-gray-400 font-roboto bg-white/60 rounded-xl border border-dashed border-gray-200">
-            No tours in summary
+            {t("cart.noToursSummary", "No tours in summary")}
           </div>
         )}
       </div>
@@ -96,7 +93,7 @@ export default function BookingSummary() {
           {/* Package Section */}
           <div>
             <h4 className="font-roboto font-semibold text-slate-700 text-xs mb-2">
-              Package
+              {t("cart.package", "Package")}
             </h4>
             <div className="space-y-1.5 font-roboto text-xs">
               {cartItems.map((item) => (
@@ -105,7 +102,7 @@ export default function BookingSummary() {
                   className="flex items-center justify-between text-slate-600"
                 >
                   <span>
-                    Adult: {item.adults} x${item.pricePerPerson}
+                    {t("booking.adults", "Adult")}: {item.adults} x${item.pricePerPerson}
                   </span>
                   <span className="font-semibold text-slate-800">
                     ${item.adults * item.pricePerPerson}
@@ -118,11 +115,11 @@ export default function BookingSummary() {
           {/* Extra Services Section */}
           <div className="mt-3">
             <h4 className="font-roboto font-semibold text-slate-700 text-xs mb-2">
-              Extra Services
+              {t("cart.extraServices", "Extra Services")}
             </h4>
             <div className="space-y-1.5 font-roboto text-xs">
               <div className="flex items-center justify-between text-slate-600">
-                <span>Medical insurance</span>
+                <span>{t("cart.medicalInsurance", "Medical insurance")}</span>
                 <span className="font-semibold text-slate-800">$20</span>
               </div>
             </div>
@@ -133,7 +130,7 @@ export default function BookingSummary() {
 
           {/* Total */}
           <div className="flex items-center justify-between font-roboto">
-            <span className="font-bold text-slate-800 text-sm">Total</span>
+            <span className="font-bold text-slate-800 text-sm">{t("cart.total", "Total")}</span>
             <span className="font-bold text-[#22c55e] text-xl">
               ${cartTotalAmount}
             </span>

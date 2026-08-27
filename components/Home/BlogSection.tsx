@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface BlogPost {
   id: string;
@@ -63,6 +64,8 @@ const cardVariants: Variants = {
 };
 
 export default function BlogSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative py-16 sm:py-20 lg:py-24 bg-white overflow-hidden">
       {/* ── Background Decorative SVG (strictly contained within this section only) ── */}
@@ -93,12 +96,12 @@ export default function BlogSection() {
           >
             {/* Small Title */}
             <span className="font-montez text-[#69DD84] text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-1 tracking-wide">
-              Discover travel guides
+              {t("blogs.subtitle", "Discover travel guides")}
             </span>
 
             {/* Main Title */}
             <h2 className="font-roboto text-[#006993] text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight mb-3">
-              Our Blogs
+              {t("blogs.title", "Our Blogs")}
             </h2>
 
             {/* Decorative Underline */}
@@ -111,7 +114,7 @@ export default function BlogSection() {
               href="/blogs"
               className="inline-block font-roboto font-semibold text-sm text-[#004560] border border-[#004560] px-6 py-2 rounded-full hover:bg-[#004560] hover:text-white transition-colors duration-200"
             >
-              More Articals
+              {t("blogs.moreArticles", "More Articles")}
             </Link>
           </div>
         </div>
@@ -156,7 +159,7 @@ export default function BlogSection() {
 
                   <div className="flex justify-end mt-4 sm:mt-6">
                     <span className="font-roboto font-semibold text-xs sm:text-sm text-[#004560] border border-[#004560] px-5 py-1.5 sm:px-6 sm:py-2 rounded-full group-hover:bg-[#004560] group-hover:text-white transition-colors duration-200 inline-block">
-                      Read More
+                      {t("blogs.readMore", "Read More")}
                     </span>
                   </div>
                 </div>

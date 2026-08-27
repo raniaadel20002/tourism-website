@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Testimonial {
   id: string;
@@ -31,6 +33,7 @@ export default function TripReviews({
 }: TripReviewsProps) {
   const [activeIdx, setActiveIdx] = useState(0);
   const current = testimonials[activeIdx] || testimonials[0];
+  const { t } = useLanguage();
 
   const handlePrev = () =>
     setActiveIdx((p) => (p === 0 ? testimonials.length - 1 : p - 1));
@@ -38,7 +41,13 @@ export default function TripReviews({
     setActiveIdx((p) => (p === testimonials.length - 1 ? 0 : p + 1));
 
   return (
-    <div className="flex flex-col lg:flex-row items-stretch gap-6 sm:gap-8 w-full">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex flex-col lg:flex-row items-stretch gap-6 sm:gap-8 w-full"
+    >
 
       {/* Overall Rating Summary Box */}
       <div className="w-full lg:w-[48%] border border-gray-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 bg-white shadow-xs flex items-center justify-between gap-6">
@@ -50,7 +59,7 @@ export default function TripReviews({
             <span className="text-[#F59E0B] text-2xl sm:text-3xl">★</span>
           </div>
           <span className="mt-2 bg-[#004560] text-white font-roboto text-xs px-4 py-1 rounded-full font-medium">
-            {reviewsSummaryCount} reviews
+            {reviewsSummaryCount} {t("tours.reviews", "reviews")}
           </span>
         </div>
 
@@ -115,6 +124,6 @@ export default function TripReviews({
         </button>
       </div>
 
-    </div>
+    </motion.div>
   );
 }

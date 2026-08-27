@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import CategoryCard from "@/components/Home/CategoryCard";
 
 export interface TourCategoryItem {
@@ -60,6 +61,8 @@ const headerVariants = {
 };
 
 export default function TourCategories() {
+  const { t } = useLanguage();
+
   return (
     <section className="w-full py-16 sm:py-20 lg:py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
@@ -74,12 +77,12 @@ export default function TourCategories() {
         >
           {/* Small Title */}
           <span className="font-montez text-[#39CA5B] text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-1 tracking-wide">
-            Handpicked Adventures
+            {t("categories.subtitle", "Handpicked Adventures")}
           </span>
 
           {/* Main Title */}
           <h2 className="font-roboto text-[#006993] text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight mb-3">
-            Tour Categories
+            {t("categories.title", "Tour Categories")}
           </h2>
 
           {/* Decorative Underline */}

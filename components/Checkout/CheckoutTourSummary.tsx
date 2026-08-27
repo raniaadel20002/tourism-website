@@ -1,3 +1,6 @@
+"use client";
+
+import { useLanguage } from "@/context/LanguageContext";
 import { ActiveBooking } from "@/context/CartContext";
 
 interface CheckoutTourSummaryProps {
@@ -5,13 +8,14 @@ interface CheckoutTourSummaryProps {
 }
 
 export default function CheckoutTourSummary({ booking }: CheckoutTourSummaryProps) {
+  const { t } = useLanguage();
   const totalTravellers = booking.adultCount + booking.childCount;
 
   return (
     <div className="lg:col-span-5 xl:col-span-4">
       <div className="bg-[#f4f9fd] rounded-[24px] p-6 border border-blue-50/80 sticky top-24">
         <h2 className="font-roboto font-bold text-slate-800 text-base sm:text-lg mb-3">
-          Tour Details
+          {t("checkout.tourDetails", "Tour Details")}
         </h2>
 
         {/* Tour Title */}
@@ -39,18 +43,18 @@ export default function CheckoutTourSummary({ booking }: CheckoutTourSummaryProp
 
         {/* No. of Travellers */}
         <div className="flex items-center justify-between text-xs font-roboto text-slate-700 mt-3 pt-2">
-          <span>No. of Travellers:</span>
+          <span>{t("checkout.noOfTravellers", "No. of Travellers")}:</span>
           <span className="font-semibold text-slate-800">{totalTravellers}</span>
         </div>
 
         {/* Package Breakdown */}
         <div className="mt-4 pt-1">
-          <h3 className="font-roboto font-bold text-slate-800 text-xs mb-2">Package</h3>
-          <p className="text-xs text-slate-600 font-roboto mb-1">Traveller(s):</p>
+          <h3 className="font-roboto font-bold text-slate-800 text-xs mb-2">{t("cart.package", "Package")}</h3>
+          <p className="text-xs text-slate-600 font-roboto mb-1">{t("checkout.travellers", "Traveller(s)")}:</p>
 
           <div className="space-y-1.5 font-roboto text-xs">
             <div className="flex items-center justify-between text-slate-600">
-              <span>Adult: {booking.adultCount} x ${booking.adultPrice}</span>
+              <span>{t("booking.adults", "Adult")}: {booking.adultCount} x ${booking.adultPrice}</span>
               <span className="font-semibold text-slate-800">
                 ${booking.adultCount * booking.adultPrice}
               </span>
@@ -58,7 +62,7 @@ export default function CheckoutTourSummary({ booking }: CheckoutTourSummaryProp
 
             {booking.childCount > 0 && (
               <div className="flex items-center justify-between text-slate-600">
-                <span>Child: {booking.childCount} x ${booking.childPrice}</span>
+                <span>{t("booking.child", "Child")}: {booking.childCount} x ${booking.childPrice}</span>
                 <span className="font-semibold text-slate-800">
                   ${booking.childCount * booking.childPrice}
                 </span>
@@ -67,7 +71,7 @@ export default function CheckoutTourSummary({ booking }: CheckoutTourSummaryProp
 
             {booking.extraServicesTotal > 0 && (
               <div className="flex items-center justify-between text-slate-600 pt-1">
-                <span>Extra Services:</span>
+                <span>{t("cart.extraServices", "Extra Services")}:</span>
                 <span className="font-semibold text-slate-800">
                   ${booking.extraServicesTotal}
                 </span>
@@ -75,7 +79,7 @@ export default function CheckoutTourSummary({ booking }: CheckoutTourSummaryProp
             )}
 
             <div className="flex items-center justify-between text-slate-600 pt-2">
-              <span>Subtotal:</span>
+              <span>{t("checkout.subtotal", "Subtotal")}:</span>
               <span className="font-semibold text-slate-800">${booking.totalAmount}</span>
             </div>
           </div>
@@ -85,7 +89,7 @@ export default function CheckoutTourSummary({ booking }: CheckoutTourSummaryProp
 
           {/* Total */}
           <div className="flex items-center justify-between font-roboto">
-            <span className="font-bold text-slate-800 text-sm">Total:</span>
+            <span className="font-bold text-slate-800 text-sm">{t("cart.total", "Total")}:</span>
             <span className="font-bold text-[#22c55e] text-xl">${booking.totalAmount}</span>
           </div>
         </div>

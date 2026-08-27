@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface TripHighlightsAndFAQProps {
   highlights: string[];
@@ -12,18 +14,25 @@ export default function TripHighlightsAndFAQ({
   faqs,
 }: TripHighlightsAndFAQProps) {
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(null);
+  const { t } = useLanguage();
 
   const toggleFaq = (idx: number) =>
     setOpenFaqIdx((prev) => (prev === idx ? null : idx));
 
   return (
-    <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 w-full">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 w-full"
+    >
 
       {/* ── Trip Highlights ──────────────────────────────────────── */}
       <div className="w-full lg:w-1/2 border border-gray-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 bg-white shadow-xs">
         <div className="mb-5">
           <span className="bg-[#006993] text-white font-roboto font-semibold text-xs px-4 py-1.5 rounded-full inline-block">
-            Trip Highlights
+            {t("trips.highlights", "Trip Highlights")}
           </span>
         </div>
         <ul className="flex flex-col gap-3 font-roboto text-xs sm:text-sm text-[#484848]">
@@ -50,7 +59,7 @@ export default function TripHighlightsAndFAQ({
       <div className="w-full lg:w-1/2 border border-gray-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 bg-white shadow-xs">
         <div className="mb-5">
           <span className="bg-[#006993] text-white font-roboto font-semibold text-xs px-4 py-1.5 rounded-full inline-block">
-            FAQs
+            {t("trips.faqs", "FAQs")}
           </span>
         </div>
         <div className="flex flex-col divide-y divide-gray-100">
@@ -92,6 +101,6 @@ export default function TripHighlightsAndFAQ({
         </div>
       </div>
 
-    </div>
+    </motion.div>
   );
 }

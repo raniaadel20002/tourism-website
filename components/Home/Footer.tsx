@@ -1,16 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-
-const quickLinks = [
-  { label: "Home", href: "/" },
-  { label: "Destinations", href: "/destinations", hasDropdown: true },
-  { label: "Trips", href: "/trips" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "About Us", href: "/about" },
-  { label: "Blogs", href: "/blogs" },
-  { label: "Contact Us", href: "/contact" },
-  { label: "FAQ", href: "/faq" },
-];
+import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 function PhoneIcon() {
   return (
@@ -144,18 +137,69 @@ const socialLinks = [
   { label: "X", icon: <XIcon />, href: "#" },
 ];
 
+/* ─── Framer Motion Variants ─── */
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.13 },
+  },
+};
+
+const columnVariants: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
 export default function Footer() {
+  const { t } = useLanguage();
+
+  const quickLinks = [
+    { label: t("nav.home", "Home"), href: "/" },
+    { label: t("nav.destinations", "Destinations"), href: "/destinations", hasDropdown: true },
+    { label: t("nav.trips", "Trips"), href: "/trips" },
+    { label: t("nav.gallery", "Gallery"), href: "/gallery" },
+    { label: t("nav.about", "About Us"), href: "/about" },
+    { label: t("nav.blogs", "Blogs"), href: "/blogs" },
+    { label: t("nav.contact", "Contact Us"), href: "/contact" },
+  ];
+
   return (
     <footer className="bg-[#006993] pt-10 sm:pt-14 pb-8 px-4 sm:px-6 lg:px-10 overflow-hidden">
       <div className="max-w-[1320px] mx-auto">
         
-        {/* ── Large white rounded container (Flexbox layout) ──────────────── */}
-        <div className="bg-white rounded-3xl sm:rounded-[36px] lg:rounded-[48px] px-8 sm:px-12 lg:px-16 py-10 sm:py-12 lg:py-14 shadow-lg">
-          
-          <div className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-between gap-10 lg:gap-8">
+        {/* ── Large white rounded container ── */}
+        <motion.div
+          className="bg-white rounded-3xl sm:rounded-[36px] lg:rounded-[48px] px-8 sm:px-12 lg:px-16 py-10 sm:py-12 lg:py-14 shadow-lg"
+          variants={cardVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+        >
+
+          <motion.div
+            className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-between gap-10 lg:gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
             
-            {/* ── Column 1: Logo + Description ────────────────────── */}
-            <div className="w-full sm:w-[45%] lg:w-[28%] flex flex-col items-start">
+            {/* ── Column 1: Logo + Description ── */}
+            <motion.div variants={columnVariants} className="w-full sm:w-[45%] lg:w-[28%] flex flex-col items-start">
               <div className="mb-5">
                 <Image
                   src="/images/home/Footer/Logo.png"
@@ -166,16 +210,14 @@ export default function Footer() {
                 />
               </div>
               <p className="font-roboto text-[#000C09] text-xs sm:text-sm leading-relaxed max-w-[260px]">
-                Every journey is an opportunity to explore, relax, and create
-                unforgettable memories crafted with care, comfort, and local
-                expertise
+                {t("footer.description", "Every journey is an opportunity to explore, relax, and create unforgettable memories crafted with care, comfort, and local expertise.")}
               </p>
-            </div>
+            </motion.div>
 
-            {/* ── Column 2: Quick Action Links ───────────────────── */}
-            <div className="w-full sm:w-[45%] lg:w-[22%] flex flex-col items-start">
+            {/* ── Column 2: Quick Action Links ── */}
+            <motion.div variants={columnVariants} className="w-full sm:w-[45%] lg:w-[22%] flex flex-col items-start">
               <h3 className="font-roboto font-semibold text-[#004560] text-base sm:text-lg mb-4 sm:mb-5">
-                Quick action
+                {t("footer.quickAction", "Quick action")}
               </h3>
               <ul className="flex flex-col gap-2.5 sm:gap-3">
                 {quickLinks.map(({ label, href, hasDropdown }) => (
@@ -205,39 +247,39 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
 
-            {/* ── Column 3: Contact Us ───────────────────────────── */}
-            <div className="w-full sm:w-[45%] lg:w-[26%] flex flex-col items-start">
+            {/* ── Column 3: Contact Us ── */}
+            <motion.div variants={columnVariants} className="w-full sm:w-[45%] lg:w-[26%] flex flex-col items-start">
               <h3 className="font-roboto font-semibold text-[#004560] text-base sm:text-lg mb-4 sm:mb-5">
-                contact Us
+                {t("footer.contactUs", "Contact Us")}
               </h3>
               <ul className="flex flex-col gap-4 sm:gap-5">
                 <li className="flex items-center gap-3">
                   <PhoneIcon />
                   <span className="font-roboto text-[#000C09] text-xs sm:text-sm">
-                    +00 (123) 456 889
+                    {t("footer.phone", "+00 (123) 456 889")}
                   </span>
                 </li>
                 <li className="flex items-center gap-3">
                   <GlobeIcon />
                   <span className="font-roboto text-[#000C09] text-xs sm:text-sm">
-                    contact@example.com
+                    {t("footer.email", "contact@example.com")}
                   </span>
                 </li>
                 <li className="flex items-center gap-3">
                   <LocationPinIcon />
                   <span className="font-roboto text-[#000C09] text-xs sm:text-sm leading-relaxed">
-                    583 Main Street, NY, USA
+                    {t("footer.address", "583 Main Street, NY, USA")}
                   </span>
                 </li>
               </ul>
-            </div>
+            </motion.div>
 
-            {/* ── Column 4: Follow Us + Social Icons ─────────────── */}
-            <div className="w-full sm:w-[45%] lg:w-[20%] flex flex-col items-start">
+            {/* ── Column 4: Follow Us + Social Icons ── */}
+            <motion.div variants={columnVariants} className="w-full sm:w-[45%] lg:w-[20%] flex flex-col items-start">
               <h3 className="font-roboto font-semibold text-[#004560] text-base sm:text-lg mb-4 sm:mb-5">
-                Follow Us
+                {t("footer.followUs", "Follow Us")}
               </h3>
               <div className="flex items-center gap-4 sm:gap-5">
                 {socialLinks.map(({ label, icon, href }) => (
@@ -251,18 +293,24 @@ export default function Footer() {
                   </a>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
-          </div>
+          </motion.div>
 
-        </div>
+        </motion.div>
 
-        {/* ── Copyright Text Below Container ───────────────────────── */}
-        <div className="mt-6 sm:mt-8 text-center">
+        {/* ── Copyright Text Below Container ── */}
+        <motion.div
+          className="mt-6 sm:mt-8 text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+        >
           <p className="font-roboto text-white text-xs sm:text-[13px] tracking-wide">
-            Powered By Tech Gear Solutions &copy; 2026 All Rights Reserved
+            {t("footer.copyright", "Powered By Tech Gear Solutions © 2026 All Rights Reserved")}
           </p>
-        </div>
+        </motion.div>
 
       </div>
     </footer>

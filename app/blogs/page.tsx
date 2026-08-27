@@ -8,7 +8,10 @@ import BlogSearchBar from "@/components/Blogs/BlogSearchBar";
 import BlogTagFilter from "@/components/Blogs/BlogTagFilter";
 import BlogsGrid from "@/components/Blogs/BlogsGrid";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function BlogsPage() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string>("All");
   const [visibleCount, setVisibleCount] = useState(6);
@@ -42,7 +45,7 @@ export default function BlogsPage() {
       <BlogsHero />
 
       {/* ── Breadcrumb ───────────────────────────────────────────── */}
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Blogs" }]} />
+      <Breadcrumb items={[{ label: t("nav.home", "Home"), href: "/" }, { label: t("nav.blogs", "Blogs") }]} />
 
       {/* ── Main Content Container ──────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex-1 flex flex-col items-center">
@@ -68,7 +71,7 @@ export default function BlogsPage() {
               onClick={handleSeeMore}
               className="w-full max-w-md sm:max-w-lg py-3 sm:py-3.5 px-8 rounded-full border border-[#004560] text-[#004560] hover:bg-[#004560] hover:text-white font-roboto font-semibold text-sm sm:text-base text-center transition-all duration-300 shadow-xs hover:shadow-md cursor-pointer"
             >
-              See More
+              {t("blogs.seeMore", "See More")}
             </button>
           </div>
         )}

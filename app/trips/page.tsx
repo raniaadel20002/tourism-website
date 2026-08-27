@@ -7,7 +7,10 @@ import Breadcrumb from "@/components/Breadcrumb";
 import TripsFilterSidebar from "@/components/Trips/TripsFilterSidebar";
 import TripsResults from "@/components/Trips/TripsResults";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function TripsPage() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("All");
   const [minPrice, setMinPrice] = useState("20");
@@ -65,7 +68,7 @@ export default function TripsPage() {
       <TripsHero />
 
       {/* ── Breadcrumb ───────────────────────────────────────────── */}
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Explore" }]} />
+      <Breadcrumb items={[{ label: t("nav.home", "Home"), href: "/" }, { label: t("nav.trips", "Explore") }]} />
 
       {/* ── Main Content Area ─────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex-1">

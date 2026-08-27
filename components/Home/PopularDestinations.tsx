@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Destination {
   id: string;
@@ -67,6 +68,8 @@ const cardVariants: Variants = {
 };
 
 export default function PopularDestinations() {
+  const { t } = useLanguage();
+
   return (
     <section className="w-full py-16 sm:py-20 lg:py-24 bg-[#F4F9FB] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
@@ -81,12 +84,12 @@ export default function PopularDestinations() {
         >
           {/* Small Title */}
           <span className="font-montez text-[#39CA5B] text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-1 tracking-wide">
-            Explore Egypt&apos;s Hidden Gems
+            {t("destinations.subtitle", "Explore Egypt's Hidden Gems")}
           </span>
 
           {/* Main Title */}
           <h2 className="font-roboto text-[#006993] text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight mb-3">
-            Popular destinations
+            {t("destinations.title", "Popular destinations")}
           </h2>
 
           {/* Decorative Underline */}
@@ -99,7 +102,7 @@ export default function PopularDestinations() {
             href="/destinations"
             className="border border-[#006993] text-[#006993] hover:bg-[#006993] hover:text-white font-roboto font-medium text-sm sm:text-base px-6 sm:px-7 py-2 sm:py-2.5 rounded-full transition-all duration-300 shadow-xs hover:shadow-md cursor-pointer"
           >
-            View More
+            {t("bestselling.moreTours", "View More")}
           </Link>
         </div>
 

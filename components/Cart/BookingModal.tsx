@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 
 export default function BookingModal() {
@@ -13,10 +15,9 @@ export default function BookingModal() {
     activeBooking,
     updateActiveBooking,
   } = useCart();
+  const { t } = useLanguage();
 
   const [dateInput, setDateInput] = useState(activeBooking.tourDate || "23/1/2025");
-
-  if (!isBookingModalOpen) return null;
 
   const handleAdultChange = (delta: number) => {
     const newCount = Math.max(1, activeBooking.adultCount + delta);
@@ -45,12 +46,28 @@ export default function BookingModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-white rounded-[28px] max-w-4xl w-full p-6 sm:p-8 relative shadow-2xl my-8 max-h-[90vh] overflow-y-auto">
+    <AnimatePresence>
+      {isBookingModalOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+          onClick={closeBookingModal}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-[28px] max-w-4xl w-full p-6 sm:p-8 relative shadow-2xl my-8 max-h-[90vh] overflow-y-auto"
+          >
         {/* Close Button */}
         <button
           onClick={closeBookingModal}
-          className="absolute top-5 right-5 text-slate-800 hover:text-black p-2 cursor-pointer rounded-full hover:bg-slate-100 transition-colors z-10"
+          className="absolute top-5 right-5 rtl:right-auto rtl:left-5 text-slate-800 hover:text-black p-2 cursor-pointer rounded-full hover:bg-slate-100 transition-colors z-10"
           aria-label="Close modal"
         >
           <svg
@@ -74,7 +91,7 @@ export default function BookingModal() {
             {/* 1. Date Selection */}
             <div>
               <h3 className="font-roboto font-bold text-slate-800 text-base mb-2">
-                Please select a tour date
+                {t("booking.selectDate", "Please select a tour date")}
               </h3>
               <div className="relative">
                 <div className="w-full px-4 py-3 rounded-xl border border-gray-200 flex items-center justify-between text-sm text-slate-700 bg-white shadow-xs focus-within:border-[#004560] focus-within:ring-1 focus-within:ring-[#004560]/20">
@@ -124,7 +141,7 @@ export default function BookingModal() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <h3 className="font-roboto font-bold text-slate-800 text-base">
-                  Quantity
+                  {t("booking.quantity", "Quantity")}
                 </h3>
                 <span className="text-emerald-600 text-xs font-semibold flex items-center gap-1 font-roboto">
                   <svg
@@ -140,17 +157,17 @@ export default function BookingModal() {
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  ( Min: 1 )
+                  ( {t("booking.minOne", "Min: 1")} )
                 </span>
               </div>
               <p className="text-xs text-gray-500 font-roboto mb-3">
-                You can select up to 50 for this package
+                {t("booking.selectUpTo50", "You can select up to 50 for this package")}
               </p>
 
               {/* Adult Stepper Card */}
               <div className="bg-[#f4f9fd] rounded-2xl px-5 py-3.5 flex items-center justify-between text-sm font-roboto mb-3">
                 <span className="font-medium text-slate-800 text-sm sm:text-base">
-                  Adult
+                  {t("booking.adults", "Adult")}
                 </span>
                 <span className="text-xs text-slate-500 font-medium">
                   ${activeBooking.adultPrice > 0 ? `${activeBooking.adultPrice}.00` : "0.00"}
@@ -185,7 +202,7 @@ export default function BookingModal() {
               {/* Children Stepper Card */}
               <div className="bg-[#f4f9fd] rounded-2xl px-5 py-3.5 flex items-center justify-between text-sm font-roboto">
                 <span className="font-medium text-slate-800 text-sm sm:text-base">
-                  Children 3-11 years
+                  {t("booking.childrenAge", "Children 3-11 years")}
                 </span>
                 <span className="text-xs text-slate-500 font-medium">
                   ${activeBooking.childPrice > 0 ? `${activeBooking.childPrice}.00` : "0.00"}
@@ -221,10 +238,10 @@ export default function BookingModal() {
             {/* 3. Extra Services Section */}
             <div>
               <h3 className="font-roboto font-bold text-slate-800 text-base mb-1">
-                Extra Services
+                {t("booking.extraServices", "Extra Services")}
               </h3>
               <p className="text-xs text-gray-500 font-roboto mb-3">
-                Add extra services on your reservation
+                {t("booking.addExtras", "Add extra services on your reservation")}
               </p>
 
               <div className="space-y-2.5">
@@ -245,7 +262,7 @@ export default function BookingModal() {
                       </svg>
                     )}
                   </div>
-                  <span>Health Insurance ( $ 30 )</span>
+                  <span>{t("booking.healthInsurance", "Health Insurance")} ( $ 30 )</span>
                 </label>
 
                 <label
@@ -265,7 +282,7 @@ export default function BookingModal() {
                       </svg>
                     )}
                   </div>
-                  <span>Medical Insurance ( $ 50 )</span>
+                  <span>{t("booking.medicalInsurance", "Medical Insurance")} ( $ 50 )</span>
                 </label>
               </div>
             </div>
@@ -275,7 +292,7 @@ export default function BookingModal() {
           <div className="lg:col-span-5">
             <div className="bg-[#f4f9fd] rounded-[24px] p-5 sm:p-6 border border-blue-50/60">
               <h2 className="font-roboto font-bold text-slate-800 text-lg mb-4">
-                Booking summary
+                {t("cart.bookingSummary", "Booking summary")}
               </h2>
 
               {/* Mini Tour Card */}
@@ -289,7 +306,7 @@ export default function BookingModal() {
                     className="object-cover"
                   />
                 </div>
-                <div className="flex-1 min-w-0 pr-4">
+                <div className="flex-1 min-w-0 pr-4 rtl:pr-0 rtl:pl-4">
                   <p className="font-roboto font-semibold text-slate-800 text-xs sm:text-[13px] truncate">
                     {activeBooking.tripTitle}
                   </p>
@@ -313,7 +330,7 @@ export default function BookingModal() {
 
                 <button
                   onClick={closeBookingModal}
-                  className="absolute top-2.5 right-2.5 text-slate-400 hover:text-red-500 transition-colors p-1"
+                  className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 text-slate-400 hover:text-red-500 transition-colors p-1"
                   aria-label="Remove tour"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -325,17 +342,17 @@ export default function BookingModal() {
               {/* Package Breakdown */}
               <div className="space-y-3 font-roboto text-xs">
                 <div>
-                  <h4 className="font-semibold text-slate-700 mb-2">Package</h4>
+                  <h4 className="font-semibold text-slate-700 mb-2">{t("cart.package", "Package")}</h4>
                   <div className="space-y-1 text-slate-600">
                     <div className="flex justify-between">
-                      <span>Adult: {activeBooking.adultCount} x${activeBooking.adultPrice}</span>
+                      <span>{t("booking.adults", "Adult")}: {activeBooking.adultCount} x${activeBooking.adultPrice}</span>
                       <span className="font-semibold text-slate-800">
                         ${activeBooking.adultCount * activeBooking.adultPrice}
                       </span>
                     </div>
                     {activeBooking.childCount > 0 && (
                       <div className="flex justify-between">
-                        <span>Child: {activeBooking.childCount} x${activeBooking.childPrice}</span>
+                        <span>{t("booking.child", "Child")}: {activeBooking.childCount} x${activeBooking.childPrice}</span>
                         <span className="font-semibold text-slate-800">
                           ${activeBooking.childCount * activeBooking.childPrice}
                         </span>
@@ -347,17 +364,17 @@ export default function BookingModal() {
                 {/* Extra Services Breakdown */}
                 {activeBooking.selectedExtras.length > 0 && (
                   <div className="pt-2">
-                    <h4 className="font-semibold text-slate-700 mb-2">Extra Services</h4>
+                    <h4 className="font-semibold text-slate-700 mb-2">{t("cart.extraServices", "Extra Services")}</h4>
                     <div className="space-y-1 text-slate-600">
                       {activeBooking.selectedExtras.includes("health-insurance-30") && (
                         <div className="flex justify-between">
-                          <span>Health Insurance</span>
+                          <span>{t("booking.healthInsurance", "Health Insurance")}</span>
                           <span className="font-semibold text-slate-800">$30</span>
                         </div>
                       )}
                       {activeBooking.selectedExtras.includes("medical-insurance-50") && (
                         <div className="flex justify-between">
-                          <span>Medical Insurance</span>
+                          <span>{t("booking.medicalInsurance", "Medical Insurance")}</span>
                           <span className="font-semibold text-slate-800">$50</span>
                         </div>
                       )}
@@ -370,7 +387,7 @@ export default function BookingModal() {
 
                 {/* Total */}
                 <div className="flex items-center justify-between pt-1">
-                  <span className="font-bold text-slate-800 text-sm">Total</span>
+                  <span className="font-bold text-slate-800 text-sm">{t("cart.total", "Total")}</span>
                   <span className="font-bold text-[#22c55e] text-xl">
                     ${activeBooking.totalAmount}
                   </span>
@@ -387,9 +404,9 @@ export default function BookingModal() {
             onClick={handleProceedToCheckout}
             className="inline-flex items-center justify-center gap-2 px-12 py-3 rounded-full border border-[#0f4c5c] text-[#0f4c5c] font-roboto font-medium text-sm sm:text-base hover:bg-[#0f4c5c] hover:text-white transition-all duration-200 shadow-xs group cursor-pointer"
           >
-            <span>Proceed to check out</span>
+            <span>{t("booking.proceedToCheckout", "Proceed to check out")}</span>
             <svg
-              className="w-4 h-4 transition-transform group-hover:translate-x-1"
+              className="w-4 h-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -403,7 +420,9 @@ export default function BookingModal() {
             </svg>
           </button>
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
