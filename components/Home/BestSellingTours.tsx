@@ -104,19 +104,16 @@ export default function BestSellingTours() {
         });
 
   return (
-    <section className="relative bg-[#13445d] py-10 lg:py-2 px-4 sm:px-6 lg:px-8 overflow-x-clip">
+    <section className="relative bg-[#13445d] py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background Decorative Shape from heart.svg */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1358px]  z-0"
+        className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center"
         aria-hidden="true"
       >
-        <Image
+        <img
           src="/images/home/bestselling/heart.svg"
           alt=""
-          width={1358}
-          height={1133}
-          className="w-full h-auto object-top"
-          priority
+          className="w-full h-full object-cover object-center max-w-[1500px]"
         />
       </div>
 
@@ -124,19 +121,19 @@ export default function BestSellingTours() {
         
         {/* Section Header */}
         <motion.div
-          className="flex flex-col items-center text-center mb-10 sm:mb-12"
+          className="flex flex-col items-center text-center mb-6 sm:mb-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={headerVariants as Variants}
         >
           {/* Small Title */}
-          <span className="font-montez text-[#69DD84] text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-1 tracking-wide">
+          <span className="font-montez text-[#69DD84] text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight mb-1 tracking-wide">
             {t("bestselling.subtitle", "Explore Tours")}
           </span>
 
           {/* Main Title */}
-          <h2 className="font-roboto text-[#FDFEFF] text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-tight mb-3">
+          <h2 className="font-roboto text-[#FDFEFF] text-2xl sm:text-3xl lg:text-[36px] font-semibold tracking-tight mb-2.5">
             {t("bestselling.title", "Best-Selling Tours")}
           </h2>
 
@@ -145,9 +142,9 @@ export default function BestSellingTours() {
         </motion.div>
 
         {/* Filter Controls + View More Bar */}
-        <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 sm:mb-12">
+        <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
           {/* Category Filter Tabs */}
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-2.5">
             {filterTabs.map((tab) => {
               const isActive = activeTab === tab;
               return (
@@ -155,7 +152,7 @@ export default function BestSellingTours() {
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full font-roboto font-medium text-xs sm:text-sm transition-all duration-300 cursor-pointer ${
+                  className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-roboto font-medium text-xs sm:text-sm transition-all duration-300 cursor-pointer ${
                     isActive
                       ? "bg-[#69DD84] text-white shadow-md scale-100 font-semibold"
                       : "bg-white text-[#4A5568] hover:bg-gray-100 hover:scale-105 shadow-sm"
@@ -170,7 +167,7 @@ export default function BestSellingTours() {
           {/* View More Button */}
           <Link
             href="/trips"
-            className="flex-shrink-0 border border-[#FDFEFF] text-[#FDFEFF] hover:bg-white hover:text-[#003A5A] font-roboto font-medium text-xs sm:text-sm px-6 py-2 sm:py-2.5 rounded-full transition-all duration-300"
+            className="flex-shrink-0 border border-[#FDFEFF] text-[#FDFEFF] hover:bg-white hover:text-[#003A5A] font-roboto font-medium text-xs sm:text-sm px-5 sm:px-6 py-1.5 sm:py-2 rounded-full transition-all duration-300"
           >
             {t("bestselling.moreTours", "View More")}
           </Link>
@@ -179,7 +176,7 @@ export default function BestSellingTours() {
         {/* Tour Cards Row (Flexbox only) */}
         <motion.div
           key={activeTab}
-          className="w-full flex flex-row items-stretch justify-start sm:justify-center gap-5 lg:gap-6 overflow-x-auto lg:overflow-visible pb-6 pt-2 px-2 scrollbar-none snap-x"
+          className="w-full flex flex-row items-stretch justify-start sm:justify-center gap-4 sm:gap-5 lg:gap-6 overflow-x-auto lg:overflow-visible pb-4 pt-1 px-1 scrollbar-none snap-x"
           initial="hidden"
           animate="visible"
           viewport={{ once: true, amount: 0.1 }}

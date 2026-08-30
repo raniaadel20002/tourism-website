@@ -8,8 +8,8 @@ export default function ContactHero() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative w-full bg-[#003853] pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-12 lg:pb-12 min-h-[360px] sm:min-h-[400px] lg:min-h-[420px] flex items-center overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 lg:gap-10 w-full">
+    <section className="relative w-full bg-[#003853] pt-0 sm:pt-0 lg:pt-0 pb-0 sm:pb-0 lg:pb-0 min-h-[360px] sm:min-h-[400px] lg:min-h-[420px] flex items-center overflow-hidden">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 lg:gap-2 w-full">
 
         {/* Hero Left: Text Content */}
         <motion.div
@@ -36,14 +36,14 @@ export default function ContactHero() {
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           className="w-full md:w-[35%] lg:w-[32%] flex justify-center items-center md:justify-end relative select-none"
         >
-          <div className="relative w-28 sm:w-36 md:w-40 lg:w-36 flex justify-center">
+          <div className="relative w-28 sm:w-36 md:w-40 lg:w-26 flex justify-center">
 
             {/* Green Telephone Handset with Cord */}
             <Image
               src="/images/contact/a30531347a56ee917b0d45426ea275a5f70609b7.png"
               alt="Green vintage telephone"
-              width={108}
-              height={416}
+              width={208}
+              height={316}
               priority
               className="w-full h-auto object-contain drop-shadow-xl"
             />

@@ -85,24 +85,24 @@ export default function FAQ() {
   };
 
   return (
-    <section className="bg-white py-14 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto flex flex-col items-center">
+    <section className="bg-white py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto flex flex-col items-center">
 
         {/* ── Section Header ── */}
         <motion.div
-          className="flex flex-col items-center text-center mb-10 sm:mb-12"
+          className="flex flex-col items-center text-center mb-6 sm:mb-8"
           variants={headerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
           {/* Small Title */}
-          <span className="font-montez text-[#69DD84] text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-1 tracking-wide">
+          <span className="font-montez text-[#69DD84] text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight mb-1 tracking-wide">
             {t("faq.subtitle", "Your Perfect Journey, Crafted with Care")}
           </span>
 
           {/* Main Title */}
-          <h2 className="font-roboto text-[#006993] text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-tight mb-3">
+          <h2 className="font-roboto text-[#006993] text-2xl sm:text-3xl lg:text-[36px] font-semibold tracking-tight mb-2.5">
             {t("faq.title", "Frequently Asked Questions")}
           </h2>
 
@@ -112,7 +112,7 @@ export default function FAQ() {
 
         {/* ── FAQ Items List ── */}
         <motion.div
-          className="w-full flex flex-col gap-3.5 sm:gap-4"
+          className="w-full flex flex-col gap-2.5 sm:gap-3"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -130,12 +130,12 @@ export default function FAQ() {
                 <button
                   type="button"
                   onClick={() => toggleItem(faq.id)}
-                  className="w-full flex items-center justify-between gap-4 px-6 sm:px-8 py-5 sm:py-6 text-left cursor-pointer transition-opacity duration-150 hover:opacity-90"
+                  className="w-full flex items-center justify-between gap-4 px-5 sm:px-6 py-3.5 sm:py-4 text-left cursor-pointer transition-opacity duration-150 hover:opacity-90"
                   aria-expanded={isOpen}
                   id={`faq-btn-${faq.id}`}
                   aria-controls={`faq-panel-${faq.id}`}
                 >
-                  <span className="font-roboto font-medium text-[#004560] text-base sm:text-lg md:text-[19px] leading-snug">
+                  <span className="font-roboto font-medium text-[#004560] text-sm sm:text-base md:text-[17px] leading-snug">
                     {t(faq.qKey, faq.defaultQ)}
                   </span>
 
@@ -176,8 +176,8 @@ export default function FAQ() {
                       transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 sm:px-8 pb-5 sm:pb-6 pt-0">
-                        <p className="font-roboto font-normal text-[#535764] text-sm sm:text-base md:text-[16.5px] leading-relaxed">
+                      <div className="px-5 sm:px-6 pb-4 sm:pb-5 pt-0">
+                        <p className="font-roboto font-normal text-[#535764] text-xs sm:text-sm md:text-[15px] leading-relaxed">
                           {t(faq.aKey, faq.defaultA)}
                         </p>
                       </div>

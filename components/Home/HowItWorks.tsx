@@ -81,24 +81,24 @@ function HowItWorksCard({ step }: { step: Step }) {
   return (
     <motion.div
       variants={cardVariants}
-      whileHover={{ y: -6 }}
+      whileHover={{ y: -5 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className="relative w-full max-w-[295px] h-[200px] bg-white rounded-[16px] px-3 pt-12 pb-5 flex flex-col items-center justify-center text-center shadow-lg"
+      className="relative w-full max-w-[260px] h-[160px] bg-white rounded-[16px] px-3 pt-9 pb-3 flex flex-col items-center justify-center text-center shadow-md"
     >
       {/* Centered green icon placed inside top decorative shape */}
-      <div className="absolute -top-[65px] left-1/2 -translate-x-1/2 w-[110px] h-[110px] z-10 flex items-center justify-center pointer-events-none">
+      <div className="absolute -top-[48px] left-1/2 -translate-x-1/2 w-[85px] h-[85px] z-10 flex items-center justify-center pointer-events-none">
         <Image
           src={step.icon}
           alt={t(step.titleKey, step.defaultTitle)}
-          width={190}
-          height={190}
-          className="w-[190px] h-[190px] object-contain scale-110"
+          width={140}
+          height={140}
+          className="w-[140px] h-[140px] object-contain scale-105"
         />
       </div>
 
       {/* Card Title */}
       <h3
-        className="text-[#000C09] text-[18px] sm:text-[19px] lg:text-[19.5px] font-medium leading-[140%] text-center font-roboto mb-2 whitespace-nowrap"
+        className="text-[#000C09] text-[15px] sm:text-[16px] font-semibold leading-[130%] text-center font-roboto mb-1 whitespace-nowrap"
         style={{ fontFamily: "var(--font-roboto), Roboto, sans-serif" }}
       >
         {t(step.titleKey, step.defaultTitle)}
@@ -106,7 +106,7 @@ function HowItWorksCard({ step }: { step: Step }) {
 
       {/* Card Description */}
       <p
-        className="text-[#000C09] text-[15px] sm:text-[16px] font-normal leading-[150%] text-center font-roboto max-w-[245px]"
+        className="text-[#000C09] text-[12px] sm:text-[13px] font-normal leading-[140%] text-center font-roboto max-w-[210px]"
         style={{ fontFamily: "var(--font-roboto), Roboto, sans-serif" }}
       >
         {t(step.descKey, step.defaultDesc)}
@@ -119,26 +119,23 @@ export default function HowItWorks() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative bg-[#13445d] py-24 lg:py-28 px-4 sm:px-6 lg:px-8 overflow-x-clip">
+    <section className="relative bg-[#13445d] py-12 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background Decorative Shape from heart.svg */}
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1358px] pointer-events-none select-none z-0"
+        className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center"
         aria-hidden="true"
       >
-        <Image
-          src="/images/howItWorks/heart.svg"
+        <img
+          src="/images/home/bestselling/heart.svg"
           alt=""
-          width={1358}
-          height={1133}
-          className="w-full h-auto object-top"
-          priority
+          className="w-full h-full object-cover object-center max-w-[1500px]"
         />
       </div>
 
       <div className="relative z-10 max-w-[1280px] mx-auto">
         {/* Header */}
         <motion.div
-          className="text-center mb-6"
+          className="text-center mb-4 sm:mb-6"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -146,7 +143,7 @@ export default function HowItWorks() {
         >
           {/* Small Decorative Subtitle */}
           <p
-            className="text-[#69DD84] text-[32px] sm:text-[36px] font-normal leading-[160%] text-center font-montez"
+            className="text-[#69DD84] text-2xl sm:text-3xl font-normal leading-[140%] text-center font-montez"
             style={{ fontFamily: "var(--font-montez), Montez, cursive" }}
           >
             {t("howItWorks.subtitle", "Book Your Adventure in Minutes")}
@@ -154,19 +151,19 @@ export default function HowItWorks() {
 
           {/* Main Title */}
           <h2
-            className="text-[#F5F9FF] text-[34px] sm:text-[40px] font-semibold leading-[160%] text-center font-roboto"
+            className="text-[#F5F9FF] text-2xl sm:text-3xl lg:text-[36px] font-semibold leading-[140%] text-center font-roboto mb-2"
             style={{ fontFamily: "var(--font-roboto), Roboto, sans-serif" }}
           >
             {t("howItWorks.title", "How It Works")}
           </h2>
 
           {/* Green Horizontal Line */}
-          <div className="mt-1 mx-auto w-[117px] h-[8px] bg-[#69DD84] rounded-[4px]" />
+          <div className="mt-1 mx-auto w-16 sm:w-20 h-1 sm:h-1.5 bg-[#69DD84] rounded-full" />
         </motion.div>
 
         {/* 4-Card Responsive Grid */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-20 justify-items-center mt-24"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-16 justify-items-center mt-16 sm:mt-18"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}

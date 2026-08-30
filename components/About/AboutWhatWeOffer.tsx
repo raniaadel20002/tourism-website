@@ -38,13 +38,13 @@ export default function AboutWhatWeOffer() {
   const { t } = useLanguage();
 
   return (
-    <div className="w-full flex flex-col items-center py-6 sm:py-10 relative z-2 overflow-hidden bg-white">
+    <div className="w-full flex flex-col items-center text-left rtl:text-right py-6 sm:py-10 relative z-2 overflow-hidden bg-white">
       <Image
         src="/images/about/glope.png"
         alt="Discover Stories, Guides & Travel Tips"
         fill
         priority
-        className="object-cover object-center z-2 overflow-hidden"
+        className="object-cover object-center z-2 text-left rtl:text-right overflow-hidden"
       />
       <motion.h3
         variants={headerVariants}

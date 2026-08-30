@@ -36,11 +36,11 @@ export default function WhereBegins() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative w-full bg-[#003853] py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative w-full bg-[#003853] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
 
       {/* ── Top-Left Decorative Airplane ── */}
       <div
-        className="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 w-36 sm:w-48 lg:w-56 h-auto pointer-events-none select-none z-0 rotate-[15deg] opacity-75"
+        className="absolute -top-4 left-0 lg:-top-6 lg:left-45 w-28 sm:w-36 lg:w-44 h-auto pointer-events-none select-none opacity-75 z-20"
         aria-hidden="true"
       >
         <Image
@@ -54,7 +54,7 @@ export default function WhereBegins() {
 
       {/* ── Bottom-Right Decorative Airplane ── */}
       <div
-        className="absolute -bottom-8 -right-8 sm:-bottom-10 sm:-right-10 w-40 sm:w-52 lg:w-60 h-auto pointer-events-none select-none z-0 -rotate-[165deg] opacity-75"
+        className="absolute -bottom-6 -right-6 sm:-bottom-8 lg:right-45 sm:-right-8 w-32 sm:w-40 lg:w-48 h-auto pointer-events-none select-none z-0  opacity-75 z-30"
         aria-hidden="true"
       >
         <Image
@@ -68,7 +68,7 @@ export default function WhereBegins() {
 
       {/* ── Main Rounded Banner Container ── */}
       <motion.div
-        className="relative z-10 max-w-6xl mx-auto rounded-2xl sm:rounded-3xl lg:rounded-[32px] overflow-hidden shadow-2xl"
+        className="relative z-10 max-w-5xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl"
         variants={bannerVariants}
         initial="hidden"
         whileInView="visible"
@@ -76,7 +76,7 @@ export default function WhereBegins() {
       >
 
         {/* Banner Background Image */}
-        <div className="relative w-full min-h-[260px] sm:min-h-[300px] md:min-h-[340px] lg:min-h-[380px] flex items-center">
+        <div className="relative w-full min-h-[200px] sm:min-h-[230px] md:min-h-[260px] lg:min-h-[280px] flex items-center">
           <Image
             src="/images/home/whereBegins/Frame 1171276613 (1).png"
             alt="Where Your Adventure Begins"
@@ -86,7 +86,7 @@ export default function WhereBegins() {
           />
 
           {/* ── Flexbox Content Container ── */}
-          <div className="relative z-10 w-full h-full flex flex-col md:flex-row items-center justify-between px-6 sm:px-10 lg:px-16 py-8 sm:py-10">
+          <div className="relative z-10 w-full h-full flex flex-col md:flex-row items-center justify-between px-6 sm:px-8 lg:px-12 py-6 sm:py-8">
 
             {/* Left side space for suitcase visual from background image */}
             <div className="hidden md:block w-1/2" aria-hidden="true" />
@@ -103,7 +103,7 @@ export default function WhereBegins() {
               {/* Main Title */}
               <motion.h2
                 variants={itemVariants}
-                className="font-roboto font-bold text-[#FDFEFF] text-2xl sm:text-3xl md:text-4xl lg:text-[42px] leading-tight tracking-tight mb-2 sm:mb-3 drop-shadow-md"
+                className="font-roboto font-bold text-[#FDFEFF] text-xl sm:text-2xl md:text-3xl lg:text-[34px] leading-tight tracking-tight mb-1.5 sm:mb-2 drop-shadow-md"
               >
                 {t("whereBegins.title", "Where Your Adventure Begins")}
               </motion.h2>
@@ -111,7 +111,7 @@ export default function WhereBegins() {
               {/* Description */}
               <motion.p
                 variants={itemVariants}
-                className="font-roboto font-normal text-[#FFFFFF] text-xs sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-7 max-w-md opacity-95"
+                className="font-roboto font-normal text-[#FFFFFF] text-xs sm:text-sm leading-relaxed mb-4 sm:mb-5 max-w-md opacity-95"
               >
                 {t("whereBegins.desc", "Choose from Egypt's most exciting travel experiences.")}
               </motion.p>
@@ -120,7 +120,7 @@ export default function WhereBegins() {
               <motion.div variants={itemVariants}>
                 <Link
                   href="/trips"
-                  className="inline-block bg-white text-[#004560] font-roboto font-semibold text-xs sm:text-sm md:text-[15px] px-8 sm:px-10 py-3 sm:py-3.5 rounded-full shadow-md hover:shadow-xl hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
+                  className="inline-block bg-white text-[#004560] font-roboto font-semibold text-xs sm:text-sm px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-md hover:shadow-lg hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
                 >
                   {t("whereBegins.cta", "Explore Tour Now")}
                 </Link>

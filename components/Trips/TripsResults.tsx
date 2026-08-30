@@ -125,10 +125,10 @@ export default function TripsResults({
         </div>
       ) : (
         <motion.div
+          key={trips.map((t) => t.id).join("-")}
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.05 }}
+          animate="visible"
           className="flex flex-wrap gap-6"
         >
           {trips.map((trip) => (

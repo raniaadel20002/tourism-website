@@ -45,10 +45,10 @@ export default function BlogsGrid({ posts, visibleCount, onResetFilters }: Blogs
 
   return (
     <motion.div
+      key={posts.slice(0, visibleCount).map((p) => p.id).join("-")}
       variants={containerVariants}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.1 }}
+      animate="visible"
       className="w-full flex flex-wrap gap-6 sm:gap-8 justify-start"
     >
       {posts.slice(0, visibleCount).map((post) => (

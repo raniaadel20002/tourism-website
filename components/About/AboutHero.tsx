@@ -8,10 +8,10 @@ export default function AboutHero() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative w-full bg-[#003853] pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-12 lg:pb-12 min-h-[360px] sm:min-h-[400px] lg:min-h-[420px] flex items-center overflow-hidden">
+    <section className="relative w-full bg-[#003853] pt-0 sm:pt-0 lg:pt-0 pb-0 sm:pb-0 lg:pb-0 min-h-[360px] sm:min-h-[400px] lg:min-h-[320px] flex items-center overflow-hidden">
       {/* Decorative Dotted Path across Hero */}
       <div
-        className="absolute bottom-0 right-0 lg:left-[45%] w-[340px] sm:w-[480px] lg:w-[620px] h-auto pointer-events-none select-none z-0 opacity-80"
+        className="absolute bottom-0 right-0 lg:left-[45%] w-[340px] sm:w-[480px] lg:w-[420px] h-auto pointer-events-none select-none z-0 opacity-80"
         aria-hidden="true"
       >
         <Image
@@ -23,7 +23,7 @@ export default function AboutHero() {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-10 relative z-10 w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-5 relative z-10 w-full">
         
         {/* Hero Left Text Content */}
         <motion.div

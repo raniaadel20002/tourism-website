@@ -15,7 +15,10 @@ const cardVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
   },
 };
 
@@ -26,7 +29,11 @@ export default function DestinationCard({ dest }: DestinationCardProps) {
     <motion.div
       variants={cardVariants}
       whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 300, damping: 22 }}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 22,
+      }}
       className="w-full"
     >
       <Link
@@ -44,17 +51,21 @@ export default function DestinationCard({ dest }: DestinationCardProps) {
         {/* Dark Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-        {/* Trip Count Pill Badge (Top Right / Top Left in RTL) */}
+        {/* Trip Count Pill Badge */}
         <div className="absolute top-4 right-4 rtl:right-auto rtl:left-4 z-10">
           <span className="bg-white/90 backdrop-blur-xs text-[#39CA5B] font-roboto font-semibold text-xs px-3.5 py-1.5 rounded-full shadow-xs">
-            {dest.tripCount} {t("destinations.trips", "Trips")}
+            {dest.tripCount}{" "}
+            {t("destinations.trips", "Trips")}
           </span>
         </div>
 
-        {/* Destination Name (Bottom Centered) */}
+        {/* Destination Name */}
         <div className="absolute bottom-5 inset-x-0 text-center z-10 px-4">
           <h2 className="font-roboto font-bold text-white text-2xl sm:text-3xl drop-shadow-md">
-            {t(`destinations.${dest.id.replace(/-/g, "")}`, dest.name)}
+            {t(
+              `destinations.${dest.id.replace(/-/g, "")}`,
+              dest.name
+            )}
           </h2>
         </div>
       </Link>

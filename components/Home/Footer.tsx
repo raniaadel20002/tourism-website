@@ -178,12 +178,12 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#006993] pt-10 sm:pt-14 pb-8 px-4 sm:px-6 lg:px-10 overflow-hidden">
+    <footer className="bg-[#006993] pt-8 sm:pt-10 pb-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="max-w-[1320px] mx-auto">
         
         {/* ── Large white rounded container ── */}
         <motion.div
-          className="bg-white rounded-3xl sm:rounded-[36px] lg:rounded-[48px] px-8 sm:px-12 lg:px-16 py-10 sm:py-12 lg:py-14 shadow-lg"
+          className="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[36px] px-6 sm:px-10 lg:px-12 py-8 sm:py-10 lg:py-12 shadow-lg"
           variants={cardVariants}
           initial="hidden"
           whileInView="visible"
@@ -191,7 +191,7 @@ export default function Footer() {
         >
 
           <motion.div
-            className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-between gap-10 lg:gap-8"
+            className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-between gap-8 lg:gap-6"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"

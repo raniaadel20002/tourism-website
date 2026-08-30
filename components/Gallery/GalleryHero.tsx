@@ -8,7 +8,7 @@ export default function GalleryHero() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative w-full bg-[#003853] pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-12 lg:pb-12 min-h-[360px] sm:min-h-[400px] lg:min-h-[420px] flex items-center overflow-hidden">
+    <section className="relative w-full bg-[#003853] pt-24 sm:pt-28 lg:pt-23 pb-10 sm:pb-12 lg:pb-5 min-h-[360px] sm:min-h-[400px] lg:min-h-[320px] flex items-center overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-10 relative z-10 w-full">
 
         {/* Hero Left Text Content */}
@@ -16,7 +16,7 @@ export default function GalleryHero() {
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="w-full lg:w-[48%] flex flex-col items-start text-left rtl:text-right z-10"
+          className="w-full lg:w-[50%] flex flex-col items-start text-left rtl:text-right z-10"
         >
           <span className="font-montez text-[#39CA5B] text-3xl sm:text-4xl md:text-5xl font-normal leading-tight mb-2 tracking-wide">
             {t("gallery.heroSubtitle", "Travel Moments")}

@@ -64,24 +64,24 @@ export default function TourCategories() {
   const { t } = useLanguage();
 
   return (
-    <section className="w-full py-16 sm:py-20 lg:py-24 bg-white overflow-hidden">
+    <section className="w-full py-10 sm:py-12 lg:py-14 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
         
         {/* Centered Section Header */}
         <motion.div
-          className="flex flex-col items-center text-center mb-12 sm:mb-16"
+          className="flex flex-col items-center text-center mb-8 sm:mb-10"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={headerVariants as Variants}
         >
           {/* Small Title */}
-          <span className="font-montez text-[#39CA5B] text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-1 tracking-wide">
+          <span className="font-montez text-[#39CA5B] text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight mb-1 tracking-wide">
             {t("categories.subtitle", "Handpicked Adventures")}
           </span>
 
           {/* Main Title */}
-          <h2 className="font-roboto text-[#006993] text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight mb-3">
+          <h2 className="font-roboto text-[#006993] text-2xl sm:text-3xl lg:text-[36px] font-bold tracking-tight mb-2.5">
             {t("categories.title", "Tour Categories")}
           </h2>
 
@@ -91,7 +91,7 @@ export default function TourCategories() {
 
         {/* Categories Flex Layout (Flexbox only) */}
         <motion.div
-          className="w-full flex flex-row items-center justify-start sm:justify-center gap-6 sm:gap-8 lg:gap-10 xl:gap-12 overflow-x-auto lg:overflow-visible pb-6 pt-2 px-4 scrollbar-none snap-x"
+          className="w-full flex flex-row items-center justify-start sm:justify-center gap-5 sm:gap-6 lg:gap-8 xl:gap-10 overflow-x-auto lg:overflow-visible pb-4 pt-1 px-2 scrollbar-none snap-x"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}

@@ -17,7 +17,7 @@ export default function BlogsHero() {
   const { t } = useLanguage();
 
   return (
-    <div className="relative w-full h-[280px] sm:h-[340px] md:h-[380px] lg:h-[420px] pt-16 flex items-center overflow-hidden">
+    <div className="relative w-full h-[280px] sm:h-[340px] md:h-[380px] lg:h-[411px] pt-16 flex items-center overflow-hidden">
       {/* Hero Background Image */}
       <div className="absolute inset-0 z-0 select-none">
         <Image

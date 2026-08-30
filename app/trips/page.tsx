@@ -15,7 +15,7 @@ export default function TripsPage() {
   const [selectedDestination, setSelectedDestination] = useState("All");
   const [minPrice, setMinPrice] = useState("20");
   const [maxPrice, setMaxPrice] = useState("100");
-  const [selectedType, setSelectedType] = useState<string>("Safari Trips");
+  const [selectedType, setSelectedType] = useState<string>("All Trips");
   const [sortBy, setSortBy] = useState("Latest");
   const [filterMobileOpen, setFilterMobileOpen] = useState(false);
 

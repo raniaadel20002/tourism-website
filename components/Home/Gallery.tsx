@@ -82,13 +82,13 @@ const columnVariants: Variants = {
 /** Single image card inside marquee */
 function MarqueeCard({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="relative w-full h-36 sm:h-48 md:h-56 lg:h-64 rounded-2xl sm:rounded-3xl overflow-hidden flex-shrink-0 mb-3 sm:mb-4 lg:mb-5">
+    <div className="relative w-full h-28 sm:h-34 md:h-38 lg:h-40 rounded-xl sm:rounded-2xl overflow-hidden flex-shrink-0 mb-2 sm:mb-3">
       <Image
         src={src}
         alt={alt}
         fill
         sizes="(max-width: 640px) 33vw, (max-width: 1024px) 30vw, 25vw"
-        className="object-fill"
+        className="object-cover"
       />
     </div>
   );
@@ -106,7 +106,7 @@ function MarqueeColumn({
   const doubled = [...images, ...images];
 
   return (
-    <div className="relative overflow-hidden w-full h-full flex-1 rounded-2xl sm:rounded-3xl">
+    <div className="relative overflow-hidden w-full h-full flex-1 rounded-xl sm:rounded-2xl">
       <div className={direction === "up" ? "marquee-up" : "marquee-down"}>
         {doubled.map((img, idx) => (
           <MarqueeCard key={`${img.id}-${idx}`} src={img.src} alt={img.alt} />
@@ -120,10 +120,10 @@ export default function Gallery() {
   const { t } = useLanguage();
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-white overflow-hidden">
+    <section className="py-10 sm:py-12 lg:py-14 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         {/* Three columns strictly aligned in a single row using Flexbox only */}
-        <div className="flex flex-row flex-nowrap items-stretch justify-center gap-3 sm:gap-4 md:gap-6 w-full h-[460px] sm:h-[560px] md:h-[640px] lg:h-[720px]">
+        <div className="flex flex-row flex-nowrap items-stretch justify-center gap-3 sm:gap-4 md:gap-5 w-full h-[360px] sm:h-[420px] md:h-[460px] lg:h-[490px]">
 
           {/* LEFT column — continuous vertical scrolling animation from TOP to BOTTOM */}
           <motion.div
@@ -153,25 +153,25 @@ export default function Gallery() {
               className="flex flex-col items-center text-center flex-shrink-0"
             >
               {/* Small Title */}
-              <span className="font-montez text-[#39CA5B] text-xl sm:text-3xl md:text-4xl lg:text-4xl font-normal leading-tight mb-0.5 sm:mb-1">
+              <span className="font-montez text-[#39CA5B] text-lg sm:text-2xl lg:text-3xl font-normal leading-tight mb-0.5 sm:mb-1">
                 {t("gallery.subtitle", "Moments Worth Remembering")}
               </span>
 
               {/* Main Title */}
-              <h2 className="font-roboto text-[#006993] text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-bold tracking-tight mb-1.5 sm:mb-2.5">
+              <h2 className="font-roboto text-[#006993] text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-bold tracking-tight mb-1 sm:mb-1.5">
                 {t("gallery.title", "Our Gallery")}
               </h2>
 
               {/* Decorative Underline */}
-              <div className="w-16 sm:w-20 lg:w-24 h-1 sm:h-1.5 bg-[#39CA5B] rounded-full" />
+              <div className="w-14 sm:w-18 lg:w-20 h-1 sm:h-1.5 bg-[#39CA5B] rounded-full" />
             </motion.div>
 
             {/* Static Images (exactly 2 images matching the bottom alignment) */}
-            <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 flex-1 min-h-0 mt-3 sm:mt-4 lg:mt-5">
+            <div className="flex flex-col gap-2.5 sm:gap-3 flex-1 min-h-0 mt-2 sm:mt-3">
               {centerImages.map((img) => (
                 <div
                   key={img.id}
-                  className="relative w-full flex-1 min-h-0 rounded-2xl sm:rounded-3xl overflow-hidden"
+                  className="relative w-full flex-1 min-h-0 rounded-xl sm:rounded-2xl overflow-hidden"
                 >
                   <Image
                     src={img.src}

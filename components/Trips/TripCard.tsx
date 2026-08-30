@@ -31,10 +31,10 @@ export default function TripCard({ trip }: TripCardProps) {
     >
       <Link
         href={`/trips/${trip.slug}`}
-        className="w-full h-full flex flex-col bg-white rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 group border border-gray-100 cursor-pointer"
+        className="w-full h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 group border border-gray-100 cursor-pointer"
       >
-        {/* Card Image */}
-        <div className="relative h-48 sm:h-52 w-full overflow-hidden">
+        {/* Card Image — taller to match reference */}
+        <div className="relative h-52 sm:h-56 md:h-60 w-full overflow-hidden flex-shrink-0">
           <Image
             src={trip.image}
             alt={trip.title}
@@ -44,7 +44,7 @@ export default function TripCard({ trip }: TripCardProps) {
         </div>
 
         {/* Card Body */}
-        <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between gap-3">
+        <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between gap-2">
           <div className="flex flex-col gap-1">
             {/* Category */}
             <span className="font-roboto text-xs text-[#5B6472] font-normal">
@@ -84,8 +84,8 @@ export default function TripCard({ trip }: TripCardProps) {
             </div>
           </div>
 
-          {/* Book Now Button */}
-          <span className="w-full mt-1 bg-[#004560] group-hover:bg-[#003348] text-white font-roboto font-semibold text-xs sm:text-sm py-2.5 rounded-full text-center shadow-sm group-hover:shadow-md transition-all duration-200 block">
+          {/* Book Now Button — rectangular with rounded corners, matching reference */}
+          <span className="w-full mt-1 bg-[#004560] group-hover:bg-[#003348] text-white font-roboto font-semibold text-sm py-2.5 rounded-lg text-center shadow-sm group-hover:shadow-md transition-all duration-200 block">
             {t("tours.bookNow", "Book Now")}
           </span>
         </div>

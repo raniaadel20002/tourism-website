@@ -7,7 +7,7 @@ export default function DestinationsHero() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative w-full bg-[#00384D] pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-12 lg:pb-12 min-h-[360px] sm:min-h-[400px] lg:min-h-[420px] flex items-center overflow-hidden">
+    <section className="relative w-full bg-[#00384D] pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-12 lg:pb-5 min-h-[360px] sm:min-h-[400px] lg:min-h-[320px] flex items-center overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-10 relative z-10 w-full">
         
         {/* ── Left Content (Text) ─────────────────────────────────── */}

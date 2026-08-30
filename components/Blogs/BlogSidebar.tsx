@@ -21,7 +21,7 @@ export default function BlogSidebar({ toc, activeToc, onTocClick, recentPosts }:
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-      className="w-full lg:w-[28%] flex flex-col gap-8 lg:sticky lg:top-24"
+      className="w-full lg:w-[28%] flex flex-col gap-8 lg:static lg:top-24"
     >
 
       {/* 1. Table of Contents Stepper Card */}

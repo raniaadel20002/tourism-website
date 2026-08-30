@@ -67,10 +67,10 @@ export default function BlogSection() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24 bg-white overflow-hidden">
+    <section className="relative py-10 sm:py-12 lg:py-14 bg-white overflow-hidden">
       {/* ── Background Decorative SVG (strictly contained within this section only) ── */}
       <div
-        className="absolute left-110 w-[280px] sm:w-[380px] md:w-[60px] lg:w-[140px] pointer-events-none select-none z-0"
+        className="absolute top-4 left-6 sm:left-12 w-20 sm:w-28 lg:w-32 pointer-events-none select-none z-0 opacity-40"
         aria-hidden="true"
       >
         <Image
@@ -86,7 +86,7 @@ export default function BlogSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Header Row ── */}
-        <div className="relative flex flex-col items-center text-center mb-10 sm:mb-14">
+        <div className="relative flex flex-col items-center text-center mb-6 sm:mb-8">
           <motion.div
             variants={headerVariants}
             initial="hidden"
@@ -95,24 +95,24 @@ export default function BlogSection() {
             className="flex flex-col items-center text-center"
           >
             {/* Small Title */}
-            <span className="font-montez text-[#69DD84] text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-1 tracking-wide">
+            <span className="font-montez text-[#69DD84] text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight mb-1 tracking-wide">
               {t("blogs.subtitle", "Discover travel guides")}
             </span>
 
             {/* Main Title */}
-            <h2 className="font-roboto text-[#006993] text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight mb-3">
+            <h2 className="font-roboto text-[#006993] text-2xl sm:text-3xl lg:text-[36px] font-bold tracking-tight mb-2.5">
               {t("blogs.title", "Our Blogs")}
             </h2>
 
             {/* Decorative Underline */}
-            <div className="w-20 sm:w-24 h-1 sm:h-1.5 bg-[#69DD84] rounded-full" />
+            <div className="w-16 sm:w-20 h-1 sm:h-1.5 bg-[#69DD84] rounded-full" />
           </motion.div>
 
-          {/* More Articals Button */}
-          <div className="mt-6 lg:mt-0 lg:absolute lg:right-0 lg:bottom-1">
+          {/* More Articles Button */}
+          <div className="mt-4 lg:mt-0 lg:absolute lg:right-0 lg:bottom-1">
             <Link
               href="/blogs"
-              className="inline-block font-roboto font-semibold text-sm text-[#004560] border border-[#004560] px-6 py-2 rounded-full hover:bg-[#004560] hover:text-white transition-colors duration-200"
+              className="inline-block font-roboto font-semibold text-xs sm:text-sm text-[#004560] border border-[#004560] px-5 sm:px-6 py-1.5 sm:py-2 rounded-full hover:bg-[#004560] hover:text-white transition-colors duration-200"
             >
               {t("blogs.moreArticles", "More Articles")}
             </Link>
@@ -120,7 +120,7 @@ export default function BlogSection() {
         </div>
 
         {/* ── Blog Cards (Flexbox: Fully clickable cards) ── */}
-        <div className="flex flex-wrap lg:flex-nowrap justify-center gap-6 w-full">
+        <div className="flex flex-wrap lg:flex-nowrap justify-center gap-4 sm:gap-5 w-full">
           {blogPosts.map((post, idx) => (
             <motion.div
               key={post.id}
@@ -129,14 +129,14 @@ export default function BlogSection() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
-              className="w-full sm:w-[calc(50%-12px)] lg:w-1/3 lg:flex-1 min-w-0"
+              className="w-full sm:w-[calc(50%-10px)] lg:w-1/3 lg:flex-1 min-w-0"
             >
               <Link
                 href={post.href}
-                className="group w-full h-full bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100/90 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col cursor-pointer"
+                className="group w-full h-full bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border border-gray-100/90 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col cursor-pointer"
               >
                 {/* Card Image */}
-                <div className="relative w-full h-56 sm:h-64 md:h-72 overflow-hidden flex-shrink-0">
+                <div className="relative w-full h-40 sm:h-44 md:h-48 overflow-hidden flex-shrink-0">
                   <Image
                     src={post.image}
                     alt={post.title}
@@ -147,18 +147,18 @@ export default function BlogSection() {
                 </div>
 
                 {/* Card Content */}
-                <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between">
+                <div className="p-4 sm:p-4.5 flex flex-col flex-1 justify-between">
                   <div>
-                    <span className="font-roboto text-[#979BA7] text-xs sm:text-sm block mb-1.5">
+                    <span className="font-roboto text-[#979BA7] text-[11px] sm:text-xs block mb-1">
                       {post.date}
                     </span>
-                    <h3 className="font-roboto text-[#004560] font-bold text-lg sm:text-xl lg:text-[22px] leading-snug group-hover:text-[#006993] transition-colors">
+                    <h3 className="font-roboto text-[#004560] font-bold text-sm sm:text-base lg:text-[17px] leading-snug group-hover:text-[#006993] transition-colors">
                       {post.title}
                     </h3>
                   </div>
 
-                  <div className="flex justify-end mt-4 sm:mt-6">
-                    <span className="font-roboto font-semibold text-xs sm:text-sm text-[#004560] border border-[#004560] px-5 py-1.5 sm:px-6 sm:py-2 rounded-full group-hover:bg-[#004560] group-hover:text-white transition-colors duration-200 inline-block">
+                  <div className="flex justify-end mt-3 sm:mt-4">
+                    <span className="font-roboto font-semibold text-[11px] sm:text-xs text-[#004560] border border-[#004560] px-4 py-1 sm:px-5 sm:py-1.5 rounded-full group-hover:bg-[#004560] group-hover:text-white transition-colors duration-200 inline-block">
                       {t("blogs.readMore", "Read More")}
                     </span>
                   </div>

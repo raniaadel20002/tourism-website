@@ -6,13 +6,26 @@ import { useLanguage, SUPPORTED_LANGUAGES, LanguageCode } from "@/context/Langua
 
 interface LanguageSwitcherProps {
   variant?: "desktop" | "mobile";
+  dropdownAlign?: "left" | "right";
   onSelect?: () => void;
 }
 
-export default function LanguageSwitcher({ variant = "desktop", onSelect }: LanguageSwitcherProps) {
+export default function LanguageSwitcher({ variant = "desktop", dropdownAlign = "right", onSelect }: LanguageSwitcherProps) {
   const { language, changeLanguage, isRTL, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const getFlagImageUrl = (code: string) => {
+    const map: Record<string, string> = {
+      en: "gb",
+      ar: "eg",
+      fr: "fr",
+      de: "de",
+      es: "es",
+    };
+    const countryCode = map[code] || "gb";
+    return `https://flagcdn.com/w20/${countryCode}.png`;
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -51,7 +64,7 @@ export default function LanguageSwitcher({ variant = "desktop", onSelect }: Lang
                   : "bg-gray-50 text-gray-700 hover:bg-gray-100"
               }`}
             >
-              <span>{lang.flag}</span>
+              <img src={getFlagImageUrl(lang.code)} alt={`${lang.code} flag`} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
               <span className="truncate">{lang.nativeName}</span>
             </button>
           ))}
@@ -85,7 +98,7 @@ export default function LanguageSwitcher({ variant = "desktop", onSelect }: Lang
           />
         </svg>
 
-        <span>{currentLang.flag}</span>
+        <img src={getFlagImageUrl(currentLang.code)} alt={`${currentLang.code} flag`} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
         <span className="uppercase text-xs font-semibold text-gray-800">{currentLang.code}</span>
 
         <svg
@@ -110,7 +123,9 @@ export default function LanguageSwitcher({ variant = "desktop", onSelect }: Lang
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
             className={`absolute z-50 mt-2 w-44 rounded-2xl bg-white shadow-xl border border-gray-100 py-1.5 overflow-hidden ${
-              isRTL ? "left-0 origin-top-left" : "right-0 origin-top-right"
+              dropdownAlign === "left"
+                ? (isRTL ? "right-0 origin-top-right" : "left-0 origin-top-left")
+                : (isRTL ? "left-0 origin-top-left" : "right-0 origin-top-right")
             }`}
           >
             {SUPPORTED_LANGUAGES.map((lang) => {
@@ -127,7 +142,7 @@ export default function LanguageSwitcher({ variant = "desktop", onSelect }: Lang
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className="text-base">{lang.flag}</span>
+                    <img src={getFlagImageUrl(lang.code)} alt={`${lang.code} flag`} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
                     <span>{lang.nativeName}</span>
                   </div>
                   {isSelected && (

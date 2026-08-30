@@ -24,6 +24,8 @@
   will-change: transform;
 }
 
+
+
 .marquee-down {
   animation: marquee-down 18s linear infinite;
   will-change: transform;

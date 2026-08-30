@@ -42,14 +42,19 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <img
-              src="/images/home/hero/Logo.png"
-              alt="logoipsum"
-              className="h-7 w-auto object-contain"
-            />
-          </Link>
+          {/* Logo and Mobile Language Switcher */}
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center">
+              <img
+                src="/images/home/hero/Logo.png"
+                alt="logoipsum"
+                className="h-7 w-auto object-contain"
+              />
+            </Link>
+            <div className="md:hidden">
+              <LanguageSwitcher variant="desktop" dropdownAlign="left" />
+            </div>
+          </div>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
@@ -196,9 +201,6 @@ export default function Navbar() {
           >
             {t("nav.cart", "Booking Cart")} ({itemCount})
           </Link>
-
-          {/* Mobile Language Switcher Row */}
-          <LanguageSwitcher variant="mobile" onSelect={() => setMobileOpen(false)} />
         </div>
       </motion.div>
     </motion.nav>

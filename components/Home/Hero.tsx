@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
@@ -23,13 +23,13 @@ const destinations: Destination[] = [
     id: "luxor",
     name: "Luxor",
     cardImage: "/images/home/hero/luxor.png",
-    heroBg: "/images/home/hero/luxor.png",
+    heroBg: "/images/home/hero/luxor-bg.jpg",
   },
   {
     id: "giza",
     name: "Giza",
     cardImage: "/images/home/hero/giza.png",
-    heroBg: "/images/home/hero/giza.png",
+    heroBg: "/images/home/hero/giza-bg.png",
   },
 ];
 
@@ -72,7 +72,16 @@ const sliderEntranceVariants: Variants = {
 
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isArabic = language === "ar";
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % destinations.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [activeIndex]);
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev - 1 + destinations.length) % destinations.length);
@@ -123,7 +132,7 @@ export default function Hero() {
             {/* Main Title */}
             <motion.h1
               variants={textItemVariants}
-              className="font-roboto text-[#FFF8F8] text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold leading-[1.12] mb-4 sm:mb-5 tracking-tight drop-shadow-md"
+              className="font-roboto text-[#FFF8F8] text-3xl text-left rtl:text-right sm:text-4xl md:text-5xl lg:text-[54px] font-bold leading-[1.12] mb-4 sm:mb-5 tracking-tight drop-shadow-md"
             >
               {t("hero.titleLine1", "Every Journey Has a Story.")}
               <br className="hidden sm:inline" />
@@ -153,18 +162,12 @@ export default function Hero() {
                 {t("hero.exploreTrips", "Explore Trips")}
               </Link>
             </motion.div>
-          </motion.div>
 
-          {/* Right: Destination Cards Slider & Navigation */}
-          <motion.div
-            className="flex flex-col items-center lg:items-end gap-3 sm:gap-4 w-full lg:w-auto"
-            variants={sliderEntranceVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            
-            {/* Previous / Next Arrow Buttons positioned above cards */}
-            <div className="flex items-center justify-center lg:justify-end gap-3 sm:gap-4">
+            {/* Previous / Next Arrow Buttons positioned below CTA */}
+            <motion.div
+              variants={textItemVariants}
+              className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4 mt-6 sm:mt-8"
+            >
               <motion.button
                 type="button"
                 onClick={handlePrev}
@@ -175,7 +178,7 @@ export default function Hero() {
                 className="group rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#39CA5B]"
               >
                 <img
-                  src="/images/home/hero/⬅.png"
+                  src={isArabic ? "/images/home/hero/➡.png" : "/images/home/hero/⬅.png"}
                   alt="Previous"
                   className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md group-hover:brightness-110 transition-[filter] duration-200"
                 />
@@ -191,13 +194,21 @@ export default function Hero() {
                 className="group rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#39CA5B]"
               >
                 <img
-                  src="/images/home/hero/➡.png"
+                  src={isArabic ? "/images/home/hero/⬅.png" : "/images/home/hero/➡.png"}
                   alt="Next"
                   className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md group-hover:brightness-110 transition-[filter] duration-200"
                 />
               </motion.button>
-            </div>
+            </motion.div>
+          </motion.div>
 
+          {/* Right: Destination Cards Slider */}
+          <motion.div
+            className="flex flex-col items-center lg:items-end gap-3 sm:gap-4 w-full lg:w-auto"
+            variants={sliderEntranceVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {/* Destination Cards Row (Horizontal Flex) */}
             <div className="flex flex-row items-end justify-center lg:justify-end gap-3 sm:gap-4 lg:gap-5 w-full overflow-x-auto lg:overflow-visible pb-2 px-2 scrollbar-none">
               {destinations.map((dest, index) => {
@@ -207,7 +218,6 @@ export default function Hero() {
                     key={dest.id}
                     type="button"
                     onClick={() => setActiveIndex(index)}
-                    onMouseEnter={() => setActiveIndex(index)}
                     aria-label={`Select ${dest.name}`}
                     whileHover={!isActive ? { scale: 1.05, opacity: 1 } : {}}
                     whileTap={{ scale: 0.97 }}
@@ -227,7 +237,6 @@ export default function Hero() {
                 );
               })}
             </div>
-
           </motion.div>
 
         </div>
