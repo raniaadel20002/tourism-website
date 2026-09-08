@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion, Variants } from "framer-motion";
-import { GalleryImage } from "@/data/gallery";
+import { GalleryImage } from "@/modules/gallery.model";
 
 interface GalleryCardProps {
   image: GalleryImage;

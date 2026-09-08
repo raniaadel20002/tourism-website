@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { GalleryImage } from "@/data/gallery";
+import { GalleryImage } from "@/modules/gallery.model";
 
 interface GalleryLightboxProps {
   image: GalleryImage;

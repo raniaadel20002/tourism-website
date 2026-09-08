@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getBlogPostBySlug, allBlogsData } from "@/data/blogs";
+import { getBlogById, getBlogs, type Blog } from "@/api/blogs";
 import Breadcrumb from "@/components/Breadcrumb";
 import BlogDetailHero from "@/components/Blogs/BlogDetailHero";
 import BlogArticle from "@/components/Blogs/BlogArticle";
@@ -18,26 +18,56 @@ export default function BlogDetailsPage() {
     typeof params?.slug === "string"
       ? params.slug
       : Array.isArray(params?.slug)
-      ? params.slug[0]
-      : "";
-  const blog = getBlogPostBySlug(slug);
+        ? params.slug[0]
+        : "";
 
-  const [activeToc, setActiveToc] = useState("introduction");
+  const [blog, setBlog] = useState<Blog | null>(null);
+  const [recentPosts, setRecentPosts] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Recent posts excluding current blog
-  const recentPostsList = allBlogsData
-    .filter((b) => b.slug !== blog.slug)
-    .slice(0, 3);
-
-  const scrollToSection = (id: string) => {
-    setActiveToc(id);
-    const element = document.getElementById(id);
-    if (element) {
-      const yOffset = -100;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
+  useEffect(() => {
+    if (!slug) return;
+    // slug may be the numeric id or a stringified id
+    const id = Number(slug);
+    if (!id) {
+      setError("Blog not found");
+      setLoading(false);
+      return;
     }
-  };
+
+    Promise.all([
+      getBlogById(id),
+      getBlogs(1, 10),
+    ])
+      .then(([b, all]) => {
+        setBlog(b);
+        setRecentPosts(all.filter((p) => p.id !== b.id).slice(0, 3));
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load blog"))
+      .finally(() => setLoading(false));
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-400 font-roboto">Loading...</p>
+      </main>
+    );
+  }
+
+  if (error || !blog) {
+    return (
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error || "Blog not found"}</p>
+          <a href="/blogs" className="px-6 py-2 bg-[#006993] text-white rounded-lg hover:bg-[#004560] inline-block">
+            Back to Blogs
+          </a>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-white flex flex-col overflow-x-clip">
@@ -61,16 +91,11 @@ export default function BlogDetailsPage() {
           {/* LEFT COLUMN: Article + Comments */}
           <div className="w-full lg:w-[68%] flex flex-col">
             <BlogArticle blog={blog} />
-            <BlogComments initialComments={blog.comments} />
+            <BlogComments />
           </div>
 
-          {/* RIGHT COLUMN: Sidebar (TOC + Recent Posts) */}
-          <BlogSidebar
-            toc={blog.toc}
-            activeToc={activeToc}
-            onTocClick={scrollToSection}
-            recentPosts={recentPostsList}
-          />
+          {/* RIGHT COLUMN: Sidebar */}
+          <BlogSidebar blog={blog} recentPosts={recentPosts} />
 
         </div>
       </div>

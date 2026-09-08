@@ -24,7 +24,7 @@ export default function BlogSearchBar({ value, onChange }: BlogSearchBarProps) {
       </span>
       <input
         type="text"
-        placeholder={t("blogs.searchPlaceholder", "Search articles...")}
+        placeholder={t("blogs.searchPlaceholder", "Search")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full pl-11 sm:pl-12 rtl:pl-4 rtl:pr-11 rtl:sm:pr-12 pr-4 py-3 sm:py-3.5 bg-white border border-gray-200 rounded-full font-roboto text-xs sm:text-sm text-[#030811] placeholder-gray-400 focus:outline-none focus:border-[#004560] shadow-xs"

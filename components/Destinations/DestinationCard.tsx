@@ -48,6 +48,13 @@ export default function DestinationCard({ dest }: DestinationCardProps) {
           className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
 
+
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2  z-10">
+          <h3 className="text-white text-3xl sm:text-4xl font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+            {dest.name}
+          </h3>
+        </div>
+
         {/* Dark Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
@@ -59,16 +66,7 @@ export default function DestinationCard({ dest }: DestinationCardProps) {
           </span>
         </div>
 
-        {/* Destination Name */}
-        <div className="absolute bottom-5 inset-x-0 text-center z-10 px-4">
-          <h2 className="font-roboto font-bold text-white text-2xl sm:text-3xl drop-shadow-md">
-            {t(
-              `destinations.${dest.id.replace(/-/g, "")}`,
-              dest.name
-            )}
-          </h2>
-        </div>
       </Link>
-    </motion.div>
+    </motion.div >
   );
 }

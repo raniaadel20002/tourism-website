@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { GalleryImage } from "@/data/gallery";
+import { GalleryImage } from "@/modules/gallery.model";
 import GalleryHero from "@/components/Gallery/GalleryHero";
 import Breadcrumb from "@/components/Breadcrumb";
 import GalleryGrid from "@/components/Gallery/GalleryGrid";

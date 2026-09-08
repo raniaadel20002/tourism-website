@@ -17,7 +17,7 @@ export default function Navbar() {
 
   const navLinks = [
     { label: t("nav.home", "Home"), href: "/" },
-    { label: t("nav.destinations", "Destinations"), href: "/destinations", hasDropdown: true },
+    { label: t("nav.destinations"), href:"destinations"},
     { label: t("nav.trips", "Trips"), href: "/trips" },
     { label: t("nav.gallery", "Gallery"), href: "/gallery" },
     { label: t("nav.blogs", "Blogs"), href: "/blogs" },
@@ -69,21 +69,6 @@ export default function Navbar() {
                 }`}
               >
                 {link.label}
-                {link.hasDropdown && (
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                )}
               </Link>
             ))}
           </div>

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState, useEffect } from "react";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
-import TourCard, { BestSellingTour } from "@/components/Home/TourCard";
+import TourCard from "@/components/Home/TourCard";
+import { getTrips, Trip } from "@/api/trips";
 
 const filterTabs = [
   "All Tours",
@@ -13,57 +13,6 @@ const filterTabs = [
   "Diving",
   "Safari",
   "Over day",
-];
-
-const bestSellingToursData: BestSellingTour[] = [
-  {
-    id: "island-trip",
-    title: "Island Trip",
-    tripType: "Sea Trip",
-    location: "Hurghada",
-    rating: 4.8,
-    reviewsCount: 345,
-    price: "$ 30.6 USA",
-    image: "/images/home/bestselling/IslandTrip.jpg",
-    slug: "island-trip",
-    categoryTag: "Snorkelling",
-  },
-  {
-    id: "luxor-day-tour",
-    title: "Luxor Day Tour",
-    tripType: "Historical Trip",
-    location: "Luxor",
-    rating: 4.8,
-    reviewsCount: 345,
-    price: "$ 30.6 USA",
-    image: "/images/home/bestselling/LuxorDayTour.jpg",
-    slug: "luxor-day-tour",
-    categoryTag: "Over day",
-  },
-  {
-    id: "desert-safari",
-    title: "Desert Safari Quad Adventure",
-    tripType: "Safari Trip",
-    location: "Hurghada",
-    rating: 4.8,
-    reviewsCount: 345,
-    price: "$ 30.6 USA",
-    image: "/images/home/bestselling/DesertSafariQuadAdventure.jpg",
-    slug: "desert-safari-quad",
-    categoryTag: "Safari",
-  },
-  {
-    id: "snorkeling-orange-bay",
-    title: "Snorkeling Trip to Orange Bay",
-    tripType: "Sea Trip",
-    location: "Hurghada",
-    rating: 4.8,
-    reviewsCount: 345,
-    price: "$ 30.6 USA",
-    image: "/images/home/bestselling/SnorkelingTriptoOrangeBay.jpg",
-    slug: "snorkeling-orange-bay",
-    categoryTag: "Snorkelling",
-  },
 ];
 
 const containerVariants = {
@@ -90,18 +39,52 @@ const headerVariants = {
 
 export default function BestSellingTours() {
   const [activeTab, setActiveTab] = useState("All Tours");
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { t } = useLanguage();
 
-  const filteredTours =
-    activeTab === "All Tours"
-      ? bestSellingToursData
-      : bestSellingToursData.filter((t) => {
-          if (activeTab === "Snorkelling") return t.categoryTag === "Snorkelling" || t.tripType.includes("Sea");
-          if (activeTab === "Diving") return t.categoryTag === "Diving" || t.tripType.includes("Sea");
-          if (activeTab === "Safari") return t.categoryTag === "Safari" || t.tripType.includes("Safari");
-          if (activeTab === "Over day") return t.categoryTag === "Over day" || t.tripType.includes("Historical");
-          return true;
-        });
+  // Fetch trips from API
+  useEffect(() => {
+    async function fetchTrips() {
+      try {
+        setLoading(true);
+        // Fetch active trips only (includeInactive: false by default)
+        const data = await getTrips(undefined, 1, 20);
+        // Filter to only active trips
+        const activeTrips = data.filter(trip => trip.isActive);
+        setTrips(activeTrips);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load tours");
+        console.error("Failed to fetch trips:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTrips();
+  }, []);
+
+  // Filter trips based on active tab
+  const filteredTours = activeTab === "All Tours"
+    ? trips
+    : trips.filter((trip) => {
+        const tripTypeLower = trip.tripTypeName?.toLowerCase() || "";
+        
+        if (activeTab === "Snorkelling") {
+          return tripTypeLower.includes("snorkel") || tripTypeLower.includes("sea");
+        }
+        if (activeTab === "Diving") {
+          return tripTypeLower.includes("div") || tripTypeLower.includes("sea");
+        }
+        if (activeTab === "Safari") {
+          return tripTypeLower.includes("safari") || tripTypeLower.includes("desert");
+        }
+        if (activeTab === "Over day") {
+          return tripTypeLower.includes("day") || tripTypeLower.includes("historical");
+        }
+        return true;
+      });
 
   return (
     <section className="relative bg-[#13445d] py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -113,7 +96,7 @@ export default function BestSellingTours() {
         <img
           src="/images/home/bestselling/heart.svg"
           alt=""
-          className="w-full h-full object-cover object-center max-w-[1500px]"
+          className="w-full h-full object-cover object-center max-w-[1550px]"
         />
       </div>
 
@@ -174,18 +157,43 @@ export default function BestSellingTours() {
         </div>
 
         {/* Tour Cards Row (Flexbox only) */}
-        <motion.div
-          key={activeTab}
-          className="w-full flex flex-row items-stretch justify-start sm:justify-center gap-4 sm:gap-5 lg:gap-6 overflow-x-auto lg:overflow-visible pb-4 pt-1 px-1 scrollbar-none snap-x"
-          initial="hidden"
-          animate="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          variants={containerVariants}
-        >
-          {filteredTours.map((tour, index) => (
-            <TourCard key={tour.id} tour={tour} index={index} />
-          ))}
-        </motion.div>
+        {loading ? (
+          <div className="w-full flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-white border-r-transparent"></div>
+              <p className="mt-4 text-white text-sm">Loading tours...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="w-full flex items-center justify-center py-12">
+            <div className="text-center">
+              <p className="text-red-400 mb-4">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="px-6 py-2 bg-white text-[#003A5A] rounded-lg hover:bg-gray-100"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        ) : filteredTours.length === 0 ? (
+          <div className="w-full flex items-center justify-center py-12">
+            <p className="text-white text-sm">No tours available for this category.</p>
+          </div>
+        ) : (
+          <motion.div
+            key={activeTab}
+            className="w-full flex flex-row items-stretch justify-start sm:justify-center gap-4 sm:gap-5 lg:gap-6 overflow-x-auto lg:overflow-visible pb-4 pt-1 px-1 scrollbar-none snap-x"
+            initial="hidden"
+            animate="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={containerVariants}
+          >
+            {filteredTours.slice(0, 4).map((tour, index) => (
+              <TourCard key={tour.id} tour={tour} index={index} />
+            ))}
+          </motion.div>
+        )}
 
       </div>
     </section>

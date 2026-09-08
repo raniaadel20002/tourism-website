@@ -1,75 +1,101 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { allBlogsData } from "@/data/blogs";
+import { useState, useEffect, useMemo } from "react";
+import { getBlogs, type Blog } from "@/api/blogs";
 import BlogsHero from "@/components/Blogs/BlogsHero";
 import Breadcrumb from "@/components/Breadcrumb";
 import BlogSearchBar from "@/components/Blogs/BlogSearchBar";
-import BlogTagFilter from "@/components/Blogs/BlogTagFilter";
 import BlogsGrid from "@/components/Blogs/BlogsGrid";
 
 import { useLanguage } from "@/context/LanguageContext";
 
+const POPULAR_TAGS = ["All", "Sea", "Safari", "History"] as const;
+
 export default function BlogsPage() {
   const { t } = useLanguage();
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTag, setActiveTag] = useState<string>("All");
+  const [activeTag, setActiveTag] = useState("All");
   const [visibleCount, setVisibleCount] = useState(6);
 
+  useEffect(() => {
+    getBlogs(1, 100)
+      .then(setBlogs)
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load blogs"))
+      .finally(() => setLoading(false));
+  }, []);
+
   const filteredPosts = useMemo(() => {
-    return allBlogsData.filter((post) => {
-      if (activeTag !== "All" && post.tag !== activeTag) return false;
-      if (
-        searchQuery.trim() &&
-        !post.title.toLowerCase().includes(searchQuery.toLowerCase())
-      ) {
-        return false;
-      }
+    // All API blogs belong to "Sea". Other tags show empty state.
+    if (activeTag !== "All" && activeTag !== "Sea") return [];
+    return blogs.filter((b) => {
+      if (searchQuery.trim() && !b.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
-  }, [searchQuery, activeTag]);
+  }, [blogs, searchQuery, activeTag]);
 
-  const handleSeeMore = () => {
-    setVisibleCount((prev) => prev + 3);
-  };
-
-  const handleResetFilters = () => {
-    setSearchQuery("");
-    setActiveTag("All");
-  };
+  const handleSeeMore = () => setVisibleCount((prev) => prev + 3);
+  const handleResetFilters = () => { setSearchQuery(""); setActiveTag("All"); };
 
   return (
     <main className="min-h-screen bg-white flex flex-col">
 
-      {/* ── Hero Section ─────────────────────────────────────────── */}
       <BlogsHero />
 
-      {/* ── Breadcrumb ───────────────────────────────────────────── */}
       <Breadcrumb items={[{ label: t("nav.home", "Home"), href: "/" }, { label: t("nav.blogs", "Blogs") }]} />
 
-      {/* ── Main Content Container ──────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex-1 flex flex-col items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1 flex flex-col">
 
         {/* Search Bar */}
         <BlogSearchBar value={searchQuery} onChange={setSearchQuery} />
 
         {/* Popular Tags */}
-        <BlogTagFilter activeTag={activeTag} onTagChange={setActiveTag} />
+        <div className="flex flex-wrap items-center gap-2 mb-8">
+          <span className="font-roboto text-sm text-[#030811] mr-1">Popular tags:</span>
+          {POPULAR_TAGS.map((tag) => {
+            const isActive = activeTag === tag;
+            return (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setActiveTag(tag)}
+                className={`px-5 py-1.5 rounded-full font-roboto text-sm font-medium transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? "bg-[#003B57] text-white"
+                    : "bg-transparent border border-gray-300 text-gray-600 hover:border-[#003B57]"
+                }`}
+              >
+                {tag}
+              </button>
+            );
+          })}
+        </div>
 
-        {/* Blog Cards Grid */}
-        <BlogsGrid
-          posts={filteredPosts}
-          visibleCount={visibleCount}
-          onResetFilters={handleResetFilters}
-        />
+        {loading && (
+          <div className="w-full py-16 text-center text-gray-400 font-roboto">Loading...</div>
+        )}
 
-        {/* ── Centered See More Button ──────────────────────────── */}
-        {filteredPosts.length > 0 && (
-          <div className="w-full flex justify-center mt-12 sm:mt-16 mb-4">
+        {!loading && error && (
+          <div className="w-full py-16 text-center text-red-500 font-roboto text-sm">{error}</div>
+        )}
+
+        {!loading && !error && (
+          <BlogsGrid
+            posts={filteredPosts}
+            visibleCount={visibleCount}
+            onResetFilters={handleResetFilters}
+          />
+        )}
+
+        {/* See More Button */}
+        {!loading && !error && filteredPosts.length > visibleCount && (
+          <div className="w-full flex justify-center mt-10 mb-4">
             <button
               type="button"
               onClick={handleSeeMore}
-              className="w-full max-w-md sm:max-w-lg py-3 sm:py-3.5 px-8 rounded-full border border-[#004560] text-[#004560] hover:bg-[#004560] hover:text-white font-roboto font-semibold text-sm sm:text-base text-center transition-all duration-300 shadow-xs hover:shadow-md cursor-pointer"
+              className="w-full max-w-sm py-3 px-8 rounded-full border border-[#004560] text-[#004560] hover:bg-[#004560] hover:text-white font-roboto font-medium text-sm text-center transition-all duration-300 cursor-pointer"
             >
               {t("blogs.seeMore", "See More")}
             </button>

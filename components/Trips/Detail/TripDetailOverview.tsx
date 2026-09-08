@@ -10,7 +10,6 @@ interface TripDetailOverviewProps {
   location: string;
   rating: number;
   reviewCount: number;
-  groupSize: string;
   duration: string;
   tourType: string;
   included: string[];
@@ -19,7 +18,7 @@ interface TripDetailOverviewProps {
 
 export default function TripDetailOverview({
   title, description, location, rating, reviewCount,
-  groupSize, duration, tourType, included, excluded,
+  duration, tourType, included, excluded,
 }: TripDetailOverviewProps) {
   const { t } = useLanguage();
 
@@ -57,12 +56,6 @@ export default function TripDetailOverview({
 
       {/* Quick Highlights Pill */}
       <div className="bg-[#F3F8FB] rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 border border-blue-50/60 text-xs sm:text-sm font-roboto">
-        <div className="flex items-center gap-2 text-[#004560]">
-          <svg className="w-4 h-4 text-[#006993]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-          <span className="text-gray-700">{t("trips.groupSize", "Group")}: <strong className="font-semibold text-[#000C09]">{groupSize}</strong></span>
-        </div>
         <div className="flex items-center gap-2 text-[#004560]">
           <svg className="w-4 h-4 text-[#006993]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

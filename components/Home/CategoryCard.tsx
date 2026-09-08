@@ -27,11 +27,16 @@ export default function CategoryCard({ item }: CategoryCardProps) {
 
   return (
     <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
       variants={cardVariants}
       className="flex flex-col items-center flex-shrink-0 cursor-pointer group snap-center"
     >
-      <Link href="/trips" className="flex flex-col items-center w-full outline-none focus:outline-none">
-        {/* Rotated Image Card with hover scale */}
+      <Link
+        href={`/trips?type=${encodeURIComponent(item.name)}`}
+        className="flex flex-col items-center w-full outline-none focus:outline-none"
+      >
         <motion.div
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -42,13 +47,17 @@ export default function CategoryCard({ item }: CategoryCardProps) {
             alt={item.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          {/* Subtle hover brightness / overlay */}
+
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
         </motion.div>
 
-        {/* Category Name */}
         <span className="font-roboto font-semibold text-[#16181E] text-sm sm:text-base lg:text-[17px] mt-3 sm:mt-3.5 text-center transition-colors duration-200 group-hover:text-[#006993]">
-          {t(`categories.${item.id}`, item.name)}
+          {t(
+            `categories.${item.name
+              .replace(/\s+(.)/g, (_, c) => c.toUpperCase())
+              .replace(/^\w/, c => c.toLowerCase())}`,
+            item.name
+          )}
         </span>
       </Link>
     </motion.div>

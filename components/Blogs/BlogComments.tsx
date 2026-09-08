@@ -1,35 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { BlogComment } from "@/data/blogs";
-
 import { useLanguage } from "@/context/LanguageContext";
 
-interface BlogCommentsProps {
-  initialComments: BlogComment[];
+interface LocalComment {
+  id: string;
+  name: string;
+  text: string;
 }
 
-export default function BlogComments({ initialComments }: BlogCommentsProps) {
-  const [customComments, setCustomComments] = useState<BlogComment[]>([]);
+export default function BlogComments() {
+  const [comments, setComments] = useState<LocalComment[]>([]);
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formComment, setFormComment] = useState("");
   const [submittedMessage, setSubmittedMessage] = useState(false);
   const { t } = useLanguage();
 
-  const allDisplayComments = [...initialComments, ...customComments];
-
   const handlePostComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || !formComment.trim()) return;
 
-    const newComment: BlogComment = {
-      id: Date.now().toString(),
-      name: formName.trim(),
-      text: formComment.trim(),
-    };
-
-    setCustomComments((prev) => [...prev, newComment]);
+    setComments((prev) => [
+      ...prev,
+      { id: Date.now().toString(), name: formName.trim(), text: formComment.trim() },
+    ]);
     setFormName("");
     setFormEmail("");
     setFormComment("");
@@ -38,41 +33,47 @@ export default function BlogComments({ initialComments }: BlogCommentsProps) {
   };
 
   return (
-    <>
-      {/* Comments Section */}
-      <div className="mt-12 pt-6 border-t border-gray-100">
-        <h3 className="font-roboto font-bold text-[#000C09] text-lg sm:text-xl mb-5">
-          {t("blogs.comments", "Comments")} ({allDisplayComments.length})
+    <div className="mt-10 flex flex-col gap-8">
+
+      {/* Comments Section — always visible */}
+      <div>
+        <h3 className="font-roboto font-bold text-[#000C09] text-lg sm:text-xl mb-4">
+          {t("blogs.comments", "Comments")}
         </h3>
 
+        {comments.length === 0 && (
+          <p className="text-sm text-gray-400 font-roboto italic">No comments yet.</p>
+        )}
+
         <div className="space-y-4">
-          {allDisplayComments.map((c) => (
+          {comments.map((c) => (
             <div
               key={c.id}
-              className="border-l-[3.5px] rtl:border-l-0 rtl:border-r-[3.5px] border-[#006993] pl-4 sm:pl-5 rtl:pl-0 rtl:pr-4 rtl:sm:pr-5 py-2 bg-transparent"
+              className="flex gap-3 border-b border-gray-100 pb-4"
             >
-              <div className="flex items-center gap-2">
-                <span className="text-[#006993] font-serif text-2xl leading-none">"</span>
-                <span className="font-roboto font-semibold text-[#000C09] text-sm sm:text-base">
-                  {c.name}
-                </span>
+              {/* Quote icon block */}
+              <div className="flex-shrink-0 w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
               </div>
-              <p className="font-roboto font-normal text-[#484848] text-xs sm:text-sm mt-1.5 leading-relaxed">
-                &quot;{c.text}&quot;
-              </p>
+              <div>
+                <p className="font-roboto font-semibold text-sm text-[#000C09] mb-1">{c.name}</p>
+                <p className="font-roboto text-sm text-[#484848] leading-relaxed">&quot;{c.text}&quot;</p>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Add Comment Form */}
-      <div className="mt-12 pt-4">
+      <div>
         <h3 className="font-roboto font-bold text-[#000C09] text-lg sm:text-xl mb-5">
-          {t("blogs.leaveComment", "Leave a Comment")}
+          {t("blogs.addComment", "Add Comment")}
         </h3>
 
         {submittedMessage && (
-          <div className="mb-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-roboto text-xs sm:text-sm flex items-center gap-2">
+          <div className="mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-roboto text-sm flex items-center gap-2">
             <svg className="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
@@ -82,59 +83,54 @@ export default function BlogComments({ initialComments }: BlogCommentsProps) {
 
         <form onSubmit={handlePostComment} className="flex flex-col gap-4">
 
-          {/* Your Name Input */}
-          <div className="flex flex-col items-start rtl:items-start">
-            <label htmlFor="comment-name" className="font-roboto font-medium text-[#000C09] text-xs sm:text-sm mb-1.5">
-              {t("blogs.commentName", "Your Name")}
+          <div>
+            <label htmlFor="comment-name" className="block font-roboto text-sm text-[#000C09] mb-1.5">
+              {t("blogs.commentName", "Your name")}
             </label>
             <input
               id="comment-name"
               type="text"
               required
-              placeholder={t("contact.namePlaceholder", "Enter Name")}
+              placeholder="Enter Name"
               value={formName}
               onChange={(e) => setFormName(e.target.value)}
-              className="w-full px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-xl font-roboto text-xs sm:text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
+              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg font-roboto text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
             />
           </div>
 
-          {/* Email Input */}
-          <div className="flex flex-col items-start rtl:items-start">
-            <label htmlFor="comment-email" className="font-roboto font-medium text-[#000C09] text-xs sm:text-sm mb-1.5">
-              {t("blogs.commentEmail", "Your Email")}
+          <div>
+            <label htmlFor="comment-email" className="block font-roboto text-sm text-[#000C09] mb-1.5">
+              {t("blogs.commentEmail", "Email")}
             </label>
             <input
               id="comment-email"
               type="email"
-              required
-              placeholder="name@example.com"
+              placeholder="Enter Email"
               value={formEmail}
               onChange={(e) => setFormEmail(e.target.value)}
-              className="w-full px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-xl font-roboto text-xs sm:text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
+              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg font-roboto text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
             />
           </div>
 
-          {/* Comment Textarea */}
-          <div className="flex flex-col items-start rtl:items-start">
-            <label htmlFor="comment-text" className="font-roboto font-medium text-[#000C09] text-xs sm:text-sm mb-1.5">
-              {t("blogs.commentMessage", "Write your comment...")}
+          <div>
+            <label htmlFor="comment-text" className="block font-roboto text-sm text-[#000C09] mb-1.5">
+              {t("blogs.commentLabel", "Comment")}
             </label>
             <textarea
               id="comment-text"
               rows={4}
               required
-              placeholder={t("blogs.commentMessage", "Write your comment...")}
+              placeholder="Text..."
               value={formComment}
               onChange={(e) => setFormComment(e.target.value)}
-              className="w-full px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-xl font-roboto text-xs sm:text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors resize-none"
+              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg font-roboto text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors resize-none"
             />
           </div>
 
-          {/* Submit Post Comment Button */}
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-end">
             <button
               type="submit"
-              className="px-8 sm:px-10 py-2.5 sm:py-3 rounded-full bg-[#004560] hover:bg-[#003449] text-white font-roboto font-semibold text-xs sm:text-sm transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
+              className="px-8 py-2.5 rounded-lg bg-[#004560] hover:bg-[#003449] text-white font-roboto font-semibold text-sm transition-all duration-200 cursor-pointer"
             >
               {t("blogs.submitComment", "Post Comment")}
             </button>
@@ -142,6 +138,6 @@ export default function BlogComments({ initialComments }: BlogCommentsProps) {
 
         </form>
       </div>
-    </>
+    </div>
   );
 }

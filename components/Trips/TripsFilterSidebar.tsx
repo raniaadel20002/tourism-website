@@ -1,7 +1,9 @@
-"use client";
+﻿"use client";
 
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { tripTypeOptions } from "@/data/trips";
+import { getTripTypes } from "@/api/tripType";
+import type { TripType } from "@/modules/tripType.model";
 
 interface TripsFilterSidebarProps {
   selectedDestination: string;
@@ -14,6 +16,7 @@ interface TripsFilterSidebarProps {
   onTypeChange: (v: string) => void;
   onClearAll: () => void;
   isOpen: boolean;
+  availableDestinations?: string[];
 }
 
 export default function TripsFilterSidebar({
@@ -27,8 +30,12 @@ export default function TripsFilterSidebar({
   onTypeChange,
   onClearAll,
   isOpen,
+  availableDestinations = [],
 }: TripsFilterSidebarProps) {
   const { t } = useLanguage();
+  const [tripTypes, setTripTypes] = useState<TripType[]>([]);
+  useEffect(() => { let cancelled = false; void getTripTypes(undefined, { pageNumber: 1, pageSize: 100 }).then((items) => { if (!cancelled) setTripTypes(items); }).catch(() => { if (!cancelled) setTripTypes([]); }); return () => { cancelled = true; }; }, []);
+  const tripTypeOptions = [{ id: 0, name: "All Trips" }, ...tripTypes];
 
   return (
     <aside
@@ -69,11 +76,9 @@ export default function TripsFilterSidebar({
             className="w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 font-roboto text-xs sm:text-sm text-[#030811] focus:outline-none focus:border-[#004560] cursor-pointer"
           >
             <option value="All">{t("trips.allDestinations", "All Destinations")}</option>
-            <option value="Hurghada">{t("destinations.hurghada", "Hurghada")}</option>
-            <option value="Luxor">{t("destinations.luxor", "Luxor")}</option>
-            <option value="Giza">{t("destinations.giza", "Giza")}</option>
-            <option value="Cairo">{t("destinations.cairo", "Cairo")}</option>
-            <option value="Aswan">{t("destinations.aswan", "Aswan")}</option>
+            {availableDestinations.map(dest => (
+              <option key={dest} value={dest}>{dest}</option>
+            ))}
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center px-3 text-gray-500">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -121,12 +126,12 @@ export default function TripsFilterSidebar({
         <h3 className="font-roboto font-medium text-[#030811] text-sm mb-3">{t("trips.tripsTypes", "Trips Types")}</h3>
         <div className="flex flex-col gap-2.5">
           {tripTypeOptions.map((item) => {
-            const isChecked = selectedType === item.label;
+            const isChecked = selectedType === item.name;
             return (
               <label
-                key={item.label}
+                key={item.name}
                 className="flex items-center justify-between cursor-pointer group py-0.5"
-                onClick={() => onTypeChange(item.label)}
+                onClick={() => onTypeChange(item.name)}
               >
                 <div className="flex items-center gap-2.5">
                   <div
@@ -143,10 +148,10 @@ export default function TripsFilterSidebar({
                     )}
                   </div>
                   <span className="font-roboto text-xs sm:text-sm text-[#030811] group-hover:text-[#004560] transition-colors">
-                    {item.label}
+                    {item.name}
                   </span>
                 </div>
-                <span className="font-roboto text-xs text-gray-400">{item.count}</span>
+                <span className="font-roboto text-xs text-gray-400">{item.id === 0 ? "" : "—"}</span>
               </label>
             );
           })}

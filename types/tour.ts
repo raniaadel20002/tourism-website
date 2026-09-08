@@ -24,15 +24,19 @@ export interface Tour {
   description: string;
   isBestSeller?: boolean;
   location: string;
+  destinationInfo?: {
+    id: number;
+    name: string | null;
+    imageUrl: string | null;
+    isFeatured: boolean;
+  } | null;
   tourType?: string;
-  groupSize?: string;
   transportation?: string;
   availability?: string;
   language?: string;
   included?: string[];
   excluded?: string[];
   highlights?: string[];
-  faqs?: { question: string; answer: string }[];
   testimonials?: {
     id: string;
     name: string;

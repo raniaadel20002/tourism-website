@@ -58,7 +58,6 @@ const tours: Tour[] = [
       "Experience the timeless beauty of Luxor on a full-day guided journey through Egypt's greatest ancient wonders. Visit magnificent temples, explore the Valley of the Kings, and uncover thousands of years of fascinating history with an expert local guide.",
     location: "Luxor",
     tourType: "Historical Tour",
-    groupSize: "2-15 Travellers",
     transportation: "Air-conditioned Vehicle",
     availability: "Daily",
     language: "English / Arabic",
@@ -81,23 +80,6 @@ const tours: Tour[] = [
       "Visit the legendary Valley of the Kings.",
       "Discover the Temple of Hatshepsut.",
       "Stop at the Colossi of Memnon.",
-    ],
-    faqs: [
-      {
-        question: "Is this tour suitable for children?",
-        answer:
-          "Yes. The tour is family-friendly and suitable for travellers of all ages.",
-      },
-      {
-        question: "What should I wear?",
-        answer:
-          "Comfortable lightweight clothing, walking shoes, sun hat, and sunscreen.",
-      },
-      {
-        question: "Does the tour include lunch?",
-        answer:
-          "Yes, a delicious lunch at an authentic local Egyptian restaurant is included.",
-      },
     ],
     testimonials: [
       {
@@ -146,7 +128,6 @@ const tours: Tour[] = [
       "Sail to the paradise shores of Orange Bay on Giftun Island. Enjoy crystal-clear shallow turquoise waters, white sandy beaches, two guided snorkeling stops at vibrant coral reefs, and an open buffet lunch onboard.",
     location: "Hurghada",
     tourType: "Sea Trip",
-    groupSize: "4-25 Travellers",
     transportation: "Luxury Boat / Yacht",
     availability: "Daily",
     language: "English / German / Arabic",
@@ -169,23 +150,6 @@ const tours: Tour[] = [
       "Snorkel at two top protected coral reefs in the Red Sea.",
       "Enjoy watersports like banana boat and sofa rides.",
       "Savor a freshly prepared seafood and grill buffet lunch.",
-    ],
-    faqs: [
-      {
-        question: "Are life jackets provided for non-swimmers?",
-        answer:
-          "Yes, certified life jackets and snorkeling instructors are provided for all guests.",
-      },
-      {
-        question: "Can children join this trip?",
-        answer:
-          "Absolutely! Orange Bay has very gentle, shallow water that is perfect for kids.",
-      },
-      {
-        question: "What should I bring with me?",
-        answer:
-          "Swimwear, beach towels, sunglasses, sunscreen, and your camera or phone.",
-      },
     ],
     testimonials: [
       {
@@ -225,7 +189,6 @@ const tours: Tour[] = [
       "Conquer the Eastern Sahara desert on an adrenaline-charged quad bike safari. Ride across rolling sand dunes, visit an authentic Bedouin village, enjoy camel rides, and savor a sunset BBQ dinner with oriental show.",
     location: "Hurghada",
     tourType: "Safari Trip",
-    groupSize: "2-20 Travellers",
     transportation: "4x4 Land Cruiser & ATV Quads",
     availability: "Daily (Morning & Sunset)",
     language: "English / Arabic / Russian",
@@ -248,23 +211,6 @@ const tours: Tour[] = [
       "Immerse in traditional Bedouin culture and lifestyle.",
       "Scenic camel ride overlooking the Red Sea mountain ranges.",
       "Sunset barbecue under the starry Arabian desert sky.",
-    ],
-    faqs: [
-      {
-        question: "Do I need a driving license to drive the quad bike?",
-        answer:
-          "No license required. Our professional guides provide full safety training before departure.",
-      },
-      {
-        question: "What is the minimum age to drive an ATV?",
-        answer:
-          "Drivers must be 16+. Children under 16 can ride behind a parent or guide.",
-      },
-      {
-        question: "What should I wear for desert quad biking?",
-        answer:
-          "Closed-toe sneakers, long comfortable pants, sunglasses, and a headscarf.",
-      },
     ],
     testimonials: [
       {
@@ -304,7 +250,6 @@ const tours: Tour[] = [
       "Immerse yourself in the Red Sea's most vibrant marine ecosystems. Snorkel alongside exotic tropical fish, sea turtles, and colorful coral reefs before unwinding on the white sands of Orange Bay.",
     location: "Hurghada",
     tourType: "Sea & Snorkel Tour",
-    groupSize: "4-20 Travellers",
     transportation: "Sea Yacht",
     availability: "Daily",
     language: "English / German / Arabic",
@@ -327,18 +272,6 @@ const tours: Tour[] = [
       "High chance of seeing wild dolphins and sea turtles.",
       "2 full hours relaxing on Orange Bay's picture-perfect beach.",
       "Delicious onboard catering prepared by cruise chefs.",
-    ],
-    faqs: [
-      {
-        question: "Is snorkeling equipment included?",
-        answer:
-          "Yes, clean sanitized masks, snorkels, fins, and life jackets are provided.",
-      },
-      {
-        question: "Can beginners participate in snorkeling?",
-        answer:
-          "Yes! Our snorkeling guides enter the water with you and assist beginners throughout.",
-      },
     ],
     testimonials: [
       {
@@ -378,7 +311,6 @@ const tours: Tour[] = [
       "Discover the mesmerizing underwater world of the Red Sea. Whether you're a certified diver or trying scuba for the first time, experience two guided boat dives with professional PADI instructors at world-renowned dive spots.",
     location: "Hurghada",
     tourType: "Scuba Diving Tour",
-    groupSize: "2-12 Travellers",
     transportation: "Dedicated Diving Vessel",
     availability: "Daily",
     language: "English / German / French / Arabic",
@@ -401,18 +333,6 @@ const tours: Tour[] = [
       "Beginner-friendly introductory dive with personal PADI instructor.",
       "Explore shipwrecks, coral gardens, and marine biodiversity.",
       "Relax on the spacious sun deck between dive sessions.",
-    ],
-    faqs: [
-      {
-        question: "Do I need previous diving experience?",
-        answer:
-          "No! Intro dives require no prior experience. A PADI master guides you step-by-step.",
-      },
-      {
-        question: "What is the maximum depth for intro divers?",
-        answer:
-          "Introductory dives are limited to safe depths of 6 to 8 meters (20-25 ft).",
-      },
     ],
     testimonials: [
       {
@@ -452,7 +372,6 @@ const tours: Tour[] = [
       "Stand in awe before the last surviving wonder of the ancient world. Tour the Great Pyramids of Khufu, Khafre, and Menkaure, gaze at the enigmatic Great Sphinx, and explore ancient funerary temples with an Egyptologist guide.",
     location: "Giza",
     tourType: "Historical Tour",
-    groupSize: "2-15 Travellers",
     transportation: "Private Air-conditioned Coach",
     availability: "Daily",
     language: "English / Spanish / Arabic",
@@ -475,18 +394,6 @@ const tours: Tour[] = [
       "Get up close with the mythical Great Sphinx of Giza.",
       "Panoramic photo stop capturing all three pyramids aligned in the desert.",
       "Optional entry into ancient burial chambers and royal solar boats.",
-    ],
-    faqs: [
-      {
-        question: "Can I enter inside the Great Pyramid?",
-        answer:
-          "Yes, interior access tickets can be purchased at the main plateau gate.",
-      },
-      {
-        question: "Is camel riding included?",
-        answer:
-          "Camel and horse carriage rides are optional and can be arranged on the spot with your guide.",
-      },
     ],
     testimonials: [
       {

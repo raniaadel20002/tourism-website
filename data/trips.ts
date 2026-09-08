@@ -1,16 +1,15 @@
-export type TripTypeTag =
-  | "All Trips"
-  | "Sea Trips"
-  | "Safari Trips"
-  | "Sneaking Trips"
-  | "Historical Trips";
-
-export interface Trip {
+﻿export interface Trip {
   id: string;
   title: string;
   category: string;
-  tripTypeTag: TripTypeTag;
+  tripTypeTag: string;
   location: string;
+  destinationInfo?: {
+    id: number;
+    name: string | null;
+    imageUrl: string | null;
+    isFeatured: boolean;
+  } | null;
   rating: number;
   reviewsCount: number;
   price: number;
@@ -100,10 +99,3 @@ export const allTripsData: Trip[] = [
   },
 ];
 
-export const tripTypeOptions = [
-  { label: "All Trips", count: 47 },
-  { label: "Sea Trips", count: 20 },
-  { label: "Safari Trips", count: 18 },
-  { label: "Sneaking Trips", count: 12 },
-  { label: "Historical Trips", count: 7 },
-] as const;

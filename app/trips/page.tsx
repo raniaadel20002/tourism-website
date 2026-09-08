@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { allTripsData } from "@/data/trips";
+import { useState, useMemo, useEffect } from "react";
+import { getTrips, type Trip as ApiTrip } from "@/api/trips";
+import { Trip as UiTrip } from "@/data/trips";
+import { transformApiTripsToUi } from "@/utils/tripTransform";
 import TripsHero from "@/components/Trips/TripsHero";
 import Breadcrumb from "@/components/Breadcrumb";
 import TripsFilterSidebar from "@/components/Trips/TripsFilterSidebar";
@@ -11,6 +13,10 @@ import { useLanguage } from "@/context/LanguageContext";
 
 export default function TripsPage() {
   const { t } = useLanguage();
+  const [apiTrips, setApiTrips] = useState<ApiTrip[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("All");
   const [minPrice, setMinPrice] = useState("20");
@@ -18,6 +24,46 @@ export default function TripsPage() {
   const [selectedType, setSelectedType] = useState<string>("All Trips");
   const [sortBy, setSortBy] = useState("Latest");
   const [filterMobileOpen, setFilterMobileOpen] = useState(false);
+
+  // Initialize selectedType from URL if present
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const typeParam = params.get("type");
+      if (typeParam) {
+        setSelectedType(typeParam);
+      }
+    }
+  }, []);
+
+  // Fetch trips on mount
+  useEffect(() => {
+    async function fetchTrips() {
+      try {
+        setLoading(true);
+        const data = await getTrips(undefined, 1, 100);
+        // Only show active trips on public page
+        setApiTrips(data.filter(trip => trip.isActive));
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch trips");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTrips();
+  }, []);
+
+  // Extract unique destinations from API trips for the filter
+  const availableDestinations = useMemo(() => {
+    const destinations = new Set<string>();
+    apiTrips.forEach(trip => {
+      if (trip.destinationInfo?.name) {
+        destinations.add(trip.destinationInfo.name);
+      }
+    });
+    return Array.from(destinations).sort();
+  }, [apiTrips]);
 
   const clearAllFilters = () => {
     setSearchQuery("");
@@ -29,37 +75,40 @@ export default function TripsPage() {
   };
 
   const filteredTrips = useMemo(() => {
-    return allTripsData
+    const filtered = apiTrips
       .filter((trip) => {
         if (
           searchQuery.trim() &&
-          !trip.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !trip.location.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !trip.category.toLowerCase().includes(searchQuery.toLowerCase())
+          !trip.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          !trip.destinationInfo?.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          !trip.tripTypeName?.toLowerCase().includes(searchQuery.toLowerCase())
         ) {
           return false;
         }
         if (
           selectedDestination !== "All" &&
-          trip.location.toLowerCase() !== selectedDestination.toLowerCase()
+          trip.destinationInfo?.name?.toLowerCase() !== selectedDestination.toLowerCase()
         ) {
           return false;
         }
         const min = parseFloat(minPrice) || 0;
         const max = parseFloat(maxPrice) || Infinity;
-        if (trip.price < min || trip.price > max) return false;
-        if (selectedType !== "All Trips" && trip.tripTypeTag !== selectedType) {
+        if (trip.adultPrice < min || trip.adultPrice > max) return false;
+        if (selectedType !== "All Trips" && trip.tripTypeName !== selectedType) {
           return false;
         }
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === "PriceLowHigh") return a.price - b.price;
-        if (sortBy === "PriceHighLow") return b.price - a.price;
-        if (sortBy === "Rating") return b.rating - a.rating;
+        if (sortBy === "PriceLowHigh") return a.adultPrice - b.adultPrice;
+        if (sortBy === "PriceHighLow") return b.adultPrice - a.adultPrice;
+        if (sortBy === "Rating") return 0; // No rating data yet
         return 0;
       });
-  }, [searchQuery, selectedDestination, minPrice, maxPrice, selectedType, sortBy]);
+    
+    // Transform to UI format
+    return transformApiTripsToUi(filtered);
+  }, [apiTrips, searchQuery, selectedDestination, minPrice, maxPrice, selectedType, sortBy]);
 
   return (
     <main className="min-h-screen bg-white flex flex-col">
@@ -72,36 +121,58 @@ export default function TripsPage() {
 
       {/* ── Main Content Area ─────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex-1">
-        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-10">
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#006993] border-r-transparent"></div>
+              <p className="mt-4 text-gray-600">Loading trips...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="px-6 py-2 bg-[#006993] text-white rounded-lg hover:bg-[#004560]"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-10">
 
-          {/* Left Sidebar Filter */}
-          <TripsFilterSidebar
-            selectedDestination={selectedDestination}
-            onDestinationChange={setSelectedDestination}
-            minPrice={minPrice}
-            onMinPriceChange={setMinPrice}
-            maxPrice={maxPrice}
-            onMaxPriceChange={setMaxPrice}
-            selectedType={selectedType}
-            onTypeChange={setSelectedType}
-            onClearAll={clearAllFilters}
-            isOpen={filterMobileOpen}
-          />
+            {/* Left Sidebar Filter */}
+            <TripsFilterSidebar
+              selectedDestination={selectedDestination}
+              onDestinationChange={setSelectedDestination}
+              minPrice={minPrice}
+              onMinPriceChange={setMinPrice}
+              maxPrice={maxPrice}
+              onMaxPriceChange={setMaxPrice}
+              selectedType={selectedType}
+              onTypeChange={setSelectedType}
+              onClearAll={clearAllFilters}
+              isOpen={filterMobileOpen}
+              availableDestinations={availableDestinations}
+            />
 
-          {/* Right Results Area */}
-          <TripsResults
-            trips={filteredTrips}
-            tripCount={filteredTrips.length}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            filterMobileOpen={filterMobileOpen}
-            onToggleMobileFilter={() => setFilterMobileOpen((p) => !p)}
-            onClearFilters={clearAllFilters}
-          />
+            {/* Right Results Area */}
+            <TripsResults
+              trips={filteredTrips}
+              tripCount={filteredTrips.length}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              filterMobileOpen={filterMobileOpen}
+              onToggleMobileFilter={() => setFilterMobileOpen((p) => !p)}
+              onClearFilters={clearAllFilters}
+            />
 
-        </div>
+          </div>
+        )}
       </div>
 
     </main>
