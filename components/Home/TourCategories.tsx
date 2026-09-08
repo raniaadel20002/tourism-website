@@ -11,7 +11,7 @@ export interface TourCategoryItem { id: string; name: string; image: string; rot
 const rotations = ["-rotate-[4deg]", "-rotate-[2deg]", "rotate-[2deg]", "rotate-[4deg]"];
 const imageByName: Record<string, string> = {
   diving: "/images/home/categories/diving.jpg",
-  snorkelling: "/images/home/categories/snorkelling.jpg",
+  snorkelling: "/images/home/categories/Snorkelling.jpg",
   safari: "/images/home/categories/DesertSafari.jpg",
 };
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } };
