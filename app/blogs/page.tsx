@@ -12,7 +12,7 @@ import { useLanguage } from "@/context/LanguageContext";
 const POPULAR_TAGS = ["All", "Sea", "Safari", "History"] as const;
 
 export default function BlogsPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,11 +21,12 @@ export default function BlogsPage() {
   const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
-    getBlogs(1, 100)
+    setLoading(true);
+    getBlogs(1, 100, language)
       .then(setBlogs)
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load blogs"))
+      .catch((err) => setError(err instanceof Error ? err.message : t("blogs.failedToLoad", "Failed to load blogs")))
       .finally(() => setLoading(false));
-  }, []);
+  }, [language, t]);
 
   const filteredPosts = useMemo(() => {
     // All API blogs belong to "Sea". Other tags show empty state.
@@ -53,9 +54,10 @@ export default function BlogsPage() {
 
         {/* Popular Tags */}
         <div className="flex flex-wrap items-center gap-2 mb-8">
-          <span className="font-roboto text-sm text-[#030811] mr-1">Popular tags:</span>
+          <span className="font-roboto text-sm text-[#030811] mr-1">{t("blogs.popularTags", "Popular tags:")}</span>
           {POPULAR_TAGS.map((tag) => {
             const isActive = activeTag === tag;
+            const tagLabel = tag === "All" ? t("blogs.allTags", "All") : t(`blogs.tag${tag}`, tag);
             return (
               <button
                 key={tag}
@@ -67,14 +69,14 @@ export default function BlogsPage() {
                     : "bg-transparent border border-gray-300 text-gray-600 hover:border-[#003B57]"
                 }`}
               >
-                {tag}
+                {tagLabel}
               </button>
             );
           })}
         </div>
 
         {loading && (
-          <div className="w-full py-16 text-center text-gray-400 font-roboto">Loading...</div>
+          <div className="w-full py-16 text-center text-gray-400 font-roboto">{t("blogs.loading", "Loading...")}</div>
         )}
 
         {!loading && error && (

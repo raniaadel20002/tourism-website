@@ -94,7 +94,7 @@ export default function DestinationsHero() {
                   letterSpacing: "0.5px",
                 }}
               >
-                Aswan
+                {t("destinations.aswan", "Aswan")}
               </text>
 
               {/* 2. Dahab (Top Right) */}
@@ -113,7 +113,7 @@ export default function DestinationsHero() {
                   letterSpacing: "0.5px",
                 }}
               >
-                Dahab
+                {t("destinations.dahab", "Dahab")}
               </text>
 
               {/* 3. Luxor (Bottom Left) */}
@@ -132,7 +132,7 @@ export default function DestinationsHero() {
                   letterSpacing: "0.5px",
                 }}
               >
-                Luxor
+                {t("destinations.luxor", "Luxor")}
               </text>
 
               {/* 4. Giza (Bottom Right) */}
@@ -151,7 +151,7 @@ export default function DestinationsHero() {
                   letterSpacing: "0.5px",
                 }}
               >
-                Giza
+                {t("destinations.giza", "Giza")}
               </text>
 
               {/* 5. Hurghada (Prominent Green Center Overlay) */}
@@ -170,7 +170,7 @@ export default function DestinationsHero() {
                   letterSpacing: "1px",
                 }}
               >
-                Hurghada
+                {t("destinations.hurghada", "Hurghada")}
               </text>
             </svg>
           </div>

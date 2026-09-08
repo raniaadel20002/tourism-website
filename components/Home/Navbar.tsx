@@ -17,7 +17,7 @@ export default function Navbar() {
 
   const navLinks = [
     { label: t("nav.home", "Home"), href: "/" },
-    { label: t("nav.destinations"), href:"destinations"},
+    { label: t("nav.destinations", "Destinations"), href: "/destinations" },
     { label: t("nav.trips", "Trips"), href: "/trips" },
     { label: t("nav.gallery", "Gallery"), href: "/gallery" },
     { label: t("nav.blogs", "Blogs"), href: "/blogs" },
@@ -47,7 +47,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center">
               <img
                 src="/images/home/hero/Logo.png"
-                alt="logoipsum"
+                alt={t("nav.logoAlt", "Logo")}
                 className="h-7 w-auto object-contain"
               />
             </Link>
@@ -109,6 +109,7 @@ export default function Navbar() {
             <Link
               href="/cart"
               className="text-gray-600 hover:text-emerald-600 relative p-1"
+              aria-label={t("nav.viewCart", "View booking cart")}
             >
               <svg
                 className="w-5 h-5"
@@ -132,7 +133,7 @@ export default function Navbar() {
             <button
               className="text-gray-600 cursor-pointer"
               onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle mobile menu"
+              aria-label={t("nav.toggleMenu", "Toggle mobile menu")}
             >
               <svg
                 className="w-6 h-6"

@@ -7,7 +7,8 @@ import { useLanguage } from "@/context/LanguageContext";
 
 interface Destination {
   id: string;
-  name: string;
+  nameKey: string;
+  fallbackName: string;
   cardImage: string;
   heroBg: string;
 }
@@ -15,19 +16,22 @@ interface Destination {
 const destinations: Destination[] = [
   {
     id: "red-sea",
-    name: "Red sea",
+    nameKey: "destinations.redSea",
+    fallbackName: "Red Sea",
     cardImage: "/images/home/hero/redsea.png",
     heroBg: "/images/home/hero/background.png",
   },
   {
     id: "luxor",
-    name: "Luxor",
+    nameKey: "destinations.luxor",
+    fallbackName: "Luxor",
     cardImage: "/images/home/hero/luxor.png",
     heroBg: "/images/home/hero/luxor-bg.jpg",
   },
   {
     id: "giza",
-    name: "Giza",
+    nameKey: "destinations.giza",
+    fallbackName: "Giza",
     cardImage: "/images/home/hero/giza.png",
     heroBg: "/images/home/hero/giza-bg.png",
   },
@@ -72,8 +76,7 @@ const sliderEntranceVariants: Variants = {
 
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const { t, language } = useLanguage();
-  const isArabic = language === "ar";
+  const { t, isRTL } = useLanguage();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -171,15 +174,15 @@ export default function Hero() {
               <motion.button
                 type="button"
                 onClick={handlePrev}
-                aria-label="Previous destination"
+                aria-label={t("hero.previousDestination", "Previous destination")}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 className="group rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#39CA5B]"
               >
                 <img
-                  src={isArabic ? "/images/home/hero/➡.png" : "/images/home/hero/⬅.png"}
-                  alt="Previous"
+                  src={isRTL ? "/images/home/hero/➡.png" : "/images/home/hero/⬅.png"}
+                  alt={t("hero.previous", "Previous")}
                   className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md group-hover:brightness-110 transition-[filter] duration-200"
                 />
               </motion.button>
@@ -187,15 +190,15 @@ export default function Hero() {
               <motion.button
                 type="button"
                 onClick={handleNext}
-                aria-label="Next destination"
+                aria-label={t("hero.nextDestination", "Next destination")}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 className="group rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#39CA5B]"
               >
                 <img
-                  src={isArabic ? "/images/home/hero/⬅.png" : "/images/home/hero/➡.png"}
-                  alt="Next"
+                  src={isRTL ? "/images/home/hero/⬅.png" : "/images/home/hero/➡.png"}
+                  alt={t("hero.next", "Next")}
                   className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md group-hover:brightness-110 transition-[filter] duration-200"
                 />
               </motion.button>
@@ -218,7 +221,7 @@ export default function Hero() {
                     key={dest.id}
                     type="button"
                     onClick={() => setActiveIndex(index)}
-                    aria-label={`Select ${dest.name}`}
+                    aria-label={`${t("hero.select", "Select")} ${t(dest.nameKey, dest.fallbackName)}`}
                     whileHover={!isActive ? { scale: 1.05, opacity: 1 } : {}}
                     whileTap={{ scale: 0.97 }}
                     transition={{ type: "spring", stiffness: 350, damping: 25 }}
@@ -230,7 +233,7 @@ export default function Hero() {
                   >
                     <img
                       src={dest.cardImage}
-                      alt={dest.name}
+                      alt={t(dest.nameKey, dest.fallbackName)}
                       className="w-full h-full object-cover transition-transform duration-700 ease-out"
                     />
                   </motion.button>

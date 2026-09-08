@@ -18,10 +18,9 @@ export default function LanguageSwitcher({ variant = "desktop", dropdownAlign = 
   const getFlagImageUrl = (code: string) => {
     const map: Record<string, string> = {
       en: "gb",
-      ar: "eg",
       fr: "fr",
-      de: "de",
-      es: "es",
+      ru: "ru",
+      ro: "ro",
     };
     const countryCode = map[code] || "gb";
     return `https://flagcdn.com/w20/${countryCode}.png`;

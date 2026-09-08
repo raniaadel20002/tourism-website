@@ -61,7 +61,7 @@ export default function BookingSummary() {
             <button
               onClick={() => removeItem(item.id)}
               className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer rounded-full hover:bg-red-50"
-              aria-label={`Remove ${item.title}`}
+              aria-label={`${t("cart.remove", "Remove")} ${item.title}`}
             >
               <svg
                 className="w-3.5 h-3.5"

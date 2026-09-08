@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { getDestinations, type Destination } from "@/api/destinations";
 import { allDestinations, type DestinationItem } from "@/data/destinations";
 import { API_BASE_URL } from "@/api/apiConfig";
+import { useLanguage } from "@/context/LanguageContext";
 import DestinationCard from "./DestinationCard";
 
 const containerVariants = {
@@ -51,13 +52,15 @@ function toCardItem(dest: Destination): DestinationItem {
 }
 
 export default function DestinationsGrid() {
+  const { t, language } = useLanguage();
   const [items, setItems] = useState<DestinationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    getDestinations(undefined, { pageNumber: 1, pageSize: 50, lang: "en" })
+    setLoading(true);
+    getDestinations(undefined, { pageNumber: 1, pageSize: 50, lang: language })
       .then((data) => {
         if (!cancelled) {
           setItems(data.map(toCardItem));
@@ -76,7 +79,7 @@ export default function DestinationsGrid() {
       });
 
     return () => { cancelled = true; };
-  }, []);
+  }, [language]);
 
   if (loading) {
     return (
@@ -99,7 +102,7 @@ export default function DestinationsGrid() {
     if (items.length === 0) {
       return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center text-gray-500 text-sm">
-          Destinations are temporarily unavailable.
+          {t("destinations.unavailable", "Destinations are temporarily unavailable.")}
         </div>
       );
     }

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -16,7 +16,7 @@ const containerVariants = {
 };
 
 interface GalleryGridProps {
-  onExpand: (image: GalleryImage) => void;
+  onExpand: (image: GalleryImage, images: GalleryImage[]) => void;
 }
 
 export default function GalleryGrid({ onExpand }: GalleryGridProps) {
@@ -33,22 +33,26 @@ export default function GalleryGrid({ onExpand }: GalleryGridProps) {
       try {
         setLoading(true);
         setError(null);
+
         const apiImages = await getAllGalleryImages();
 
         if (!cancelled) {
           const mapped: GalleryImage[] = apiImages.map((img) => ({
             id: String(img.id),
             src: buildImageUrl(img.imageUrl),
-            alt: `Gallery image ${img.id}`,
+            alt: `${t("gallery.image", "Gallery image")} ${img.id}`,
             isFeatured: img.isFeatured,
           }));
+
           setImages(mapped);
         }
       } catch (err) {
         if (!cancelled) {
           console.error("Gallery fetch error:", err);
           setError(
-            err instanceof Error ? err.message : "Failed to load images"
+            err instanceof Error
+              ? err.message
+              : t("gallery.failedToLoad", "Failed to load images")
           );
         }
       } finally {
@@ -57,15 +61,14 @@ export default function GalleryGrid({ onExpand }: GalleryGridProps) {
     }
 
     fetchImages();
+
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 w-full flex-1 flex flex-col items-center">
-
-      {/* Loading State */}
       {loading && (
         <div className="w-full flex flex-wrap gap-6 sm:gap-8 justify-start">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -77,16 +80,16 @@ export default function GalleryGrid({ onExpand }: GalleryGridProps) {
         </div>
       )}
 
-      {/* Error State */}
       {!loading && error && (
         <div className="w-full flex flex-col items-center justify-center py-20 text-center">
           <p className="font-roboto text-red-500 text-base mb-4">{error}</p>
+
           <button
             type="button"
             onClick={() => window.location.reload()}
             className="px-6 py-2 rounded-full border border-[#004560] text-[#004560] hover:bg-[#004560] hover:text-white font-roboto font-semibold text-sm transition-all duration-300 cursor-pointer"
           >
-            Try Again
+            {t("gallery.tryAgain", "Try Again")}
           </button>
         </div>
       )}
@@ -94,12 +97,11 @@ export default function GalleryGrid({ onExpand }: GalleryGridProps) {
       {!loading && !error && images.length === 0 && (
         <div className="w-full flex flex-col items-center justify-center py-20 text-center">
           <p className="font-roboto text-[#004560] text-base">
-            No gallery images are available yet.
+            {t("gallery.noImages", "No gallery images are available yet.")}
           </p>
         </div>
       )}
 
-      {/* Gallery Items Grid */}
       {!loading && !error && images.length > 0 && (
         <motion.div
           variants={containerVariants}
@@ -109,12 +111,15 @@ export default function GalleryGrid({ onExpand }: GalleryGridProps) {
           className="w-full flex flex-wrap gap-6 sm:gap-8 justify-start"
         >
           {images.slice(0, displayedCount).map((image) => (
-            <GalleryCard key={image.id} image={image} onExpand={onExpand} />
+            <GalleryCard
+              key={image.id}
+              image={image}
+              onExpand={() => onExpand(image, images)}
+            />
           ))}
         </motion.div>
       )}
 
-      {/* Centered See More Button */}
       {!loading && !error && images.length > 0 && (
         <div className="w-full flex justify-center mt-12 sm:mt-16 mb-4">
           <button
@@ -127,12 +132,11 @@ export default function GalleryGrid({ onExpand }: GalleryGridProps) {
             className="w-full max-w-md sm:max-w-lg py-3 sm:py-3.5 px-8 rounded-full border border-[#004560] text-[#004560] hover:bg-[#004560] hover:text-white font-roboto font-semibold text-sm sm:text-base text-center transition-all duration-300 shadow-xs hover:shadow-md cursor-pointer"
           >
             {displayedCount >= images.length
-              ? t("common.showLess", "Show Less")
+              ? t("gallery.showLess", "Show Less")
               : t("blogs.seeMore", "See More")}
           </button>
         </div>
       )}
-
     </div>
   );
 }

@@ -1,22 +1,33 @@
 @import "tailwindcss";
 
 .font-montez {
-  font-family: var(--font-montez), 'Montez', cursive;
+  font-family: var(--font-montez), "Montez", cursive;
 }
 
 .font-roboto {
-  font-family: var(--font-roboto), 'Roboto', sans-serif;
+  font-family: var(--font-roboto), "Roboto", sans-serif;
 }
 
 /* ─── Gallery vertical marquee keyframes ─── */
+
 @keyframes marquee-up {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-50%);
+  }
 }
 
 @keyframes marquee-down {
-  0%   { transform: translateY(-50%); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(-50%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .marquee-up {
@@ -24,9 +35,12 @@
   will-change: transform;
 }
 
-
-
 .marquee-down {
   animation: marquee-down 18s linear infinite;
   will-change: transform;
+}
+
+* {
+  -webkit-user-drag: none;
+  user-drag: none;
 }

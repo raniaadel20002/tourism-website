@@ -79,7 +79,7 @@ export default function WhereBegins() {
         <div className="relative w-full min-h-[200px] sm:min-h-[230px] md:min-h-[260px] lg:min-h-[280px] flex items-center">
           <Image
             src="/images/home/whereBegins/Frame 1171276613 (1).png"
-            alt="Where Your Adventure Begins"
+            alt={t("whereBegins.title", "Where Your Adventure Begins")}
             fill
             priority
             className="object-cover object-center"

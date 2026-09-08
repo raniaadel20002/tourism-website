@@ -167,7 +167,7 @@ export default function BillingForm({
       {/* Booking API error banner */}
       {bookingError && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-roboto">
-          <strong className="font-bold">Booking failed: </strong>
+          <strong className="font-bold">{t("checkout.bookingFailed", "Booking failed")}: </strong>
           {bookingError}
         </div>
       )}
@@ -226,7 +226,7 @@ export default function BillingForm({
                         "checkout.selectNationality",
                         "Select Nationality"
                       )
-                    : n}
+                    : t(`nationalities.${n.toLowerCase()}`, n)}
                 </option>
               ))}
             </select>

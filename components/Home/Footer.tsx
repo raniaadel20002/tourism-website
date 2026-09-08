@@ -203,7 +203,7 @@ export default function Footer() {
               <div className="mb-5">
                 <Image
                   src="/images/home/Footer/Logo.png"
-                  alt="logoipsum"
+                  alt={t("nav.logoAlt", "Logo")}
                   width={160}
                   height={38}
                   className="h-auto w-36 sm:w-40 object-contain"
@@ -286,7 +286,7 @@ export default function Footer() {
                   <a
                     key={label}
                     href={href}
-                    aria-label={label}
+                    aria-label={t(`contact.follow${label}`, label)}
                     className="inline-flex items-center justify-center transition-transform hover:scale-110 duration-200"
                   >
                     {icon}
