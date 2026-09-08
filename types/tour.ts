@@ -12,7 +12,7 @@ export interface Tour {
   rating: number;
   reviewCount: number;
   reviewsSummaryCount?: number;
-  ratingBreakdown?: {
+  ratingBreakdown?: { 
     5: number;
     4: number;
     3: number;
