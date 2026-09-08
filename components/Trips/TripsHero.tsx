@@ -22,7 +22,7 @@ export default function TripsHero() {
       <div className="absolute inset-0 z-0 select-none">
         <Image
           src="/images/search.png"
-          alt={t("trips.heroTitle", "Find Your Next Adventure")}
+          alt="Find Your Next Adventure"
           fill
           priority
           className="object-cover object-center"

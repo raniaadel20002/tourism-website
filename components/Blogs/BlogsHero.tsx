@@ -22,7 +22,7 @@ export default function BlogsHero() {
       <div className="absolute inset-0 z-0 select-none">
         <Image
           src="/images/blogCover.png"
-          alt={t("blogs.heroTitle", "Discover Stories, Guides & Travel Tips")}
+          alt="Discover Stories, Guides & Travel Tips"
           fill
           priority
           className="object-cover object-center"

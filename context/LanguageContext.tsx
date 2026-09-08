@@ -2,11 +2,12 @@
 
 import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
 import en from "@/locales/en.json";
+import ar from "@/locales/ar.json";
 import fr from "@/locales/fr.json";
-import ru from "@/locales/ru.json";
-import ro from "@/locales/ro.json";
+import de from "@/locales/de.json";
+import es from "@/locales/es.json";
 
-export type LanguageCode = "en" | "fr" | "ru" | "ro";
+export type LanguageCode = "en" | "ar" | "fr" | "de" | "es";
 
 export interface LanguageInfo {
   code: LanguageCode;
@@ -18,16 +19,18 @@ export interface LanguageInfo {
 
 export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
   { code: "en", name: "English", nativeName: "English", dir: "ltr", flag: "🇬🇧" },
+  { code: "ar", name: "Arabic", nativeName: "العربية", dir: "rtl", flag: "🇪🇬" },
   { code: "fr", name: "French", nativeName: "Français", dir: "ltr", flag: "🇫🇷" },
-  { code: "ru", name: "Russian", nativeName: "Русский", dir: "ltr", flag: "🇷🇺" },
-  { code: "ro", name: "Romanian", nativeName: "Română", dir: "ltr", flag: "🇷🇴" },
+  { code: "de", name: "German", nativeName: "Deutsch", dir: "ltr", flag: "🇩🇪" },
+  { code: "es", name: "Spanish", nativeName: "Español", dir: "ltr", flag: "🇪🇸" },
 ];
 
 const translations: Record<LanguageCode, any> = {
   en,
+  ar,
   fr,
-  ru,
-  ro,
+  de,
+  es,
 };
 
 interface LanguageContextType {
@@ -48,7 +51,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem("tourism_lang") as LanguageCode | null;
-      if (saved && ["en", "fr", "ru", "ro"].includes(saved)) {
+      if (saved && ["en", "ar", "fr", "de", "es"].includes(saved)) {
         setLanguage(saved);
       }
     } catch {
@@ -58,7 +61,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   // Update HTML document lang and dir attributes on change
   useEffect(() => {
-    const dir = "ltr";
+    const dir = language === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = language;
     document.documentElement.dir = dir;
     try {
@@ -79,7 +82,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const isRTL = dir === "rtl";
 
   const changeLanguage = (code: LanguageCode) => {
-    if (["en", "fr", "ru", "ro"].includes(code)) {
+    if (["en", "ar", "fr", "de", "es"].includes(code)) {
       setLanguage(code);
     }
   };

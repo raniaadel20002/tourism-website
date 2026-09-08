@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useLanguage } from "@/context/LanguageContext";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -10,8 +9,6 @@ import {
 } from "./ContactIcons";
 
 export default function ContactMapAndSocials() {
-  const { t } = useLanguage();
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -36,21 +33,21 @@ export default function ContactMapAndSocials() {
       {/* Follow Us Section */}
       <div className="flex flex-col items-start pt-2">
         <h3 className="font-roboto font-bold text-[#004560] text-base sm:text-lg mb-3 sm:mb-4">
-          {t("contact.followUs", "Follow Us")}
+          Follow Us
         </h3>
 
         {/* Green Social Icons */}
         <div className="flex items-center gap-4 sm:gap-5 text-[#39CA5B]">
-          <a href="#" aria-label={t("contact.followFacebook", "Follow us on Facebook")} className="p-1.5 rounded-full hover:text-[#2EA84B] hover:scale-110 transition-all duration-200">
+          <a href="#" aria-label="Follow us on Facebook" className="p-1.5 rounded-full hover:text-[#2EA84B] hover:scale-110 transition-all duration-200">
             <FacebookIcon className="w-5 sm:w-6 h-5 sm:h-6" />
           </a>
-          <a href="#" aria-label={t("contact.followInstagram", "Follow us on Instagram")} className="p-1.5 rounded-full hover:text-[#2EA84B] hover:scale-110 transition-all duration-200">
+          <a href="#" aria-label="Follow us on Instagram" className="p-1.5 rounded-full hover:text-[#2EA84B] hover:scale-110 transition-all duration-200">
             <InstagramIcon className="w-5 sm:w-6 h-5 sm:h-6" />
           </a>
-          <a href="#" aria-label={t("contact.followTikTok", "Follow us on TikTok")} className="p-1.5 rounded-full hover:text-[#2EA84B] hover:scale-110 transition-all duration-200">
+          <a href="#" aria-label="Follow us on TikTok" className="p-1.5 rounded-full hover:text-[#2EA84B] hover:scale-110 transition-all duration-200">
             <TikTokIcon className="w-5 sm:w-6 h-5 sm:h-6" />
           </a>
-          <a href="#" aria-label={t("contact.followX", "Follow us on X")} className="p-1.5 rounded-full hover:text-[#2EA84B] hover:scale-110 transition-all duration-200">
+          <a href="#" aria-label="Follow us on X" className="p-1.5 rounded-full hover:text-[#2EA84B] hover:scale-110 transition-all duration-200">
             <XIcon className="w-5 sm:w-6 h-5 sm:h-6" />
           </a>
         </div>

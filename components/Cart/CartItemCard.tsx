@@ -65,7 +65,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
             <button
               onClick={() => removeItem(item.id)}
               className="inline-flex items-center gap-1.5 px-3 py-1 border border-red-200/90 rounded-lg text-red-500 hover:bg-red-50 hover:border-red-300 transition-colors text-xs font-medium shrink-0 cursor-pointer"
-              aria-label={`${t("cart.remove", "Remove")} ${item.title}`}
+              aria-label={`Remove ${item.title} from cart`}
             >
               <svg
                 className="w-3.5 h-3.5 stroke-red-500"

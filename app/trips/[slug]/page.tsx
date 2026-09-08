@@ -24,8 +24,7 @@ import TripAddReview from "@/components/Trips/Detail/TripAddReview";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function TripDetailsPage() {
-  const { t, language } = useLanguage();
-  const apiLang = language;
+  const { t } = useLanguage();
   const params = useParams();
 
   const slug =
@@ -53,7 +52,7 @@ export default function TripDetailsPage() {
       try {
         setLoading(true);
 
-        const trips = await getTrips(undefined, 1, 100, { lang: apiLang });
+        const trips = await getTrips(undefined, 1, 100);
 
         const foundTrip = trips.find((t) => {
           const tripSlug = t.name
@@ -82,7 +81,7 @@ export default function TripDetailsPage() {
     if (slug) {
       fetchTrip();
     }
-  }, [slug, apiLang]);
+  }, [slug]);
 
   // Fetch reviews for the current trip
   const fetchReviews = useCallback(async () => {
@@ -125,7 +124,7 @@ export default function TripDetailsPage() {
       <main className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#006993] border-r-transparent"></div>
-          <p className="mt-4 text-gray-600">{t("trips.loadingDetails", "Loading trip details...")}</p>
+          <p className="mt-4 text-gray-600">Loading trip details...</p>
         </div>
       </main>
     );
@@ -136,14 +135,14 @@ export default function TripDetailsPage() {
       <main className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">
-            {error || t("trips.tripNotFound", "Trip not found")}
+            {error || "Trip not found"}
           </p>
 
           <a
             href="/trips"
             className="px-6 py-2 bg-[#006993] text-white rounded-lg hover:bg-[#004560] inline-block"
           >
-            {t("trips.backToTrips", "Back to Trips")}
+            Back to Trips
           </a>
         </div>
       </main>
@@ -336,7 +335,7 @@ export default function TripDetailsPage() {
             }`}
           availability={
             trip.availableDays?.length === 7
-              ? t("trips.daily", "Daily")
+              ? "Daily"
               : trip.availableDays?.join(", ") || ""
           }
         />
@@ -349,7 +348,7 @@ export default function TripDetailsPage() {
         {/* 5. Reviews & Testimonials */}
         {reviewsLoading ? (
           <div className="w-full py-10 text-center text-gray-500 font-roboto">
-            {t("trips.loadingReviews", "Loading reviews...")}
+            Loading reviews...
           </div>
         ) : reviewError ? (
           <div className="w-full py-10 text-center text-red-500 font-roboto">

@@ -2,78 +2,74 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { getTrips, type Trip as ApiTrip } from "@/api/trips";
+import { Trip as UiTrip } from "@/data/trips";
 import { transformApiTripsToUi } from "@/utils/tripTransform";
 import TripsHero from "@/components/Trips/TripsHero";
 import Breadcrumb from "@/components/Breadcrumb";
 import TripsFilterSidebar from "@/components/Trips/TripsFilterSidebar";
 import TripsResults from "@/components/Trips/TripsResults";
+
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function TripsPage() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [apiTrips, setApiTrips] = useState<ApiTrip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("All");
-  const [minPrice, setMinPrice] = useState("0");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [selectedType, setSelectedType] = useState("All Trips");
+  const [minPrice, setMinPrice] = useState("20");
+  const [maxPrice, setMaxPrice] = useState("100");
+  const [selectedType, setSelectedType] = useState<string>("All Trips");
   const [sortBy, setSortBy] = useState("Latest");
   const [filterMobileOpen, setFilterMobileOpen] = useState(false);
 
+  // Initialize selectedType from URL if present
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const typeParam = params.get("type");
-
       if (typeParam) {
         setSelectedType(typeParam);
       }
     }
   }, []);
 
+  // Fetch trips on mount
   useEffect(() => {
     async function fetchTrips() {
       try {
         setLoading(true);
-
-        const data = await getTrips(undefined, 1, 100, {
-          lang: language,
-        });
-
-        setApiTrips(data.filter((trip) => trip.isActive));
+        const data = await getTrips(undefined, 1, 100);
+        // Only show active trips on public page
+        setApiTrips(data.filter(trip => trip.isActive));
         setError(null);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch trips"
-        );
+        setError(err instanceof Error ? err.message : "Failed to fetch trips");
       } finally {
         setLoading(false);
       }
     }
-
     fetchTrips();
-  }, [language]);
+  }, []);
 
+  // Extract unique destinations from API trips for the filter
   const availableDestinations = useMemo(() => {
     const destinations = new Set<string>();
-
-    apiTrips.forEach((trip) => {
+    apiTrips.forEach(trip => {
       if (trip.destinationInfo?.name) {
         destinations.add(trip.destinationInfo.name);
       }
     });
-
     return Array.from(destinations).sort();
   }, [apiTrips]);
 
   const clearAllFilters = () => {
     setSearchQuery("");
     setSelectedDestination("All");
-    setMinPrice("0");
-    setMaxPrice("");
+    setMinPrice("20");
+    setMaxPrice("100");
     setSelectedType("All Trips");
     setSortBy("Latest");
   };
@@ -81,107 +77,73 @@ export default function TripsPage() {
   const filteredTrips = useMemo(() => {
     const filtered = apiTrips
       .filter((trip) => {
-        const query = searchQuery.trim().toLowerCase();
-
         if (
-          query &&
-          !trip.name?.toLowerCase().includes(query) &&
-          !trip.destinationInfo?.name?.toLowerCase().includes(query) &&
-          !trip.tripTypeName?.toLowerCase().includes(query)
+          searchQuery.trim() &&
+          !trip.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          !trip.destinationInfo?.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          !trip.tripTypeName?.toLowerCase().includes(searchQuery.toLowerCase())
         ) {
           return false;
         }
-
         if (
           selectedDestination !== "All" &&
-          trip.destinationInfo?.name?.toLowerCase() !==
-            selectedDestination.toLowerCase()
+          trip.destinationInfo?.name?.toLowerCase() !== selectedDestination.toLowerCase()
         ) {
           return false;
         }
-
         const min = parseFloat(minPrice) || 0;
-        const max = maxPrice.trim()
-          ? parseFloat(maxPrice)
-          : Infinity;
-
-        if (trip.adultPrice < min || trip.adultPrice > max) {
+        const max = parseFloat(maxPrice) || Infinity;
+        if (trip.adultPrice < min || trip.adultPrice > max) return false;
+        if (selectedType !== "All Trips" && trip.tripTypeName !== selectedType) {
           return false;
         }
-
-        if (
-          selectedType !== "All Trips" &&
-          trip.tripTypeName?.toLowerCase() !== selectedType.toLowerCase()
-        ) {
-          return false;
-        }
-
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === "PriceLowHigh") {
-          return a.adultPrice - b.adultPrice;
-        }
-
-        if (sortBy === "PriceHighLow") {
-          return b.adultPrice - a.adultPrice;
-        }
-
+        if (sortBy === "PriceLowHigh") return a.adultPrice - b.adultPrice;
+        if (sortBy === "PriceHighLow") return b.adultPrice - a.adultPrice;
+        if (sortBy === "Rating") return 0; // No rating data yet
         return 0;
       });
-
+    
+    // Transform to UI format
     return transformApiTripsToUi(filtered);
-  }, [
-    apiTrips,
-    searchQuery,
-    selectedDestination,
-    minPrice,
-    maxPrice,
-    selectedType,
-    sortBy,
-  ]);
+  }, [apiTrips, searchQuery, selectedDestination, minPrice, maxPrice, selectedType, sortBy]);
 
   return (
     <main className="min-h-screen bg-white flex flex-col">
+
+      {/* ── Hero ──────────────────────────────────────────────────── */}
       <TripsHero />
 
-      <Breadcrumb
-        items={[
-          {
-            label: t("nav.home", "Home"),
-            href: "/",
-          },
-          {
-            label: t("nav.trips", "Explore"),
-          },
-        ]}
-      />
+      {/* ── Breadcrumb ───────────────────────────────────────────── */}
+      <Breadcrumb items={[{ label: t("nav.home", "Home"), href: "/" }, { label: t("nav.trips", "Explore") }]} />
 
+      {/* ── Main Content Area ─────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex-1">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#006993] border-r-transparent" />
-              <p className="mt-4 text-gray-600">
-                {t("trips.loading", "Loading trips...")}
-              </p>
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#006993] border-r-transparent"></div>
+              <p className="mt-4 text-gray-600">Loading trips...</p>
             </div>
           </div>
         ) : error ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <p className="text-red-600 mb-4">{error}</p>
-
-              <button
+              <button 
                 onClick={() => window.location.reload()}
                 className="px-6 py-2 bg-[#006993] text-white rounded-lg hover:bg-[#004560]"
               >
-                {t("trips.tryAgain", "Try Again")}
+                Try Again
               </button>
             </div>
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-10">
+
+            {/* Left Sidebar Filter */}
             <TripsFilterSidebar
               selectedDestination={selectedDestination}
               onDestinationChange={setSelectedDestination}
@@ -196,6 +158,7 @@ export default function TripsPage() {
               availableDestinations={availableDestinations}
             />
 
+            {/* Right Results Area */}
             <TripsResults
               trips={filteredTrips}
               tripCount={filteredTrips.length}
@@ -204,14 +167,14 @@ export default function TripsPage() {
               sortBy={sortBy}
               onSortChange={setSortBy}
               filterMobileOpen={filterMobileOpen}
-              onToggleMobileFilter={() =>
-                setFilterMobileOpen((previous) => !previous)
-              }
+              onToggleMobileFilter={() => setFilterMobileOpen((p) => !p)}
               onClearFilters={clearAllFilters}
             />
+
           </div>
         )}
       </div>
+
     </main>
   );
 }

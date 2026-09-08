@@ -9,10 +9,7 @@
     "contact": "Contactez-nous",
     "cart": "Panier",
     "viewCart": "Voir le panier",
-    "changeLanguage": "Changer de langue",
-    "logoAlt": "Logo",
-    "toggleMenu": "Basculer le menu mobile",
-    "breadcrumb": "Fil d'Ariane"
+    "changeLanguage": "Changer de langue"
   },
   "hero": {
     "explore": "Explorer",
@@ -20,12 +17,7 @@
     "titleLine1": "Chaque voyage a une histoire.",
     "titleLine2": "Commencez la vôtre en Égypte.",
     "desc": "Des dunes dorées du Sahara aux récifs coralliens animés de la mer Rouge, découvrez des aventures inoubliables.",
-    "exploreTrips": "Explorer les voyages",
-    "previous": "Précédent",
-    "next": "Suivant",
-    "previousDestination": "Destination précédente",
-    "nextDestination": "Destination suivante",
-    "select": "Sélectionner"
+    "exploreTrips": "Explorer les circuits"
   },
   "categories": {
     "subtitle": "Choisissez votre voyage",
@@ -37,9 +29,7 @@
     "historicalTours": "Circuits historiques",
     "historicalToursDesc": "Explorez les temples, les pyramides et les trésors antiques.",
     "nileCruises": "Croisières sur le Nil",
-    "nileCruisesDesc": "Naviguez entre Louxor et Assouan dans le plus grand confort.",
-    "noTripTypes": "Aucune catégorie de circuit disponible pour le moment.",
-    "failedToLoad": "Échec du chargement des catégories de circuits."
+    "nileCruisesDesc": "Naviguez entre Louxor et Assouan dans le plus grand confort."
   },
   "bestselling": {
     "subtitle": "Expériences les mieux notées",
@@ -48,14 +38,7 @@
     "review": "Avis",
     "reviews": "Avis",
     "bookNow": "Réserver",
-    "from": "À partir de",
-    "allTours": "Toutes les excursions",
-    "snorkelling": "Snorkeling",
-    "diving": "Plongée",
-    "safari": "Safari",
-    "loading": "Chargement des excursions...",
-    "retry": "Réessayer",
-    "noTours": "Aucune excursion disponible pour cette catégorie."
+    "from": "À partir de"
   },
   "destinations": {
     "subtitle": "Explorez l'Égypte",
@@ -67,9 +50,7 @@
     "aswan": "Assouan",
     "luxor": "Louxor",
     "sharmElSheikh": "Charm el-Cheikh",
-    "dahab": "Dahab",
-    "redSea": "Mer Rouge",
-    "unavailable": "Les destinations sont temporairement indisponibles."
+    "dahab": "Dahab"
   },
   "howItWorks": {
     "subtitle": "Réservez votre aventure en quelques minutes",
@@ -88,22 +69,7 @@
     "title": "Notre galerie",
     "heroSubtitle": "Moments de voyage",
     "heroTitle": "Explorez l'Égypte à travers notre objectif",
-    "seeMore": "Voir plus",
-    "altScubaDiver": "Plongeur sous-marin",
-    "altSnorkeler": "Nageur avec masque et tuba",
-    "altFlyboarding": "Aventure en flyboard",
-    "altDiversCircle": "Groupe de plongeurs en cercle vu d'en haut",
-    "altSeaTurtle": "Tortue de mer nageant dans une eau limpide",
-    "altDolphins": "Dauphins nageant dans une eau bleu turquoise",
-    "altKarnakTemple": "Colonnes antiques du temple de Karnak à Louxor",
-    "altYacht": "Yacht de luxe naviguant sur la mer Rouge",
-    "camera": "Appareil photo vintage",
-    "image": "Image de la galerie",
-    "noImages": "Aucune image n'est encore disponible dans la galerie.",
-    "expand": "Agrandir",
-    "closePreview": "Fermer l'aperçu de l'image",
-    "showLess": "Voir moins",
-    "tryAgain": "Réessayer"
+    "seeMore": "Voir plus"
   },
   "blogs": {
     "subtitle": "Découvrez nos guides de voyage",
@@ -124,28 +90,7 @@
     "commentEmail": "Votre e-mail",
     "commentMessage": "Écrivez votre commentaire...",
     "submitComment": "Publier le commentaire",
-    "post1Title": "Meilleures excursions à Hurghada 2026",
-    "post2Title": "La Vallée des Rois",
-    "post3Title": "Comment choisir votre prochaine excursion ?",
-    "sampleDate": "10 juin",
-    "popularTags": "Tags populaires :",
-    "tagSea": "Mer",
-    "tagSafari": "Safari",
-    "tagHistory": "Histoire",
-    "tagDiving": "Plongée",
-    "loading": "Chargement...",
-    "failedToLoad": "Échec du chargement des articles",
-    "blogNotFound": "Article non trouvé",
-    "failedToLoadBlog": "Échec du chargement de l'article",
-    "noComments": "Aucun commentaire pour le moment.",
-    "addComment": "Ajouter un commentaire",
-    "commentLabel": "Commentaire",
-    "commentNamePlaceholder": "Entrez votre nom",
-    "commentEmailPlaceholder": "Entrez votre e-mail",
-    "introduction": "Introduction",
-    "sections": "Sections",
-    "backToBlogs": "Retour aux articles",
-    "blogDetails": "Détails de l'article"
+    "commentSuccess": "Merci ! Votre commentaire a été publié."
   },
   "whereBegins": {
     "title": "Là où votre aventure commence",
@@ -177,12 +122,10 @@
   "about": {
     "heroSubtitle": "Notre histoire",
     "heroTitle": "Découvrez l'Égypte avec ceux qui la connaissent le mieux",
-    "heroImageAlt": "Hublot d'avion avec vue sur les nuages",
     "introTitle": "Votre voyage commence avec nous",
     "introText": "Nous créons des expériences de voyage inoubliables qui vous rapprochent du cœur de l'Égypte. Des aventures sur la mer Rouge et des safaris dans le désert aux monuments historiques légendaires et croisières sur le Nil, chaque itinéraire est conçu avec soin.",
     "companyTitle": "À propos de notre entreprise",
     "companyText": "Nous croyons que voyager est bien plus que visiter des lieux — c'est une histoire de moments et de souvenirs partagés. Notre équipe est composée d'experts locaux passionnés qui connaissent chaque recoin secret.",
-    "collageAlt": "Collage de destinations égyptiennes et d'un voyageur",
     "missionTitle": "Notre Mission",
     "missionText": "Offrir des expériences de voyage authentiques, sûres et inspirantes permettant à chaque visiteur de découvrir l'Égypte en toute sérénité.",
     "visionTitle": "Notre Vision",
@@ -190,13 +133,7 @@
     "whatWeOffer": "Ce que nous proposons",
     "offerSea": "Excursions en mer - Snorkeling, îles magnifiques, eaux cristallines et détente.",
     "offerSafari": "Safari désert - Aventure, culture bédouine et couchers de soleil inoubliables.",
-    "offerHistory": "Circuits historiques - Découvrez les merveilles antiques avec des guides égyptologues.",
-    "offerSeaTitle": "Excursions en mer",
-    "offerSeaDesc": "Snorkeling, îles magnifiques, eaux cristallines et détente.",
-    "offerSafariTitle": "Safari désert",
-    "offerSafariDesc": "Aventure, culture bédouine et couchers de soleil inoubliables.",
-    "offerHistoryTitle": "Circuits historiques",
-    "offerHistoryDesc": "Découvrez les merveilles antiques avec des guides égyptologues."
+    "offerHistory": "Circuits historiques - Découvrez les merveilles antiques avec des guides égyptologues."
   },
   "contact": {
     "heroSubtitle": "Contactez-nous",
@@ -215,13 +152,7 @@
     "locationLabel": "Emplacement",
     "locationValue": "Hurghada, Mer Rouge, Égypte",
     "callUs": "Appelez-nous",
-    "emailLabel": "E-mail",
-    "phoneAlt": "Téléphone vintage vert",
-    "followUs": "Suivez-nous",
-    "followFacebook": "Suivez-nous sur Facebook",
-    "followInstagram": "Suivez-nous sur Instagram",
-    "followTikTok": "Suivez-nous sur TikTok",
-    "followX": "Suivez-nous sur X"
+    "emailLabel": "E-mail"
   },
   "trips": {
     "heroSubtitle": "Explorez l'Égypte",
@@ -272,46 +203,7 @@
     "child": "Enfants 3-11 Ans",
     "person": "/ Personne",
     "checkAvailability": "Vérifier la Disponibilité",
-    "date": "Date",
-    "from": "À partir de",
-    "includedExcluded": "Inclus / Non inclus",
-    "bookNow": "Réserver",
-    "location": "Emplacement",
-    "daily": "Tous les jours",
-    "loading": "Chargement des voyages...",
-    "loadingDetails": "Chargement des détails du voyage...",
-    "loadingReviews": "Chargement des avis...",
-    "previousReview": "Avis précédent",
-    "nextReview": "Avis suivant",
-    "tryAgain": "Réessayer",
-    "backToTrips": "Retour aux voyages",
-    "tripNotFound": "Voyage introuvable",
-    "noReviews": "Aucun avis pour le moment. Soyez le premier à évaluer ce voyage !",
-    "submitting": "Envoi en cours...",
-    "sortPriceAsc": "Prix : Croissant",
-    "sortPriceDesc": "Prix : Décroissant",
-    "searchPlaceholder": "Rechercher des voyages...",
-    "noTripsFound": "Aucun voyage ne correspond à vos critères",
-    "allDestinations": "Toutes les destinations",
-    "allTrips": "Tous les voyages",
-    "destinationLabel": "Destination",
-    "priceRange": "Gamme de prix",
-    "to": "À",
-    "tripsTypes": "Types de voyages",
-    "filter": "Filtres",
-    "review": {
-      "firstName": "Prénom",
-      "lastName": "Nom",
-      "email": "E-mail",
-      "phone": "Téléphone",
-      "firstNamePlaceholder": "Votre prénom",
-      "lastNamePlaceholder": "Votre nom",
-      "emailPlaceholder": "Adresse e-mail",
-      "phonePlaceholder": "Numéro de téléphone",
-      "comment": "Commentaire",
-      "commentPlaceholder": "Écrivez votre commentaire...",
-      "submitError": "Échec de la soumission de l'avis"
-    }
+    "date": "Date"
   },
   "cart": {
     "title": "Panier de Réservation",
@@ -363,11 +255,7 @@
     "tourDetails": "Détails de la Visite",
     "noOfTravellers": "Nombre de Voyageurs",
     "travellers": "Voyageur(s)",
-    "subtotal": "Sous-total",
-    "bookingFailed": "Échec de la réservation",
-    "bookingFailedDesc": "Échec de la réservation. Veuillez réessayer.",
-    "applying": "Application en cours...",
-    "booking": "Réservation en cours..."
+    "subtotal": "Sous-total"
   },
   "confirmation": {
     "title": "Voyage Réservé avec Succès",
@@ -380,27 +268,7 @@
     "desc": "Nous avons bien reçu votre réservation et envoyé un e-mail de confirmation avec tous les détails.",
     "bookingId": "N° de Réservation",
     "homeBtn": "Retour à l'Accueil",
-    "viewTrips": "Explorer d'Autres Voyages",
-    "close": "Fermer la confirmation"
-  },
-  "nationalities": {
-    "select": "Sélectionner la nationalité",
-    "egyptian": "Égyptienne",
-    "american": "Américaine",
-    "british": "Britannique",
-    "german": "Allemande",
-    "french": "Française",
-    "italian": "Italienne",
-    "spanish": "Espagnole",
-    "australian": "Australienne",
-    "canadian": "Canadienne",
-    "saudi": "Saoudienne",
-    "emirati": "Émiratie",
-    "russian": "Russe",
-    "chinese": "Chinoise",
-    "japanese": "Japonaise",
-    "indian": "Indienne",
-    "other": "Autre"
+    "viewTrips": "Explorer d'Autres Voyages"
   },
   "booking": {
     "selectDate": "Veuillez sélectionner une date de visite",
@@ -414,18 +282,7 @@
     "addExtras": "Ajoutez des services supplémentaires à votre réservation",
     "healthInsurance": "Assurance Santé",
     "medicalInsurance": "Assurance Médicale",
-    "proceedToCheckout": "Procéder au Paiement",
-    "selectDateAlert": "Veuillez sélectionner une date d'excursion.",
-    "invalidTrip": "Voyage invalide.",
-    "closeModal": "Fermer la fenêtre",
-    "availableOn": "Disponible le :",
-    "noAvailableDays": "Aucun jour disponible n'est configuré pour ce voyage.",
-    "increaseAdults": "Augmenter le nombre d'adultes",
-    "decreaseAdults": "Diminuer le nombre d'adultes",
-    "increaseChildren": "Augmenter le nombre d'enfants",
-    "decreaseChildren": "Diminuer le nombre d'enfants",
-    "onlyAvailableOn": "Ce voyage est uniquement disponible le :",
-    "noDaysConfigured": "Ce voyage n'a aucun jour disponible configuré. Veuillez contacter le support."
+    "proceedToCheckout": "Procéder au Paiement"
   },
   "modal": {
     "selectDate": "Veuillez sélectionner une date de visite",

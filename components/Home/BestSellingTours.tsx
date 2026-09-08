@@ -11,7 +11,8 @@ const filterTabs = [
   "All Tours",
   "Snorkelling",
   "Diving",
-  "Safari"
+  "Safari",
+  "Over day",
 ];
 
 const containerVariants = {
@@ -41,8 +42,7 @@ export default function BestSellingTours() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { t, language } = useLanguage();
-  const apiLang = language;
+  const { t } = useLanguage();
 
   // Fetch trips from API
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function BestSellingTours() {
       try {
         setLoading(true);
         // Fetch active trips only (includeInactive: false by default)
-        const data = await getTrips(undefined, 1, 20, { lang: apiLang });
+        const data = await getTrips(undefined, 1, 20);
         // Filter to only active trips
         const activeTrips = data.filter(trip => trip.isActive);
         setTrips(activeTrips);
@@ -63,7 +63,7 @@ export default function BestSellingTours() {
       }
     }
     fetchTrips();
-  }, [apiLang]);
+  }, []);
 
   // Filter trips based on active tab
   const filteredTours = activeTab === "All Tours"
@@ -79,6 +79,9 @@ export default function BestSellingTours() {
         }
         if (activeTab === "Safari") {
           return tripTypeLower.includes("safari") || tripTypeLower.includes("desert");
+        }
+        if (activeTab === "Over day") {
+          return tripTypeLower.includes("day") || tripTypeLower.includes("historical");
         }
         return true;
       });
@@ -127,12 +130,6 @@ export default function BestSellingTours() {
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-2.5">
             {filterTabs.map((tab) => {
               const isActive = activeTab === tab;
-              const tabLabels: Record<string, string> = {
-                "All Tours": t("bestselling.allTours", "All Tours"),
-                "Snorkelling": t("bestselling.snorkelling", "Snorkelling"),
-                "Diving": t("bestselling.diving", "Diving"),
-                "Safari": t("bestselling.safari", "Safari"),
-              };
               return (
                 <button
                   key={tab}
@@ -144,7 +141,7 @@ export default function BestSellingTours() {
                       : "bg-white text-[#4A5568] hover:bg-gray-100 hover:scale-105 shadow-sm"
                   }`}
                 >
-                  {tabLabels[tab] || tab}
+                  {tab}
                 </button>
               );
             })}
@@ -164,7 +161,7 @@ export default function BestSellingTours() {
           <div className="w-full flex items-center justify-center py-12">
             <div className="text-center">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-white border-r-transparent"></div>
-              <p className="mt-4 text-white text-sm">{t("bestselling.loading", "Loading tours...")}</p>
+              <p className="mt-4 text-white text-sm">Loading tours...</p>
             </div>
           </div>
         ) : error ? (
@@ -175,13 +172,13 @@ export default function BestSellingTours() {
                 onClick={() => window.location.reload()}
                 className="px-6 py-2 bg-white text-[#003A5A] rounded-lg hover:bg-gray-100"
               >
-                {t("bestselling.retry", "Retry")}
+                Retry
               </button>
             </div>
           </div>
         ) : filteredTours.length === 0 ? (
           <div className="w-full flex items-center justify-center py-12">
-            <p className="text-white text-sm">{t("bestselling.noTours", "No tours available for this category.")}</p>
+            <p className="text-white text-sm">No tours available for this category.</p>
           </div>
         ) : (
           <motion.div

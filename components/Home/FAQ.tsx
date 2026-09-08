@@ -39,14 +39,14 @@ const cardVariants: Variants = {
 
 export default function FAQ() {
   const [openIds, setOpenIds] = useState<string[]>(["1"]);
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   const [faqs, setFAQs] = useState<FAQItem[]>([]);
 
   useEffect(() => {
     async function fetchFAQs() {
       try {
-        const data = await getFAQs(undefined, 1, 100, language);
+        const data = await getFAQs();
 
         // Keep the API response compatible with the component.
         setFAQs(Array.isArray(data) ? data : []);
@@ -57,7 +57,7 @@ export default function FAQ() {
     }
 
     fetchFAQs();
-  }, [language]);
+  }, []);
 
   const toggleItem = (id: string) => {
     setOpenIds((prev) =>

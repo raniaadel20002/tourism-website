@@ -42,7 +42,7 @@ export default function AboutCompany() {
         <div className="relative w-72 sm:w-96 md:w-[420px] lg:w-[440px] h-auto">
           <Image
             src="/images/about/Group12.png"
-            alt={t("about.collageAlt", "Collage of Egyptian destinations and traveler")}
+            alt="Collage of Egyptian destinations and traveler"
             width={500}
             height={500}
             className="w-full h-auto object-contain"

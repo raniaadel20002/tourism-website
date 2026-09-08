@@ -84,8 +84,7 @@ async function parse<T>(res: Response, action: string): Promise<T> {
 
 export async function getBlogs(
   pageNumber = 1,
-  pageSize = 100,
-  lang?: string
+  pageSize = 100
 ): Promise<Blog[]> {
   const q = new URLSearchParams({
     PageNumber: String(pageNumber),
@@ -93,10 +92,7 @@ export async function getBlogs(
   });
   return parse<Blog[]>(
     await fetch(`${API_BASE_URL}/api/Blogs?${q}`, {
-      headers: {
-        accept: "text/plain",
-        ...(lang ? { "Accept-Language": lang } : {}),
-      },
+      headers: { accept: "text/plain" },
       cache: "no-store",
     }),
     "Fetch blogs"
@@ -105,13 +101,10 @@ export async function getBlogs(
 
 // ─── GET /api/Blogs/{id} ─────────────────────────────────────────────────────
 
-export async function getBlogById(id: number, lang?: string): Promise<Blog> {
+export async function getBlogById(id: number): Promise<Blog> {
   return parse<Blog>(
     await fetch(`${API_BASE_URL}/api/Blogs/${id}`, {
-      headers: {
-        accept: "text/plain",
-        ...(lang ? { "Accept-Language": lang } : {}),
-      },
+      headers: { accept: "text/plain" },
       cache: "no-store",
     }),
     "Fetch blog"

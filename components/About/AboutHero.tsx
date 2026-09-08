@@ -50,7 +50,7 @@ export default function AboutHero() {
           <div className="relative w-48 sm:w-60 md:w-72 lg:w-[290px] h-auto drop-shadow-2xl">
             <Image
               src="/images/about/image 11.png"
-              alt={t("about.heroImageAlt", "Airplane window overlooking clouds and aircraft")}
+              alt="Airplane window overlooking clouds and aircraft"
               width={320}
               height={400}
               priority

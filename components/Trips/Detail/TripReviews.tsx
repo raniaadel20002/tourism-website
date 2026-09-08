@@ -87,7 +87,7 @@ export default function TripReviews({
 
             <span className="mt-2 bg-[#004560] text-white font-roboto text-xs px-4 py-1 rounded-full font-medium">
               {reviewsSummaryCount}{" "}
-              {t("trips.reviews", "reviews")}
+              {t("tours.reviews", "reviews")}
             </span>
           </div>
 
@@ -123,7 +123,7 @@ export default function TripReviews({
             type="button"
             onClick={handlePrev}
             disabled={!hasTestimonials}
-            aria-label={t("trips.previousReview", "Previous review")}
+            aria-label="Previous review"
             className="absolute -left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-[#004560] hover:bg-[#004560] hover:text-white hover:border-[#004560] transition-all duration-200"
           >
             <svg
@@ -194,7 +194,7 @@ export default function TripReviews({
           type="button"
           onClick={handleNext}
           disabled={!hasTestimonials}
-          aria-label={t("trips.nextReview", "Next review")}
+          aria-label="Next review"
           className="absolute -right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-[#004560] hover:bg-[#004560] hover:text-white hover:border-[#004560] transition-all duration-200"
         >
           <svg

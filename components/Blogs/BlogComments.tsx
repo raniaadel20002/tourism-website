@@ -42,7 +42,7 @@ export default function BlogComments() {
         </h3>
 
         {comments.length === 0 && (
-          <p className="text-sm text-gray-400 font-roboto italic">{t("blogs.noComments", "No comments yet.")}</p>
+          <p className="text-sm text-gray-400 font-roboto italic">No comments yet.</p>
         )}
 
         <div className="space-y-4">
@@ -91,7 +91,7 @@ export default function BlogComments() {
               id="comment-name"
               type="text"
               required
-              placeholder={t("blogs.commentNamePlaceholder", "Enter Name")}
+              placeholder="Enter Name"
               value={formName}
               onChange={(e) => setFormName(e.target.value)}
               className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg font-roboto text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
@@ -105,7 +105,7 @@ export default function BlogComments() {
             <input
               id="comment-email"
               type="email"
-              placeholder={t("blogs.commentEmailPlaceholder", "Enter Email")}
+              placeholder="Enter Email"
               value={formEmail}
               onChange={(e) => setFormEmail(e.target.value)}
               className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg font-roboto text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
@@ -120,7 +120,7 @@ export default function BlogComments() {
               id="comment-text"
               rows={4}
               required
-              placeholder={t("blogs.commentMessage", "Write your comment...")}
+              placeholder="Text..."
               value={formComment}
               onChange={(e) => setFormComment(e.target.value)}
               className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg font-roboto text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors resize-none"

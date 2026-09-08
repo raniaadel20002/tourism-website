@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig";
+﻿import { API_BASE_URL } from "./apiConfig";
 import {
   TripType,
   TripTypeNameLocalized,
@@ -9,19 +9,18 @@ import {
 // Re-export types so callers can import from one place if needed
 export type { TripType, TripTypeNameLocalized, GetTripTypesParams };
 
-// ——————————————————————————————————————————————————————————————————————————————
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-function authHeaders(token?: string, lang?: string): HeadersInit {
+function authHeaders(token?: string): HeadersInit {
   return {
     accept: "text/plain",
-    ...(lang ? { "Accept-Language": lang } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
 
-// ——————————————————————————————————————————————————————————————————————————————
+// â”€â”€â”€ API Functions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-/** GET /api/TripTypes — list all trip types (paginated) */
+/** GET /api/TripTypes â€” list all trip types (paginated) */
 export async function getTripTypes(
   token?: string,
   params: GetTripTypesParams = {}
@@ -35,7 +34,7 @@ export async function getTripTypes(
   const url = `${API_BASE_URL}/api/TripTypes${query.size ? `?${query}` : ""}`;
 
   const res = await fetch(url, {
-    headers: authHeaders(token, params.lang),
+    headers: authHeaders(token),
     cache: "no-store",
   });
 

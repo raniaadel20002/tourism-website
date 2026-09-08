@@ -32,7 +32,7 @@ export default function TripInfoCard({ location, duration, availability }: TripI
   const { t } = useLanguage();
 
   const items = [
-    { key: "Location", label: t("trips.location", "Location"), value: location },
+    { key: "Location", label: t("contact.locationLabel", "Location"), value: location },
     { key: "Duration", label: t("trips.duration", "Duration"), value: duration },
     { key: "Availability", label: t("trips.availability", "Availability"), value: availability },
   ];

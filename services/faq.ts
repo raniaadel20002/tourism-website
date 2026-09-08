@@ -3,9 +3,8 @@ import type { FAQ, FAQApiResponse, FAQMutation } from "@/modules/faq.model";
 
 export type { FAQ, FAQMutation };
 
-const headers = (token?: string, lang?: string): HeadersInit => ({
+const headers = (token?: string): HeadersInit => ({
   accept: "text/plain",
-  ...(lang ? { "Accept-Language": lang } : {}),
   ...(token ? { Authorization: `Bearer ${token}` } : {}),
 });
 
@@ -16,10 +15,10 @@ async function parse<T>(res: Response, action: string): Promise<T> {
   return json.data;
 }
 
-export async function getFAQs(token?: string, pageNumber = 1, pageSize = 100, lang?: string) {
+export async function getFAQs(token?: string, pageNumber = 1, pageSize = 100) {
   return parse<FAQ[]>(
     await fetch(`${API_BASE_URL}/api/Questions?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
-      headers: headers(token, lang),
+      headers: headers(token),
       cache: "no-store",
     }),
     "Failed to fetch FAQs"

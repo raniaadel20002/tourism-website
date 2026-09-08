@@ -60,8 +60,8 @@ export default function BlogCard({ post }: BlogCardProps) {
           </h2>
 
           {/* Centered Read More Button */}
-          <div className="flex justify-center pt-1 w-full">
-            <span className="font-roboto font-medium text-sm text-[#004560] border border-[#004560] px-8 py-2 rounded-full group-hover:bg-[#004560] group-hover:text-white transition-colors duration-200 inline-block w-full text-center">
+          <div className="flex justify-center pt-1">
+            <span className="font-roboto font-medium text-sm text-[#004560] border border-[#004560] px-8 py-2 rounded-full group-hover:bg-[#004560] group-hover:text-white transition-colors duration-200 inline-block">
               {t("blogs.readMore", "Read More")}
             </span>
           </div>

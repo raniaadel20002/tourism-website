@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { motion, Variants } from "framer-motion";
 import { GalleryImage } from "@/modules/gallery.model";
-import { useLanguage } from "@/context/LanguageContext";
 
 interface GalleryCardProps {
   image: GalleryImage;
@@ -20,8 +19,6 @@ const cardVariants: Variants = {
 };
 
 export default function GalleryCard({ image, onExpand }: GalleryCardProps) {
-  const { t } = useLanguage();
-
   return (
     <motion.div
       variants={cardVariants}
@@ -43,7 +40,7 @@ export default function GalleryCard({ image, onExpand }: GalleryCardProps) {
       <button
         type="button"
         onClick={() => onExpand(image)}
-        aria-label={`${t("gallery.expand")} ${image.alt}`}
+        aria-label={`Expand ${image.alt}`}
         className="absolute top-4 right-4 bg-white/90 hover:bg-white text-[#004560] p-2 sm:p-2.5 rounded-xl shadow-md transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer z-10 backdrop-blur-xs"
       >
         {/* 4 outward pointing arrows (fullscreen icon) */}

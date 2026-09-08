@@ -9,10 +9,7 @@
     "contact": "Contact Us",
     "cart": "Booking Cart",
     "viewCart": "View booking cart",
-    "changeLanguage": "Change language",
-    "logoAlt": "Logo",
-    "toggleMenu": "Toggle mobile menu",
-    "breadcrumb": "Breadcrumb"
+    "changeLanguage": "Change language"
   },
   "hero": {
     "explore": "Explore",
@@ -20,12 +17,7 @@
     "titleLine1": "Every Journey Has a Story.",
     "titleLine2": "Start Yours in Egypt.",
     "desc": "From the golden dunes of the Sahara to the vibrant coral reefs of the Red Sea, discover unforgettable adventures crafted for every traveler.",
-    "exploreTrips": "Explore Trips",
-    "previous": "Previous",
-    "next": "Next",
-    "previousDestination": "Previous destination",
-    "nextDestination": "Next destination",
-    "select": "Select"
+    "exploreTrips": "Explore Trips"
   },
   "categories": {
     "subtitle": "Choose Your Journey",
@@ -37,9 +29,7 @@
     "historicalTours": "Historical Tours",
     "historicalToursDesc": "Explore temples, pyramids, and ancient treasures.",
     "nileCruises": "Nile Cruises",
-    "nileCruisesDesc": "Sail between Luxor and Aswan in comfort.",
-    "noTripTypes": "No trip types are available yet.",
-    "failedToLoad": "Failed to load trip types."
+    "nileCruisesDesc": "Sail between Luxor and Aswan in comfort."
   },
   "bestselling": {
     "subtitle": "Top Rated Experiences",
@@ -48,14 +38,7 @@
     "review": "Review",
     "reviews": "Reviews",
     "bookNow": "Book Now",
-    "from": "From",
-    "allTours": "All Tours",
-    "snorkelling": "Snorkelling",
-    "diving": "Diving",
-    "safari": "Safari",
-    "loading": "Loading tours...",
-    "retry": "Retry",
-    "noTours": "No tours available for this category."
+    "from": "From"
   },
   "destinations": {
     "subtitle": "Explore Egypt",
@@ -67,9 +50,7 @@
     "aswan": "Aswan",
     "luxor": "Luxor",
     "sharmElSheikh": "Sharm El Sheikh",
-    "dahab": "Dahab",
-    "redSea": "Red Sea",
-    "unavailable": "Destinations are temporarily unavailable."
+    "dahab": "Dahab"
   },
   "howItWorks": {
     "subtitle": "Book Your Adventure in Minutes",
@@ -88,22 +69,7 @@
     "title": "Our Gallery",
     "heroSubtitle": "Travel Moments",
     "heroTitle": "Explore Egypt Through Our Lens",
-    "seeMore": "See More",
-    "altScubaDiver": "Scuba diver underwater",
-    "altSnorkeler": "Snorkeler underwater",
-    "altFlyboarding": "Flyboarding adventure",
-    "altDiversCircle": "Group of scuba divers in a circle overhead",
-    "altSeaTurtle": "Sea turtle swimming in clear waters",
-    "altDolphins": "Dolphins swimming in crystal blue water",
-    "altKarnakTemple": "Ancient Karnak temple columns in Luxor",
-    "altYacht": "Luxury yacht sailing on the Red Sea",
-    "camera": "Vintage Camera",
-    "image": "Gallery image",
-    "noImages": "No gallery images are available yet.",
-    "expand": "Expand",
-    "closePreview": "Close image preview",
-    "showLess": "Show Less",
-    "tryAgain": "Try Again"
+    "seeMore": "See More"
   },
   "blogs": {
     "subtitle": "Discover travel guides",
@@ -124,28 +90,7 @@
     "commentEmail": "Your Email",
     "commentMessage": "Write your comment...",
     "submitComment": "Post Comment",
-    "post1Title": "Top Tours in Hurghada 2026",
-    "post2Title": "The Valley of the Kings",
-    "post3Title": "How to Choose Your Next Tour?",
-    "sampleDate": "10 Jun",
-    "popularTags": "Popular tags:",
-    "tagSea": "Sea",
-    "tagSafari": "Safari",
-    "tagHistory": "History",
-    "tagDiving": "Diving",
-    "loading": "Loading...",
-    "failedToLoad": "Failed to load blogs",
-    "blogNotFound": "Blog not found",
-    "failedToLoadBlog": "Failed to load blog",
-    "noComments": "No comments yet.",
-    "addComment": "Add Comment",
-    "commentLabel": "Comment",
-    "commentNamePlaceholder": "Enter Name",
-    "commentEmailPlaceholder": "Enter Email",
-    "introduction": "Introduction",
-    "sections": "Sections",
-    "backToBlogs": "Back to Blogs",
-    "blogDetails": "Blog Details"
+    "commentSuccess": "Thank you! Your comment has been posted."
   },
   "whereBegins": {
     "title": "Where Your Adventure Begins",
@@ -177,12 +122,10 @@
   "about": {
     "heroSubtitle": "Our Story",
     "heroTitle": "Discover Egypt with People Who Know It Best",
-    "heroImageAlt": "Airplane window overlooking clouds and aircraft",
     "introTitle": "Your Journey Begins With Us",
     "introText": "We create unforgettable travel experiences that bring you closer to the heart of Egypt. From crystal-clear Red Sea adventures and thrilling desert safaris to iconic historical landmarks and scenic Nile cruises, every journey is carefully designed to inspire, excite, and leave you with memories that last a lifetime.",
     "companyTitle": "About Our Company",
     "companyText": "We believe that travel is more than just visiting places — it's about stories, moments, and memories that last a lifetime. Our team is made up of local experts and travel enthusiasts who know every hidden gem, every perfect timing, and every detail that turns a trip into an experience.",
-    "collageAlt": "Collage of Egyptian destinations and traveler",
     "missionTitle": "Our Mission",
     "missionText": "To provide authentic, safe, and inspiring travel experiences that allow every visitor to explore Egypt with confidence, comfort, and unforgettable memories.",
     "visionTitle": "Our Vision",
@@ -190,13 +133,7 @@
     "whatWeOffer": "What We Offer?",
     "offerSea": "Sea Trips - Snorkeling, islands, crystal-clear waters, and relaxation.",
     "offerSafari": "Desert Safari - Adventure, culture, and unforgettable desert views.",
-    "offerHistory": "Historical Tours - Explore Egypt's ancient wonders with expert guides.",
-    "offerSeaTitle": "Sea Trips",
-    "offerSeaDesc": "Snorkeling, islands, crystal-clear waters, and relaxation.",
-    "offerSafariTitle": "Desert Safari",
-    "offerSafariDesc": "Adventure, culture, and unforgettable desert views.",
-    "offerHistoryTitle": "Historical Tours",
-    "offerHistoryDesc": "Explore Egypt's ancient wonders with expert guides."
+    "offerHistory": "Historical Tours - Explore Egypt's ancient wonders with expert guides."
   },
   "contact": {
     "heroSubtitle": "Get in Touch",
@@ -215,13 +152,7 @@
     "locationLabel": "Location",
     "locationValue": "Hurghada, Red Sea, Egypt",
     "callUs": "Call Us",
-    "emailLabel": "Email",
-    "phoneAlt": "Green vintage telephone",
-    "followUs": "Follow Us",
-    "followFacebook": "Follow us on Facebook",
-    "followInstagram": "Follow us on Instagram",
-    "followTikTok": "Follow us on TikTok",
-    "followX": "Follow us on X"
+    "emailLabel": "Email"
   },
   "trips": {
     "heroSubtitle": "Explore Egypt",
@@ -272,46 +203,7 @@
     "child": "Children 3-11 Years",
     "person": "/ Person",
     "checkAvailability": "Check Availability",
-    "date": "Date",
-    "from": "From",
-    "includedExcluded": "Included / Excluded",
-    "bookNow": "Book Now",
-    "location": "Location",
-    "daily": "Daily",
-    "loading": "Loading trips...",
-    "loadingDetails": "Loading trip details...",
-    "loadingReviews": "Loading reviews...",
-    "previousReview": "Previous review",
-    "nextReview": "Next review",
-    "tryAgain": "Try Again",
-    "backToTrips": "Back to Trips",
-    "tripNotFound": "Trip not found",
-    "noReviews": "No reviews yet. Be the first to review this trip!",
-    "submitting": "Submitting...",
-    "sortPriceAsc": "Price: Low to High",
-    "sortPriceDesc": "Price: High to Low",
-    "searchPlaceholder": "Search trips...",
-    "noTripsFound": "No trips matched your criteria",
-    "allDestinations": "All Destinations",
-    "allTrips": "All Trips",
-    "destinationLabel": "Destination",
-    "priceRange": "Price Range",
-    "to": "To",
-    "tripsTypes": "Trip Types",
-    "filter": "Filter",
-    "review": {
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "email": "Email",
-      "phone": "Phone",
-      "firstNamePlaceholder": "First name",
-      "lastNamePlaceholder": "Last name",
-      "emailPlaceholder": "Email address",
-      "phonePlaceholder": "Phone number",
-      "comment": "Comment",
-      "commentPlaceholder": "Write your comment...",
-      "submitError": "Failed to submit review"
-    }
+    "date": "Date"
   },
   "cart": {
     "title": "Booking Cart",
@@ -363,11 +255,7 @@
     "tourDetails": "Tour Details",
     "noOfTravellers": "No. of Travellers",
     "travellers": "Traveller(s)",
-    "subtotal": "Subtotal",
-    "bookingFailed": "Booking failed",
-    "bookingFailedDesc": "Booking failed. Please try again.",
-    "applying": "Applying...",
-    "booking": "Booking..."
+    "subtotal": "Subtotal"
   },
   "confirmation": {
     "title": "Trip Successfully Booked",
@@ -380,27 +268,7 @@
     "desc": "We have received your reservation and sent a confirmation email with all details.",
     "bookingId": "Booking ID",
     "homeBtn": "Return to Home",
-    "viewTrips": "Explore More Trips",
-    "close": "Close confirmation"
-  },
-  "nationalities": {
-    "select": "Select Nationality",
-    "egyptian": "Egyptian",
-    "american": "American",
-    "british": "British",
-    "german": "German",
-    "french": "French",
-    "italian": "Italian",
-    "spanish": "Spanish",
-    "australian": "Australian",
-    "canadian": "Canadian",
-    "saudi": "Saudi",
-    "emirati": "Emirati",
-    "russian": "Russian",
-    "chinese": "Chinese",
-    "japanese": "Japanese",
-    "indian": "Indian",
-    "other": "Other"
+    "viewTrips": "Explore More Trips"
   },
   "booking": {
     "selectDate": "Please select a tour date",
@@ -414,18 +282,7 @@
     "addExtras": "Add extra services on your reservation",
     "healthInsurance": "Health Insurance",
     "medicalInsurance": "Medical Insurance",
-    "proceedToCheckout": "Proceed to check out",
-    "selectDateAlert": "Please select a tour date.",
-    "invalidTrip": "Invalid trip.",
-    "closeModal": "Close modal",
-    "availableOn": "Available on:",
-    "noAvailableDays": "No available days are configured for this trip.",
-    "increaseAdults": "Increase adults",
-    "decreaseAdults": "Decrease adults",
-    "increaseChildren": "Increase children",
-    "decreaseChildren": "Decrease children",
-    "onlyAvailableOn": "This trip is only available on:",
-    "noDaysConfigured": "This trip has no available days configured. Please contact support."
+    "proceedToCheckout": "Proceed to check out"
   },
   "modal": {
     "selectDate": "Please select a tour date",

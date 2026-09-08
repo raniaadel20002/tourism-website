@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -32,21 +32,9 @@ export default function TripsFilterSidebar({
   isOpen,
   availableDestinations = [],
 }: TripsFilterSidebarProps) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [tripTypes, setTripTypes] = useState<TripType[]>([]);
-  useEffect(() => {
-    let cancelled = false;
-    void getTripTypes(undefined, { pageNumber: 1, pageSize: 100, lang: language })
-      .then((items) => {
-        if (!cancelled) setTripTypes(items);
-      })
-      .catch(() => {
-        if (!cancelled) setTripTypes([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [language]);
+  useEffect(() => { let cancelled = false; void getTripTypes(undefined, { pageNumber: 1, pageSize: 100 }).then((items) => { if (!cancelled) setTripTypes(items); }).catch(() => { if (!cancelled) setTripTypes([]); }); return () => { cancelled = true; }; }, []);
   const tripTypeOptions = [{ id: 0, name: "All Trips" }, ...tripTypes];
 
   return (
@@ -160,7 +148,7 @@ export default function TripsFilterSidebar({
                     )}
                   </div>
                   <span className="font-roboto text-xs sm:text-sm text-[#030811] group-hover:text-[#004560] transition-colors">
-                    {item.id === 0 ? t("trips.allTrips", "All Trips") : item.name}
+                    {item.name}
                   </span>
                 </div>
                 <span className="font-roboto text-xs text-gray-400">{item.id === 0 ? "" : "—"}</span>

@@ -41,7 +41,7 @@ export default function ContactHero() {
             {/* Green Telephone Handset with Cord */}
             <Image
               src="/images/contact/a30531347a56ee917b0d45426ea275a5f70609b7.png"
-              alt={t("contact.phoneAlt", "Green vintage telephone")}
+              alt="Green vintage telephone"
               width={208}
               height={316}
               priority
