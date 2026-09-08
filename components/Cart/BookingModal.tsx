@@ -15,6 +15,7 @@ export default function BookingModal() {
     closeBookingModal,
     activeBooking,
     updateActiveBooking,
+    addItem,
   } = useCart();
 
   const { t } = useLanguage();
@@ -38,41 +39,61 @@ export default function BookingModal() {
    * If availableDays is empty, no date is allowed (explicit — do not silently allow all).
    */
   const isDateAllowed = (dateStr: string): boolean => {
-    if (!activeBooking.availableDays || activeBooking.availableDays.length === 0) {
+    if (
+      !activeBooking.availableDays ||
+      activeBooking.availableDays.length === 0
+    ) {
       return false;
     }
+
     const d = new Date(dateStr + "T00:00:00");
     const jsDay = d.getDay();
     const dayName = JS_DAY_NAMES[jsDay];
+
     return activeBooking.availableDays.includes(dayName);
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDateChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const value = e.target.value;
+
     if (!value) {
       updateActiveBooking({ tourDate: "" });
       return;
     }
+
     if (!isDateAllowed(value)) {
       const available = activeBooking.availableDays;
+
       const dayMsg =
         available.length > 0
           ? `This trip is only available on: ${available.join(", ")}.`
           : "This trip has no available days configured. Please contact support.";
+
       alert(dayMsg);
       updateActiveBooking({ tourDate: "" });
       return;
     }
+
     updateActiveBooking({ tourDate: value });
   };
 
   const handleAdultChange = (delta: number) => {
-    const newCount = Math.max(1, activeBooking.adultCount + delta);
+    const newCount = Math.max(
+      1,
+      activeBooking.adultCount + delta
+    );
+
     updateActiveBooking({ adultCount: newCount });
   };
 
   const handleChildChange = (delta: number) => {
-    const newCount = Math.max(0, activeBooking.childCount + delta);
+    const newCount = Math.max(
+      0,
+      activeBooking.childCount + delta
+    );
+
     updateActiveBooking({ childCount: newCount });
   };
 
@@ -95,8 +116,32 @@ export default function BookingModal() {
       return;
     }
 
+    if (!activeBooking.tripId) {
+      alert("Invalid trip.");
+      return;
+    }
+
+    /**
+     * Add the selected booking to the frontend cart.
+     * The cart is stored locally because there is no Cart/Basket API.
+     */
+    addItem({
+      id: `${activeBooking.tripId}-${activeBooking.tourDate}`,
+      title: activeBooking.tripTitle,
+      summaryTitle: activeBooking.tripTitle,
+      category: "",
+      location: "",
+      date: activeBooking.tourDate,
+      summaryDate: activeBooking.tourDate,
+      adults: activeBooking.adultCount,
+      pricePerPerson: activeBooking.adultPrice,
+      totalPrice: activeBooking.totalAmount,
+      image: activeBooking.tripImage,
+    });
+
     closeBookingModal();
-    router.push("/checkout");
+
+    router.push("/cart");
   };
 
   return (
@@ -172,9 +217,11 @@ export default function BookingModal() {
                           type="date"
                           value={activeBooking.tourDate || ""}
                           onChange={handleDateChange}
-                          min={new Date()
-                            .toISOString()
-                            .split("T")[0]}
+                          min={
+                            new Date()
+                              .toISOString()
+                              .split("T")[0]
+                          }
                           className="w-full outline-none bg-transparent font-roboto text-slate-700 text-sm"
                         />
                       </div>
@@ -197,7 +244,8 @@ export default function BookingModal() {
                 </div>
 
                 {/* Available days hint */}
-                {activeBooking.availableDays && activeBooking.availableDays.length > 0 ? (
+                {activeBooking.availableDays &&
+                activeBooking.availableDays.length > 0 ? (
                   <p className="text-xs text-gray-500 font-roboto mt-1.5">
                     Available on:{" "}
                     <span className="font-medium text-slate-700">
@@ -266,8 +314,8 @@ export default function BookingModal() {
                           className="w-4 h-4"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke="currentColor"
                           strokeWidth={2.5}
+                          stroke="currentColor"
                         >
                           <path
                             strokeLinecap="round"
@@ -291,8 +339,8 @@ export default function BookingModal() {
                           className="w-4 h-4"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke="currentColor"
                           strokeWidth={2.5}
+                          stroke="currentColor"
                         >
                           <path
                             strokeLinecap="round"
@@ -331,8 +379,8 @@ export default function BookingModal() {
                           className="w-4 h-4"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke="currentColor"
                           strokeWidth={2.5}
+                          stroke="currentColor"
                         >
                           <path
                             strokeLinecap="round"
@@ -356,8 +404,8 @@ export default function BookingModal() {
                           className="w-4 h-4"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke="currentColor"
                           strokeWidth={2.5}
+                          stroke="currentColor"
                         >
                           <path
                             strokeLinecap="round"
@@ -409,8 +457,8 @@ export default function BookingModal() {
                             className="w-3.5 h-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke="currentColor"
                             strokeWidth={3}
+                            stroke="currentColor"
                           >
                             <path
                               strokeLinecap="round"
@@ -452,8 +500,8 @@ export default function BookingModal() {
                             className="w-3.5 h-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke="currentColor"
                             strokeWidth={3}
+                            stroke="currentColor"
                           >
                             <path
                               strokeLinecap="round"
@@ -514,7 +562,7 @@ export default function BookingModal() {
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002-2v12a2 2 0 002 2z"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                           />
                         </svg>
 
@@ -533,7 +581,6 @@ export default function BookingModal() {
                         className="w-3.5 h-3.5"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke="currentColor"
                         strokeWidth={2}
                       >
                         <path
@@ -669,7 +716,6 @@ export default function BookingModal() {
                   className="w-4 h-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
                   strokeWidth={2}
                 >
                   <path
@@ -686,3 +732,4 @@ export default function BookingModal() {
     </AnimatePresence>
   );
 }
+
