@@ -16,6 +16,7 @@ export interface TripTypeNameLocalized {
 export interface GetTripTypesParams {
   pageNumber?: number;
   pageSize?: number;
+  lang?: string;
 }
 
 /** Generic API envelope used across all TripType endpoints */

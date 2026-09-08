@@ -8,6 +8,7 @@ import { useLanguage } from "@/context/LanguageContext";
 interface Destination {
   id: string;
   name: string;
+  nameKey: string;
   image: string;
   href: string;
 }
@@ -16,19 +17,22 @@ const destinationsData: Destination[] = [
   {
     id: "hurghada",
     name: "Hurghada",
-    image: "/images/home/PopularDestinations/hurghada.png",
+    nameKey: "destinations.hurghada",
+    image: "/images/destination/hurghada.png",
     href: "/trips?destination=Hurghada",
   },
   {
     id: "giza",
     name: "Giza",
-    image: "/images/home/PopularDestinations/giza.png",
+    nameKey: "destinations.giza",
+    image: "/images/destination/giza.png",
     href: "/trips?destination=Giza",
   },
   {
     id: "aswan",
     name: "Aswan",
-    image: "/images/home/PopularDestinations/aswan.png",
+    nameKey: "destinations.aswan",
+    image: "/images/destination/aswan.png",
     href: "/trips?destination=Aswan",
   },
 ];
@@ -124,15 +128,20 @@ export default function PopularDestinations() {
             >
               <Link href={dest.href} className="block w-full">
                 <div className="relative w-full h-[170px] sm:h-[195px] lg:h-[220px] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-md group-hover:shadow-xl transition-shadow duration-300 bg-gray-100">
-                  {/* Destination Image with baked-in title from design assets */}
                   <Image
                     src={dest.image}
-                    alt={dest.name}
+                    alt={t(dest.nameKey, dest.name)}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     priority
                   />
+                  {/* Localized destination name overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-4 sm:pb-5 pointer-events-none">
+                    <span className="font-roboto font-bold text-white text-base sm:text-lg lg:text-xl drop-shadow-md tracking-wide">
+                      {t(dest.nameKey, dest.name)}
+                    </span>
+                  </div>
                 </div>
               </Link>
             </motion.div>

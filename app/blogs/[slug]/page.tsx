@@ -12,7 +12,7 @@ import BlogSidebar from "@/components/Blogs/BlogSidebar";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function BlogDetailsPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const params = useParams();
   const slug =
     typeof params?.slug === "string"
@@ -28,30 +28,31 @@ export default function BlogDetailsPage() {
 
   useEffect(() => {
     if (!slug) return;
+    setLoading(true);
     // slug may be the numeric id or a stringified id
     const id = Number(slug);
     if (!id) {
-      setError("Blog not found");
+      setError(t("blogs.blogNotFound", "Blog not found"));
       setLoading(false);
       return;
     }
 
     Promise.all([
-      getBlogById(id),
-      getBlogs(1, 10),
+      getBlogById(id, language),
+      getBlogs(1, 10, language),
     ])
       .then(([b, all]) => {
         setBlog(b);
         setRecentPosts(all.filter((p) => p.id !== b.id).slice(0, 3));
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load blog"))
+      .catch((err) => setError(err instanceof Error ? err.message : t("blogs.failedToLoadBlog", "Failed to load blog")))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, language, t]);
 
   if (loading) {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-400 font-roboto">Loading...</p>
+        <p className="text-gray-400 font-roboto">{t("blogs.loading", "Loading...")}</p>
       </main>
     );
   }
@@ -60,9 +61,9 @@ export default function BlogDetailsPage() {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error || "Blog not found"}</p>
+          <p className="text-red-600 mb-4">{error || t("blogs.blogNotFound", "Blog not found")}</p>
           <a href="/blogs" className="px-6 py-2 bg-[#006993] text-white rounded-lg hover:bg-[#004560] inline-block">
-            Back to Blogs
+            {t("blogs.backToBlogs", "Back to Blogs")}
           </a>
         </div>
       </main>

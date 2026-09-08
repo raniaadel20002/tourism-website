@@ -11,8 +11,11 @@ import BillingForm, {
 import CheckoutTourSummary from "@/components/Checkout/CheckoutTourSummary";
 import type { PromoCode } from "@/modules/promoCode.model";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function CheckoutPage() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const { activeBooking, completeBooking } = useCart();
 
@@ -35,7 +38,7 @@ export default function CheckoutPage() {
       const message =
         err instanceof Error
           ? err.message
-          : "Booking failed. Please try again.";
+          : t("checkout.bookingFailedDesc", "Booking failed. Please try again.");
       setBookingError(message);
     } finally {
       setIsSubmitting(false);

@@ -68,8 +68,8 @@ export default function BookingModal() {
 
       const dayMsg =
         available.length > 0
-          ? `This trip is only available on: ${available.join(", ")}.`
-          : "This trip has no available days configured. Please contact support.";
+          ? `${t("booking.onlyAvailableOn", "This trip is only available on:")} ${available.join(", ")}.`
+          : t("booking.noDaysConfigured", "This trip has no available days configured. Please contact support.");
 
       alert(dayMsg);
       updateActiveBooking({ tourDate: "" });
@@ -112,12 +112,12 @@ export default function BookingModal() {
 
   const handleProceedToCheckout = () => {
     if (!activeBooking.tourDate) {
-      alert("Please select a tour date.");
+      alert(t("booking.selectDateAlert", "Please select a tour date."));
       return;
     }
 
     if (!activeBooking.tripId) {
-      alert("Invalid trip.");
+      alert(t("booking.invalidTrip", "Invalid trip."));
       return;
     }
 
@@ -167,7 +167,7 @@ export default function BookingModal() {
             <button
               onClick={closeBookingModal}
               className="absolute top-5 right-5 rtl:right-auto rtl:left-5 text-slate-800 hover:text-black p-2 cursor-pointer rounded-full hover:bg-slate-100 transition-colors z-10"
-              aria-label="Close modal"
+              aria-label={t("booking.closeModal", "Close modal")}
             >
               <svg
                 className="w-6 h-6 stroke-slate-800"
@@ -247,14 +247,14 @@ export default function BookingModal() {
                 {activeBooking.availableDays &&
                 activeBooking.availableDays.length > 0 ? (
                   <p className="text-xs text-gray-500 font-roboto mt-1.5">
-                    Available on:{" "}
+                    {t("booking.availableOn", "Available on:")}{" "}
                     <span className="font-medium text-slate-700">
                       {activeBooking.availableDays.join(", ")}
                     </span>
                   </p>
                 ) : (
                   <p className="text-xs text-amber-600 font-roboto mt-1.5">
-                    No available days are configured for this trip.
+                    {t("booking.noAvailableDays", "No available days are configured for this trip.")}
                   </p>
                 )}
 
@@ -308,7 +308,7 @@ export default function BookingModal() {
                         type="button"
                         onClick={() => handleAdultChange(1)}
                         className="w-8 h-8 rounded-full bg-[#003853] text-white flex items-center justify-center hover:bg-[#00283d] transition-colors cursor-pointer shadow-xs"
-                        aria-label="Increase adults"
+                        aria-label={t("booking.increaseAdults", "Increase adults")}
                       >
                         <svg
                           className="w-4 h-4"
@@ -333,7 +333,7 @@ export default function BookingModal() {
                         type="button"
                         onClick={() => handleAdultChange(-1)}
                         className="w-8 h-8 rounded-full bg-[#003853] text-white flex items-center justify-center hover:bg-[#00283d] transition-colors cursor-pointer shadow-xs"
-                        aria-label="Decrease adults"
+                        aria-label={t("booking.decreaseAdults", "Decrease adults")}
                       >
                         <svg
                           className="w-4 h-4"
@@ -373,7 +373,7 @@ export default function BookingModal() {
                         type="button"
                         onClick={() => handleChildChange(1)}
                         className="w-8 h-8 rounded-full bg-[#003853] text-white flex items-center justify-center hover:bg-[#00283d] transition-colors cursor-pointer shadow-xs"
-                        aria-label="Increase children"
+                        aria-label={t("booking.increaseChildren", "Increase children")}
                       >
                         <svg
                           className="w-4 h-4"
@@ -398,7 +398,7 @@ export default function BookingModal() {
                         type="button"
                         onClick={() => handleChildChange(-1)}
                         className="w-8 h-8 rounded-full bg-[#003853] text-white flex items-center justify-center hover:bg-[#00283d] transition-colors cursor-pointer shadow-xs"
-                        aria-label="Decrease children"
+                        aria-label={t("booking.decreaseChildren", "Decrease children")}
                       >
                         <svg
                           className="w-4 h-4"
@@ -575,7 +575,7 @@ export default function BookingModal() {
                     <button
                       onClick={closeBookingModal}
                       className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 text-slate-400 hover:text-red-500 transition-colors p-1"
-                      aria-label="Remove tour"
+                      aria-label={t("cart.remove", "Remove")}
                     >
                       <svg
                         className="w-3.5 h-3.5"

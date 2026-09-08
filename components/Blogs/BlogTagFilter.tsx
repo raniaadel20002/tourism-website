@@ -15,11 +15,11 @@ export default function BlogTagFilter({ activeTag, onTagChange }: BlogTagFilterP
   return (
     <div className="w-full max-w-4xl flex flex-wrap items-center gap-2.5 sm:gap-3 mb-10 sm:mb-12">
       <span className="font-roboto font-normal text-xs sm:text-sm text-[#030811] mr-1 rtl:mr-0 rtl:ml-1">
-        Popular tags:
+        {t("blogs.popularTags", "Popular tags:")}
       </span>
       {popularTags.map((tag) => {
         const isActive = activeTag === tag;
-        const tagLabel = tag === "All" ? t("blogs.allTags", "All") : tag;
+        const tagLabel = tag === "All" ? t("blogs.allTags", "All") : t(`blogs.tag${tag}`, tag);
         return (
           <button
             key={tag}

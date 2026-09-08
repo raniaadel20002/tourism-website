@@ -20,7 +20,7 @@ export default function BlogSidebar({ blog, recentPosts }: BlogSidebarProps) {
     (a, b) => a.sectionNumber - b.sectionNumber
   );
   const toc = [
-    { id: "introduction", label: "Introduction" },
+    { id: "introduction", label: t("blogs.introduction", "Introduction") },
     ...sortedSections.map((s) => ({
       id: `section-${s.id}`,
       label: s.title || `Section ${s.sectionNumber}`,

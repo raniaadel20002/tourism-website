@@ -70,7 +70,7 @@ export default function TripAddReview({
       setSubmitError(
         err instanceof Error
           ? err.message
-          : "Failed to submit review"
+          : t("trips.review.submitError", "Failed to submit review")
       );
     } finally {
       setSubmitting(false);
@@ -136,7 +136,7 @@ export default function TripAddReview({
               htmlFor="review-first-name"
               className="font-roboto font-medium text-[#000C09] text-xs sm:text-sm mb-1.5"
             >
-              First Name <span className="text-red-500">*</span>
+              {t("trips.review.firstName", "First Name")} <span className="text-red-500">*</span>
             </label>
 
             <input
@@ -146,7 +146,7 @@ export default function TripAddReview({
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               className="w-full px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-xl font-roboto text-xs sm:text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
-              placeholder="First name"
+              placeholder={t("trips.review.firstNamePlaceholder", "First name")}
             />
           </div>
 
@@ -155,7 +155,7 @@ export default function TripAddReview({
               htmlFor="review-last-name"
               className="font-roboto font-medium text-[#000C09] text-xs sm:text-sm mb-1.5"
             >
-              Last Name <span className="text-red-500">*</span>
+              {t("trips.review.lastName", "Last Name")} <span className="text-red-500">*</span>
             </label>
 
             <input
@@ -165,7 +165,7 @@ export default function TripAddReview({
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               className="w-full px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-xl font-roboto text-xs sm:text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
-              placeholder="Last name"
+              placeholder={t("trips.review.lastNamePlaceholder", "Last name")}
             />
           </div>
 
@@ -174,7 +174,7 @@ export default function TripAddReview({
               htmlFor="review-email"
               className="font-roboto font-medium text-[#000C09] text-xs sm:text-sm mb-1.5"
             >
-              Email <span className="text-red-500">*</span>
+              {t("trips.review.email", "Email")} <span className="text-red-500">*</span>
             </label>
 
             <input
@@ -184,7 +184,7 @@ export default function TripAddReview({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-xl font-roboto text-xs sm:text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
-              placeholder="Email address"
+              placeholder={t("trips.review.emailPlaceholder", "Email address")}
             />
           </div>
 
@@ -193,7 +193,7 @@ export default function TripAddReview({
               htmlFor="review-phone"
               className="font-roboto font-medium text-[#000C09] text-xs sm:text-sm mb-1.5"
             >
-              Phone <span className="text-red-500">*</span>
+              {t("trips.review.phone", "Phone")} <span className="text-red-500">*</span>
             </label>
 
             <input
@@ -203,7 +203,7 @@ export default function TripAddReview({
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full px-4 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-xl font-roboto text-xs sm:text-sm text-[#000C09] placeholder-gray-400 focus:outline-none focus:border-[#004560] transition-colors"
-              placeholder="Phone number"
+              placeholder={t("trips.review.phonePlaceholder", "Phone number")}
             />
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function TripAddReview({
             htmlFor="review-comment-input"
             className="font-roboto font-medium text-[#000C09] text-xs sm:text-sm mb-1.5"
           >
-            {t("blogs.commentMessage", "Comment")}{" "}
+            {t("trips.review.comment", "Comment")}{" "}
             <span className="text-red-500">*</span>
           </label>
 
@@ -249,7 +249,7 @@ export default function TripAddReview({
             rows={4}
             required
             placeholder={t(
-              "blogs.commentMessage",
+              "trips.review.commentPlaceholder",
               "Write your comment..."
             )}
             value={reviewComment}
@@ -266,7 +266,7 @@ export default function TripAddReview({
             className="px-8 sm:px-10 py-2.5 sm:py-3 rounded-full border border-[#004560] text-[#004560] hover:bg-[#004560] hover:text-white font-roboto font-semibold text-xs sm:text-sm transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting
-              ? "Submitting..."
+              ? t("trips.submitting", "Submitting...")
               : t("trips.submitReview", "Submit Review")}
           </button>
         </div>
