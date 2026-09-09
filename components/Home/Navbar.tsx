@@ -48,7 +48,9 @@ export default function Navbar() {
               <img
                 src="/images/home/hero/Logo.png"
                 alt={t("nav.logoAlt", "Logo")}
-                className="h-7 w-auto object-contain"
+                width={118}
+                height={28}
+                className="h-7 w-auto object-contain aspect-[160/38]"
               />
             </Link>
             <div className="md:hidden">

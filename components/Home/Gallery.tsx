@@ -166,12 +166,18 @@ export default function Gallery() {
               viewport={{ once: true, amount: 0.2 }}
               className="flex-1 min-w-0 h-full flex flex-col"
             >
-              {leftImages.length > 0 && (
+              {leftImages.length > 0 ? (
                 <MarqueeColumn
                   images={leftImages}
                   direction="down"
                   onSelect={setSelectedImage}
                 />
+              ) : (
+                <div className="w-full h-full flex flex-col gap-2.5 sm:gap-3 overflow-hidden">
+                  <div className="w-full h-28 sm:h-34 md:h-38 lg:h-40 rounded-xl sm:rounded-2xl bg-gray-100 animate-pulse flex-shrink-0" />
+                  <div className="w-full h-28 sm:h-34 md:h-38 lg:h-40 rounded-xl sm:rounded-2xl bg-gray-100 animate-pulse flex-shrink-0" />
+                  <div className="w-full h-28 sm:h-34 md:h-38 lg:h-40 rounded-xl sm:rounded-2xl bg-gray-100 animate-pulse flex-shrink-0" />
+                </div>
               )}
             </motion.div>
 
@@ -205,23 +211,30 @@ export default function Gallery() {
               </motion.div>
 
               <div className="flex flex-col gap-2.5 sm:gap-3 flex-1 min-h-0 mt-2 sm:mt-3">
-                {centerImages.map((image) => (
-                  <button
-                    type="button"
-                    key={image.id}
-                    onClick={() => setSelectedImage(image)}
-                    className="relative w-full flex-1 min-h-0 rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group"
-                    aria-label={image.alt}
-                  >
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      sizes="(max-width: 640px) 33vw, (max-width: 1024px) 30vw, 25vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </button>
-                ))}
+                {centerImages.length > 0 ? (
+                  centerImages.map((image) => (
+                    <button
+                      type="button"
+                      key={image.id}
+                      onClick={() => setSelectedImage(image)}
+                      className="relative w-full flex-1 min-h-0 rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group"
+                      aria-label={image.alt}
+                    >
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        fill
+                        sizes="(max-width: 640px) 33vw, (max-width: 1024px) 30vw, 25vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </button>
+                  ))
+                ) : (
+                  <>
+                    <div className="w-full flex-1 min-h-0 rounded-xl sm:rounded-2xl bg-gray-100 animate-pulse" />
+                    <div className="w-full flex-1 min-h-0 rounded-xl sm:rounded-2xl bg-gray-100 animate-pulse" />
+                  </>
+                )}
               </div>
             </motion.div>
 
@@ -233,12 +246,18 @@ export default function Gallery() {
               viewport={{ once: true, amount: 0.2 }}
               className="flex-1 min-w-0 h-full flex flex-col"
             >
-              {rightImages.length > 0 && (
+              {rightImages.length > 0 ? (
                 <MarqueeColumn
                   images={rightImages}
                   direction="up"
                   onSelect={setSelectedImage}
                 />
+              ) : (
+                <div className="w-full h-full flex flex-col gap-2.5 sm:gap-3 overflow-hidden">
+                  <div className="w-full h-28 sm:h-34 md:h-38 lg:h-40 rounded-xl sm:rounded-2xl bg-gray-100 animate-pulse flex-shrink-0" />
+                  <div className="w-full h-28 sm:h-34 md:h-38 lg:h-40 rounded-xl sm:rounded-2xl bg-gray-100 animate-pulse flex-shrink-0" />
+                  <div className="w-full h-28 sm:h-34 md:h-38 lg:h-40 rounded-xl sm:rounded-2xl bg-gray-100 animate-pulse flex-shrink-0" />
+                </div>
               )}
             </motion.div>
 

@@ -43,7 +43,9 @@ export default function BlogSection() {
 
     async function fetchBlogs() {
       try {
-        setLoading(true);
+        if (blogs.length === 0) {
+          setLoading(true);
+        }
 
         const data = await getBlogs(1, 3, language);
 
@@ -52,10 +54,6 @@ export default function BlogSection() {
         }
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
-
-        if (!cancelled) {
-          setBlogs([]);
-        }
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -116,11 +114,24 @@ export default function BlogSection() {
           </div>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center py-10">
-            <p className="font-roboto text-sm text-gray-400">
-              {t("blogs.loading", "Loading...")}
-            </p>
+        {loading && blogs.length === 0 ? (
+          <div className="flex flex-wrap lg:flex-nowrap justify-center gap-4 sm:gap-5 w-full">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div
+                key={`blog-skel-${idx}`}
+                className="w-full sm:w-[calc(50%-10px)] lg:w-[360px] min-w-0 bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border border-gray-100/90 flex flex-col animate-pulse"
+              >
+                <div className="w-full h-40 sm:h-44 md:h-48 bg-gray-200 flex-shrink-0" />
+                <div className="p-4 sm:p-4.5 flex flex-col flex-1 justify-between gap-4">
+                  <div>
+                    <div className="h-2.5 w-12 bg-gray-200 rounded mb-2" />
+                    <div className="h-4 w-3/4 bg-gray-200 rounded mb-1.5" />
+                    <div className="h-4 w-1/2 bg-gray-200 rounded" />
+                  </div>
+                  <div className="w-full h-7 bg-gray-100 rounded-full mt-2" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="flex flex-wrap lg:flex-nowrap justify-center gap-4 sm:gap-5 w-full">

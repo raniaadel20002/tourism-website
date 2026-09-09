@@ -63,7 +63,7 @@ export default function LanguageSwitcher({ variant = "desktop", dropdownAlign = 
                   : "bg-gray-50 text-gray-700 hover:bg-gray-100"
               }`}
             >
-              <img src={getFlagImageUrl(lang.code)} alt={`${lang.code} flag`} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
+              <img src={getFlagImageUrl(lang.code)} alt={`${lang.code} flag`} width={16} height={12} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
               <span className="truncate">{lang.nativeName}</span>
             </button>
           ))}
@@ -97,7 +97,7 @@ export default function LanguageSwitcher({ variant = "desktop", dropdownAlign = 
           />
         </svg>
 
-        <img src={getFlagImageUrl(currentLang.code)} alt={`${currentLang.code} flag`} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
+        <img src={getFlagImageUrl(currentLang.code)} alt={`${currentLang.code} flag`} width={16} height={12} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
         <span className="uppercase text-xs font-semibold text-gray-800">{currentLang.code}</span>
 
         <svg
@@ -141,7 +141,7 @@ export default function LanguageSwitcher({ variant = "desktop", dropdownAlign = 
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <img src={getFlagImageUrl(lang.code)} alt={`${lang.code} flag`} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
+                    <img src={getFlagImageUrl(lang.code)} alt={`${lang.code} flag`} width={16} height={12} className="w-4 h-3 object-cover rounded-[2px] shadow-sm" />
                     <span>{lang.nativeName}</span>
                   </div>
                   {isSelected && (

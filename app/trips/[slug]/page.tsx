@@ -49,11 +49,16 @@ export default function TripDetailsPage() {
 
   // Fetch all trips and find the one matching the slug
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchTrip() {
       try {
-        setLoading(true);
+        if (!trip) {
+          setLoading(true);
+        }
 
         const trips = await getTrips(undefined, 1, 100, { lang: apiLang });
+        if (cancelled) return;
 
         const foundTrip = trips.find((t) => {
           const tripSlug = t.name
@@ -71,17 +76,24 @@ export default function TripDetailsPage() {
           setError("Trip not found");
         }
       } catch (err) {
+        if (cancelled) return;
         setError(
           err instanceof Error ? err.message : "Failed to fetch trip"
         );
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
     if (slug) {
       fetchTrip();
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [slug, apiLang]);
 
   // Fetch reviews for the current trip
@@ -120,7 +132,7 @@ export default function TripDetailsPage() {
     fetchReviews();
   }, [fetchReviews]);
 
-  if (loading) {
+  if (loading && !trip) {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">

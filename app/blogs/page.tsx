@@ -21,11 +21,23 @@ export default function BlogsPage() {
   const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
-    setLoading(true);
+    let cancelled = false;
+    if (blogs.length === 0) {
+      setLoading(true);
+    }
     getBlogs(1, 100, language)
-      .then(setBlogs)
-      .catch((err) => setError(err instanceof Error ? err.message : t("blogs.failedToLoad", "Failed to load blogs")))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (!cancelled) setBlogs(data);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : t("blogs.failedToLoad", "Failed to load blogs"));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [language, t]);
 
   const filteredPosts = useMemo(() => {
@@ -75,15 +87,31 @@ export default function BlogsPage() {
           })}
         </div>
 
-        {loading && (
-          <div className="w-full py-16 text-center text-gray-400 font-roboto">{t("blogs.loading", "Loading...")}</div>
+        {loading && blogs.length === 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <div
+                key={`blog-card-skel-${idx}`}
+                className="w-full flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm animate-pulse"
+              >
+                <div className="h-56 sm:h-60 w-full bg-gray-200 flex-shrink-0" />
+                <div className="p-5 flex flex-col flex-1 justify-between gap-4">
+                  <div className="space-y-2">
+                    <div className="h-4 w-4/5 bg-gray-200 rounded" />
+                    <div className="h-4 w-3/5 bg-gray-200 rounded" />
+                  </div>
+                  <div className="w-full h-9 bg-gray-100 rounded-full mt-2" />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
 
-        {!loading && error && (
+        {!loading && error && blogs.length === 0 && (
           <div className="w-full py-16 text-center text-red-500 font-roboto text-sm">{error}</div>
         )}
 
-        {!loading && !error && (
+        {(!loading || blogs.length > 0) && (
           <BlogsGrid
             posts={filteredPosts}
             visibleCount={visibleCount}

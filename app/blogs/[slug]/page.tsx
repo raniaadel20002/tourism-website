@@ -6,7 +6,6 @@ import { getBlogById, getBlogs, type Blog } from "@/api/blogs";
 import Breadcrumb from "@/components/Breadcrumb";
 import BlogDetailHero from "@/components/Blogs/BlogDetailHero";
 import BlogArticle from "@/components/Blogs/BlogArticle";
-import BlogComments from "@/components/Blogs/BlogComments";
 import BlogSidebar from "@/components/Blogs/BlogSidebar";
 
 import { useLanguage } from "@/context/LanguageContext";
@@ -28,7 +27,10 @@ export default function BlogDetailsPage() {
 
   useEffect(() => {
     if (!slug) return;
-    setLoading(true);
+    let cancelled = false;
+    if (!blog) {
+      setLoading(true);
+    }
     // slug may be the numeric id or a stringified id
     const id = Number(slug);
     if (!id) {
@@ -42,14 +44,27 @@ export default function BlogDetailsPage() {
       getBlogs(1, 10, language),
     ])
       .then(([b, all]) => {
-        setBlog(b);
-        setRecentPosts(all.filter((p) => p.id !== b.id).slice(0, 3));
+        if (!cancelled) {
+          setBlog(b);
+          setRecentPosts(all.filter((p) => p.id !== b.id).slice(0, 3));
+          setError(null);
+        }
       })
-      .catch((err) => setError(err instanceof Error ? err.message : t("blogs.failedToLoadBlog", "Failed to load blog")))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : t("blogs.failedToLoadBlog", "Failed to load blog"));
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [slug, language, t]);
 
-  if (loading) {
+  if (loading && !blog) {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center">
         <p className="text-gray-400 font-roboto">{t("blogs.loading", "Loading...")}</p>
@@ -92,7 +107,6 @@ export default function BlogDetailsPage() {
           {/* LEFT COLUMN: Article + Comments */}
           <div className="w-full lg:w-[68%] flex flex-col">
             <BlogArticle blog={blog} />
-            <BlogComments />
           </div>
 
           {/* RIGHT COLUMN: Sidebar */}

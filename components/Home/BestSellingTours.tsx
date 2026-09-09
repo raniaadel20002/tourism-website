@@ -46,23 +46,35 @@ export default function BestSellingTours() {
 
   // Fetch trips from API
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchTrips() {
       try {
-        setLoading(true);
+        if (trips.length === 0) {
+          setLoading(true);
+        }
         // Fetch active trips only (includeInactive: false by default)
         const data = await getTrips(undefined, 1, 20, { lang: apiLang });
+        if (cancelled) return;
         // Filter to only active trips
         const activeTrips = data.filter(trip => trip.isActive);
         setTrips(activeTrips);
         setError(null);
       } catch (err) {
+        if (cancelled) return;
         setError(err instanceof Error ? err.message : "Failed to load tours");
         console.error("Failed to fetch trips:", err);
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
     fetchTrips();
+
+    return () => {
+      cancelled = true;
+    };
   }, [apiLang]);
 
   // Filter trips based on active tab
@@ -160,14 +172,30 @@ export default function BestSellingTours() {
         </div>
 
         {/* Tour Cards Row (Flexbox only) */}
-        {loading ? (
-          <div className="w-full flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-white border-r-transparent"></div>
-              <p className="mt-4 text-white text-sm">{t("bestselling.loading", "Loading tours...")}</p>
-            </div>
+        {loading && trips.length === 0 ? (
+          <div className="w-full flex flex-row items-stretch justify-start sm:justify-center gap-4 sm:gap-5 lg:gap-6 overflow-x-auto lg:overflow-visible pb-4 pt-1 px-1 scrollbar-none snap-x">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={`tour-skel-${idx}`}
+                className="w-[235px] sm:w-[245px] lg:w-[255px] flex-shrink-0 snap-center bg-white rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-md flex flex-col animate-pulse"
+              >
+                <div className="h-36 sm:h-40 bg-gray-200 w-full" />
+                <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between gap-3">
+                  <div className="flex flex-col gap-2">
+                    <div className="h-2.5 w-16 bg-gray-200 rounded" />
+                    <div className="h-4 w-36 bg-gray-200 rounded" />
+                    <div className="h-3 w-24 bg-gray-200 rounded" />
+                  </div>
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="h-3 w-16 bg-gray-200 rounded" />
+                    <div className="h-4 w-14 bg-gray-200 rounded" />
+                  </div>
+                  <div className="w-full h-8 bg-gray-200 rounded-full mt-0.5" />
+                </div>
+              </div>
+            ))}
           </div>
-        ) : error ? (
+        ) : error && trips.length === 0 ? (
           <div className="w-full flex items-center justify-center py-12">
             <div className="text-center">
               <p className="text-red-400 mb-4">{error}</p>

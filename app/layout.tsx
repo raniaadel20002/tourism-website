@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Montez, Roboto } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
@@ -11,8 +11,8 @@ const montez = Montez({
 });
 
 const roboto = Roboto({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  subsets: ["latin", "latin-ext", "cyrillic"],
   variable: "--font-roboto",
 });
 
