@@ -1,25 +1,36 @@
-import { API_BASE_URL } from "./apiConfig";
 import {
   TripType,
   TripTypeNameLocalized,
   GetTripTypesParams,
   TripTypeApiResponse,
 } from "@/modules/tripType.model";
+import { authFetch } from "@/utils/authFetch";
 
 // Re-export types so callers can import from one place if needed
 export type { TripType, TripTypeNameLocalized, GetTripTypesParams };
 
-// ——————————————————————————————————————————————————————————————————————————————
+async function parse<T>(
+  res: Response,
+  action: string
+): Promise<T> {
+  if (res.status === 401) {
+    throw Object.assign(new Error("UNAUTHORIZED"), {
+      isUnauthorized: true,
+    });
+  }
 
-function authHeaders(token?: string, lang?: string): HeadersInit {
-  return {
-    accept: "text/plain",
-    ...(lang ? { "Accept-Language": lang } : {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+  if (!res.ok) {
+    throw new Error(`${action}: ${res.status}`);
+  }
+
+  const json: TripTypeApiResponse<T> = await res.json();
+
+  if (!json.success) {
+    throw new Error(json.message || action);
+  }
+
+  return json.data;
 }
-
-// ——————————————————————————————————————————————————————————————————————————————
 
 /** GET /api/TripTypes — list all trip types (paginated) */
 export async function getTripTypes(
@@ -27,126 +38,99 @@ export async function getTripTypes(
   params: GetTripTypesParams = {}
 ): Promise<TripType[]> {
   const query = new URLSearchParams();
-  if (params.pageNumber !== undefined)
+
+  if (params.pageNumber !== undefined) {
     query.set("PageNumber", String(params.pageNumber));
-  if (params.pageSize !== undefined)
+  }
+
+  if (params.pageSize !== undefined) {
     query.set("PageSize", String(params.pageSize));
-
-  const url = `${API_BASE_URL}/api/TripTypes${query.size ? `?${query}` : ""}`;
-
-  const res = await fetch(url, {
-    headers: authHeaders(token, params.lang),
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch trip types: ${res.status}`);
   }
 
-  const json: TripTypeApiResponse<TripType[]> = await res.json();
+  const queryString = query.toString();
 
-  if (!json.success) {
-    throw new Error(json.message || "Failed to fetch trip types");
-  }
+  const res = await authFetch(
+    `/api/TripTypes${queryString ? `?${queryString}` : ""}`,
+    {
+      method: "GET",
+      headers: params.lang
+        ? { "Accept-Language": params.lang }
+        : undefined,
+    }
+  );
 
-  return json.data;
+  return parse<TripType[]>(res, "Failed to fetch trip types");
 }
 
-/** GET /api/TripTypes/{id} â€” get a single trip type */
+/** GET /api/TripTypes/{id} — get a single trip type */
 export async function getTripTypeById(
   id: number,
-  token: string
+  token: string,
+  lang = "en"
 ): Promise<TripType> {
-  const res = await fetch(`${API_BASE_URL}/api/TripTypes/${id}`, {
-    headers: authHeaders(token),
-    cache: "no-store",
+  const res = await authFetch(`/api/TripTypes/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept-Language": lang,
+    },
   });
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch trip type ${id}: ${res.status}`);
-  }
-
-  const json: TripTypeApiResponse<TripType> = await res.json();
-
-  if (!json.success) {
-    throw new Error(json.message || `Failed to fetch trip type ${id}`);
-  }
-
-  return json.data;
+  return parse<TripType>(
+    res,
+    `Failed to fetch trip type ${id}`
+  );
 }
 
-/** POST /api/TripTypes â€” create a new trip type */
+/** POST /api/TripTypes — create a new trip type */
 export async function createTripType(
   name: TripTypeNameLocalized,
   token: string
 ): Promise<TripType> {
-  const res = await fetch(`${API_BASE_URL}/api/TripTypes`, {
+  const res = await authFetch("/api/TripTypes", {
     method: "POST",
     headers: {
-      ...authHeaders(token),
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ name }),
   });
 
-  if (!res.ok) {
-    throw new Error(`Failed to create trip type: ${res.status}`);
-  }
-
-  const json: TripTypeApiResponse<TripType> = await res.json();
-
-  if (!json.success) {
-    throw new Error(json.message || "Failed to create trip type");
-  }
-
-  return json.data;
+  return parse<TripType>(
+    res,
+    "Failed to create trip type"
+  );
 }
 
-/** PUT /api/TripTypes â€” update an existing trip type */
+/** PUT /api/TripTypes — update an existing trip type */
 export async function updateTripType(
   id: number,
   name: TripTypeNameLocalized,
   token: string
 ): Promise<TripType> {
-  const res = await fetch(`${API_BASE_URL}/api/TripTypes`, {
+  const res = await authFetch("/api/TripTypes", {
     method: "PUT",
     headers: {
-      ...authHeaders(token),
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ id, name }),
   });
 
-  if (!res.ok) {
-    throw new Error(`Failed to update trip type ${id}: ${res.status}`);
-  }
-
-  const json: TripTypeApiResponse<TripType> = await res.json();
-
-  if (!json.success) {
-    throw new Error(json.message || `Failed to update trip type ${id}`);
-  }
-
-  return json.data;
+  return parse<TripType>(
+    res,
+    `Failed to update trip type ${id}`
+  );
 }
 
-/** DELETE /api/TripTypes/{id} â€” delete a trip type */
+/** DELETE /api/TripTypes/{id} — delete a trip type */
 export async function deleteTripType(
   id: number,
   token: string
 ): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/api/TripTypes/${id}`, {
+  const res = await authFetch(`/api/TripTypes/${id}`, {
     method: "DELETE",
-    headers: authHeaders(token),
   });
 
-  if (!res.ok) {
-    throw new Error(`Failed to delete trip type ${id}: ${res.status}`);
-  }
-
-  const json: TripTypeApiResponse<string> = await res.json();
-
-  if (!json.success) {
-    throw new Error(json.message || `Failed to delete trip type ${id}`);
-  }
+  await parse<string>(
+    res,
+    `Failed to delete trip type ${id}`
+  );
 }

@@ -1,6 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+import { usePathname, useRouter } from "next/navigation";
 import en from "@/locales/en.json";
 import fr from "@/locales/fr.json";
 import ru from "@/locales/ru.json";
@@ -17,10 +25,34 @@ export interface LanguageInfo {
 }
 
 export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
-  { code: "en", name: "English", nativeName: "English", dir: "ltr", flag: "🇬🇧" },
-  { code: "fr", name: "French", nativeName: "Français", dir: "ltr", flag: "🇫🇷" },
-  { code: "ru", name: "Russian", nativeName: "Русский", dir: "ltr", flag: "🇷🇺" },
-  { code: "ro", name: "Romanian", nativeName: "Română", dir: "ltr", flag: "🇷🇴" },
+  {
+    code: "en",
+    name: "English",
+    nativeName: "English",
+    dir: "ltr",
+    flag: "🇬🇧",
+  },
+  {
+    code: "fr",
+    name: "French",
+    nativeName: "Français",
+    dir: "ltr",
+    flag: "🇫🇷",
+  },
+  {
+    code: "ru",
+    name: "Russian",
+    nativeName: "Русский",
+    dir: "ltr",
+    flag: "🇷🇺",
+  },
+  {
+    code: "ro",
+    name: "Romanian",
+    nativeName: "Română",
+    dir: "ltr",
+    flag: "🇷🇴",
+  },
 ];
 
 const translations: Record<LanguageCode, any> = {
@@ -37,30 +69,56 @@ interface LanguageContextType {
   currentLanguageInfo: LanguageInfo;
   changeLanguage: (code: LanguageCode) => void;
   t: (path: string, fallback?: string) => string;
+  localizedHref: (href: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<LanguageCode>("en");
+function isLanguageCode(value: string): value is LanguageCode {
+  return ["en", "fr", "ru", "ro"].includes(value);
+}
 
-  // Load persisted language from localStorage
+export function LanguageProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const getLanguageFromPath = (): LanguageCode => {
+    // Language is the LAST segment of the URL
+    const segments = pathname.split("/").filter(Boolean);
+    const lastSegment = segments[segments.length - 1];
+
+    return lastSegment && isLanguageCode(lastSegment) ? lastSegment : "en";
+  };
+
+  const [language, setLanguage] = useState<LanguageCode>(
+    getLanguageFromPath()
+  );
+
   useEffect(() => {
+    const urlLanguage = getLanguageFromPath();
+
+    if (urlLanguage !== language) {
+      setLanguage(urlLanguage);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = "ltr";
+
+    // Store in cookie for middleware redirect fallback
     try {
-      const saved = localStorage.getItem("tourism_lang") as LanguageCode | null;
-      if (saved && ["en", "fr", "ru", "ro"].includes(saved)) {
-        setLanguage(saved);
-      }
+      document.cookie = `tourism_lang=${language};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
     } catch {
       // ignore
     }
-  }, []);
 
-  // Update HTML document lang and dir attributes on change
-  useEffect(() => {
-    const dir = "ltr";
-    document.documentElement.lang = language;
-    document.documentElement.dir = dir;
     try {
       localStorage.setItem("tourism_lang", language);
     } catch {
@@ -79,14 +137,58 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const isRTL = dir === "rtl";
 
   const changeLanguage = (code: LanguageCode) => {
-    if (["en", "fr", "ru", "ro"].includes(code)) {
-      setLanguage(code);
+    if (!isLanguageCode(code) || code === language) {
+      return;
     }
+
+    // Replace the LAST segment with the new language code
+    const segments = pathname.split("/").filter(Boolean);
+    const lastSegment = segments[segments.length - 1];
+
+    if (lastSegment && isLanguageCode(lastSegment)) {
+      segments[segments.length - 1] = code;
+    } else {
+      segments.push(code);
+    }
+
+    const newPath = "/" + segments.join("/");
+    // Preserve the current query string during language switch (client-side only)
+    const qs = typeof window !== "undefined" ? window.location.search : "";
+    const finalPath = qs ? `${newPath}${qs}` : newPath;
+
+    setLanguage(code);
+    router.push(finalPath);
   };
 
   /**
-   * Helper function to retrieve nested keys like "nav.home" or "hero.search.destination"
+   * Build a localized href by appending the current language as the last segment.
+   * Handles query strings: "/trips?type=Safari" → "/trips/{lang}?type=Safari"
+   * Home "/" → "/{lang}"
    */
+  const localizedHref = useCallback(
+    (href: string): string => {
+      // Separate path from query string
+      const [pathPart, ...rest] = href.split("?");
+      const query = rest.length > 0 ? "?" + rest.join("?") : "";
+
+      // Clean trailing slash
+      const cleanPath = pathPart.replace(/\/+$/, "") || "";
+
+      // Guard: if the path already ends with a supported lang code, replace it
+      const pathSegments = cleanPath.split("/").filter(Boolean);
+      const lastSeg = pathSegments[pathSegments.length - 1];
+      if (lastSeg && isLanguageCode(lastSeg)) {
+        pathSegments[pathSegments.length - 1] = language;
+        return "/" + pathSegments.join("/") + query;
+      }
+
+      // Build localized path
+      const localizedPath = cleanPath === "" ? `/${language}` : `${cleanPath}/${language}`;
+      return localizedPath + query;
+    },
+    [language]
+  );
+
   const t = (path: string, fallback?: string): string => {
     const keys = path.split(".");
     let current: any = translations[language];
@@ -95,16 +197,23 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       if (current && typeof current === "object" && k in current) {
         current = current[k];
       } else {
-        // Fallback to English
-        let enCurrent: any = translations["en"];
+        let enCurrent: any = translations.en;
+
         for (const ek of keys) {
-          if (enCurrent && typeof enCurrent === "object" && ek in enCurrent) {
+          if (
+            enCurrent &&
+            typeof enCurrent === "object" &&
+            ek in enCurrent
+          ) {
             enCurrent = enCurrent[ek];
           } else {
             return fallback || path;
           }
         }
-        return typeof enCurrent === "string" ? enCurrent : fallback || path;
+
+        return typeof enCurrent === "string"
+          ? enCurrent
+          : fallback || path;
       }
     }
 
@@ -120,6 +229,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         currentLanguageInfo,
         changeLanguage,
         t,
+        localizedHref,
       }}
     >
       {children}
@@ -129,8 +239,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
 export function useLanguage() {
   const context = useContext(LanguageContext);
+
   if (!context) {
     throw new Error("useLanguage must be used within a LanguageProvider");
   }
+
   return context;
 }

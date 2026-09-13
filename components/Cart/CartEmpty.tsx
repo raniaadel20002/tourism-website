@@ -8,7 +8,7 @@ interface CartEmptyProps {
 }
 
 export default function CartEmpty({ onReset }: CartEmptyProps) {
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   return (
     <div className="bg-white border border-gray-200/80 rounded-2xl p-10 sm:p-16 text-center max-w-2xl mx-auto shadow-xs">
@@ -30,7 +30,7 @@ export default function CartEmpty({ onReset }: CartEmptyProps) {
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Link
-          href="/trips"
+          href={localizedHref("/trips")}
           className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-roboto font-medium text-sm transition-colors shadow-xs"
         >
           {t("cart.exploreTours", "Explore Tours")}

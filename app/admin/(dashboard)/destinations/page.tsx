@@ -10,6 +10,9 @@ import {
   type Destination,
 } from "@/api/destinations";
 import { buildImageUrl } from "@/api/gallery";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 // ─── Add / Edit Modal ─────────────────────────────────────────────────────────
 
@@ -33,9 +36,9 @@ function DestinationModal({ isOpen, editId, onClose, onSuccess }: DestinationMod
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   const isEdit = editId != null;
 
@@ -43,7 +46,6 @@ function DestinationModal({ isOpen, editId, onClose, onSuccess }: DestinationMod
   useEffect(() => {
     if (!isOpen) return;
 
-    setError(null);
     setSaving(false);
     setPreviewUrl(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -55,27 +57,36 @@ function DestinationModal({ isOpen, editId, onClose, onSuccess }: DestinationMod
 
     const token = localStorage.getItem("admin_access_token");
     if (!token) {
-      setError("Your session has expired. Please sign in again.");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
 
     setLoadingEdit(true);
     setForm(emptyForm);
-    getDestinationById(editId!, token)
-      .then((dest) => {
+    Promise.all([
+      getDestinationById(editId!, token, "en"),
+      getDestinationById(editId!, token, "fr"),
+      getDestinationById(editId!, token, "ru"),
+      getDestinationById(editId!, token, "ro"),
+    ])
+      .then(([enDest, frDest, ruDest, roDest]) => {
         setForm({
-          nameEn: dest.name ?? "",
-          nameFr: "",
-          nameRu: "",
-          nameRo: "",
-          isFeatured: dest.isFeatured,
+          nameEn: enDest.name ?? "",
+          nameFr: frDest.name ?? "",
+          nameRu: ruDest.name ?? "",
+          nameRo: roDest.name ?? "",
+          isFeatured: enDest.isFeatured,
           imageFile: null,
         });
-        setPreviewUrl(dest.imageUrl ? buildImageUrl(dest.imageUrl) : null);
+
+        setPreviewUrl(
+          enDest.imageUrl ? buildImageUrl(enDest.imageUrl) : null
+        );
       })
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : "Failed to load destination.")
-      )
+      .catch((err) => {
+        const msg = parseApiError(err);
+        if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load destination.");
+      })
       .finally(() => setLoadingEdit(false));
   }, [isOpen, isEdit, editId]);
 
@@ -103,17 +114,16 @@ function DestinationModal({ isOpen, editId, onClose, onSuccess }: DestinationMod
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!form.nameEn.trim()) { setError("The English name is required."); return; }
-    if (!form.nameFr.trim()) { setError("The French name is required."); return; }
-    if (!form.nameRu.trim()) { setError("The Russian name is required."); return; }
-    if (!form.nameRo.trim()) { setError("The Romanian name is required."); return; }
-    if (!isEdit && !form.imageFile) { setError("An image is required for new destinations."); return; }
+    if (!form.nameEn.trim()) { toast.error("The English name is required."); return; }
+    if (!form.nameFr.trim()) { toast.error("The French name is required."); return; }
+    if (!form.nameRu.trim()) { toast.error("The Russian name is required."); return; }
+    if (!form.nameRo.trim()) { toast.error("The Romanian name is required."); return; }
+    if (!isEdit && !form.imageFile) { toast.error("An image is required for new destinations."); return; }
 
     const token = localStorage.getItem("admin_access_token");
-    if (!token) { setError("Your session has expired. Please sign in again."); return; }
+    if (!token) { toast.error("Your session has expired. Please sign in again."); return; }
 
     setSaving(true);
-    setError(null);
     try {
       const result = isEdit
         ? await updateDestination({ id: editId!, ...form }, token)
@@ -121,7 +131,8 @@ function DestinationModal({ isOpen, editId, onClose, onSuccess }: DestinationMod
       onSuccess(result, isEdit);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save destination.");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to save destination.");
     } finally {
       setSaving(false);
     }
@@ -160,12 +171,6 @@ function DestinationModal({ isOpen, editId, onClose, onSuccess }: DestinationMod
             <div className="flex items-center justify-center py-10 text-sm text-gray-500">Loading…</div>
           ) : (
             <>
-              {error && (
-                <div role="alert" className="rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-600">
-                  {error}
-                </div>
-              )}
-
               {/* Name fields */}
               <p className="text-xs text-gray-400">All four language names are required by the API.</p>
               {([
@@ -264,10 +269,10 @@ function DestinationModal({ isOpen, editId, onClose, onSuccess }: DestinationMod
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DestinationsPage() {
+  const { confirm } = useAdminModal();
+  const toast = useToast();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
@@ -279,18 +284,18 @@ export default function DestinationsPage() {
   const loadDestinations = useCallback(async (search = searchQuery, size = pageSize) => {
     const token = localStorage.getItem("admin_access_token");
     if (!token) {
-      setError("Your session has expired. Please sign in again.");
+      toast.error("Your session has expired. Please sign in again.");
       setLoading(false);
       return;
     }
     setLoading(true);
-    setError(null);
     try {
       setDestinations(
         await getDestinations(token, { pageNumber: 1, pageSize: size, searchTerm: search || undefined })
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load destinations.");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load destinations.");
     } finally {
       setLoading(false);
     }
@@ -310,15 +315,11 @@ export default function DestinationsPage() {
 
   const openAdd = () => {
     setEditingId(null);
-    setError(null);
-    setSuccess(null);
     setModalOpen(true);
   };
 
   const openEdit = (id: number) => {
     setEditingId(id);
-    setError(null);
-    setSuccess(null);
     setModalOpen(true);
   };
 
@@ -328,23 +329,22 @@ export default function DestinationsPage() {
         ? prev.map((d) => (d.id === result.id ? result : d))
         : [result, ...prev]
     );
-    setSuccess(isEdit ? "Destination updated successfully." : "Destination created successfully.");
+    toast.success(isEdit ? "Destination updated successfully." : "Destination created successfully.");
   };
 
   const remove = async (dest: Destination) => {
     const token = localStorage.getItem("admin_access_token");
-    if (!token) { setError("Your session has expired. Please sign in again."); return; }
-    if (!window.confirm(`Delete destination "${dest.name}"? This cannot be undone.`)) return;
+    if (!token) { toast.error("Your session has expired. Please sign in again."); return; }
+    if (!(await confirm(`Delete destination "${dest.name}"? This cannot be undone.`))) return;
 
     setDeletingId(dest.id);
-    setError(null);
-    setSuccess(null);
     try {
       await deleteDestination(dest.id, token);
       setDestinations((prev) => prev.filter((d) => d.id !== dest.id));
-      setSuccess("Destination deleted successfully.");
+      toast.success("Destination deleted successfully.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete destination.");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to delete destination.");
     } finally {
       setDeletingId(null);
     }
@@ -371,16 +371,6 @@ export default function DestinationsPage() {
           Add destination
         </button>
       </div>
-
-      {/* Feedback banner */}
-      {(error || success) && (
-        <div
-          role={error ? "alert" : "status"}
-          className={`rounded-lg border p-3 text-sm ${error ? "border-red-100 bg-red-50 text-red-600" : "border-emerald-100 bg-emerald-50 text-emerald-700"}`}
-        >
-          {error ?? success}
-        </div>
-      )}
 
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-wrap gap-4">
@@ -435,7 +425,7 @@ export default function DestinationsPage() {
                   </td>
                 </tr>
               )}
-              {!loading && !error && destinations.length === 0 && (
+              {!loading && destinations.length === 0 && (
                 <tr>
                   <td colSpan={4} className="px-6 py-10 text-center text-sm text-gray-500">
                     No destinations found.

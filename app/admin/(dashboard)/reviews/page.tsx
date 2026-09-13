@@ -6,11 +6,15 @@ import {
   deleteReview,
   type Review,
 } from "@/api/review";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 export default function ReviewsPage() {
+  const { confirm } = useAdminModal();
+  const toast = useToast();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const [tripIdInput, setTripIdInput] = useState("");
   const [tripId, setTripId] = useState<number | undefined>(undefined);
@@ -27,7 +31,6 @@ export default function ReviewsPage() {
 
   const fetchReviews = useCallback(async () => {
     setLoading(true);
-    setError("");
 
     try {
       const token = getToken();
@@ -45,9 +48,8 @@ export default function ReviewsPage() {
       setReviews(data || []);
     } catch (err) {
       setReviews([]);
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch reviews"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to fetch reviews");
     } finally {
       setLoading(false);
     }
@@ -69,11 +71,10 @@ export default function ReviewsPage() {
     const parsed = Number(value);
 
     if (!Number.isInteger(parsed) || parsed <= 0) {
-      setError("Trip ID must be a valid positive number.");
+      toast.error("Trip ID must be a valid positive number.");
       return;
     }
 
-    setError("");
     setTripId(parsed);
     setPageNumber(1);
   };
@@ -82,11 +83,10 @@ export default function ReviewsPage() {
     setTripIdInput("");
     setTripId(undefined);
     setPageNumber(1);
-    setError("");
   };
 
   const handleDelete = async (id: number) => {
-    const confirmed = window.confirm(
+    const confirmed = await confirm(
       "Are you sure you want to delete this review?"
     );
 
@@ -100,12 +100,11 @@ export default function ReviewsPage() {
       }
 
       await deleteReview(id, token);
-
+      toast.success("Review deleted successfully");
       await fetchReviews();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to delete review"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to delete review");
     }
   };
 
@@ -190,13 +189,6 @@ export default function ReviewsPage() {
           Clear
         </button>
       </div>
-
-      {/* Error */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
 
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">

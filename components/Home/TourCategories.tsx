@@ -58,13 +58,19 @@ function buildImageUrl(imageUrl: string): string {
 
 function buildTripImages(trips: Trip[]): Record<string, string> {
   const images: Record<string, string> = {};
+  const hasPrimary: Record<string, boolean> = {};
 
   trips.forEach((trip) => {
     const typeName = trip.tripTypeName?.trim().toLowerCase();
-    const imageUrl = trip.images?.[0]?.imageUrl;
+    if (!typeName) return;
 
-    if (typeName && imageUrl && !images[typeName]) {
-      images[typeName] = buildImageUrl(imageUrl);
+    const primaryImg = trip.images?.find((img) => img.isPrimary);
+    
+    if (primaryImg?.imageUrl && !hasPrimary[typeName]) {
+      images[typeName] = buildImageUrl(primaryImg.imageUrl);
+      hasPrimary[typeName] = true;
+    } else if (trip.images?.[0]?.imageUrl && !images[typeName]) {
+      images[typeName] = buildImageUrl(trip.images[0].imageUrl);
     }
   });
 

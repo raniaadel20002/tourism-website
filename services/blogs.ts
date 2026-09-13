@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig";
+import { authFetch } from "@/utils/authFetch";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -53,30 +53,19 @@ interface BlogApiResponse<T> {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function getToken(): string {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("admin_access_token") || "";
-  }
-  return "";
-}
-
-function authHeaders(token: string): HeadersInit {
-  return {
-    accept: "text/plain",
-    Authorization: `Bearer ${token}`,
-  };
-}
-
 async function parse<T>(res: Response, action: string): Promise<T> {
-  let text = "";
-  try { text = await res.text(); } catch { /* ignore */ }
-  let json: BlogApiResponse<T>;
-  try { json = JSON.parse(text); } catch {
-    throw new Error(`${action} failed (${res.status}): ${text.slice(0, 120)}`);
+  if (res.status === 401) {
+    throw Object.assign(new Error("UNAUTHORIZED"), {
+      isUnauthorized: true,
+    });
   }
-  if (!res.ok || !json.success) {
-    throw new Error(json.message || `${action} failed (${res.status})`);
-  }
+
+  if (!res.ok) throw new Error(`${action}: ${res.status}`);
+
+  const json: BlogApiResponse<T> = await res.json();
+
+  if (!json.success) throw new Error(json.message || action);
+
   return json.data;
 }
 
@@ -91,90 +80,119 @@ export async function getBlogs(
     PageNumber: String(pageNumber),
     PageSize: String(pageSize),
   });
-  return parse<Blog[]>(
-    await fetch(`${API_BASE_URL}/api/Blogs?${q}`, {
-      headers: {
-        accept: "text/plain",
-        ...(lang ? { "Accept-Language": lang } : {}),
-      },
-      cache: "no-store",
-    }),
-    "Fetch blogs"
-  );
+
+  const res = await authFetch(`/api/Blogs?${q}`, {
+    method: "GET",
+    headers: {
+      accept: "text/plain",
+      ...(lang ? { "Accept-Language": lang } : {}),
+    },
+  });
+
+  return parse<Blog[]>(res, "Fetch blogs");
 }
 
 // ─── GET /api/Blogs/{id} ─────────────────────────────────────────────────────
 
 export async function getBlogById(id: number, lang?: string): Promise<Blog> {
-  return parse<Blog>(
-    await fetch(`${API_BASE_URL}/api/Blogs/${id}`, {
-      headers: {
-        accept: "text/plain",
-        ...(lang ? { "Accept-Language": lang } : {}),
-      },
-      cache: "no-store",
-    }),
-    "Fetch blog"
-  );
+  const res = await authFetch(`/api/Blogs/${id}`, {
+    method: "GET",
+    headers: {
+      accept: "text/plain",
+      ...(lang ? { "Accept-Language": lang } : {}),
+    },
+  });
+
+  return parse<Blog>(res, "Fetch blog");
 }
 
 // ─── POST /api/Blogs ─────────────────────────────────────────────────────────
 
 export async function createBlog(body: CreateBlogInput): Promise<Blog> {
-  const token = getToken();
-  return parse<Blog>(
-    await fetch(`${API_BASE_URL}/api/Blogs`, {
-      method: "POST",
-      headers: { ...authHeaders(token), "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }),
-    "Create blog"
-  );
+  const res = await authFetch("/api/Blogs", {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return parse<Blog>(res, "Create blog");
 }
 
 // ─── PUT /api/Blogs/{id} ─────────────────────────────────────────────────────
 
-export async function updateBlog(id: number, body: UpdateBlogInput): Promise<Blog> {
-  const token = getToken();
-  return parse<Blog>(
-    await fetch(`${API_BASE_URL}/api/Blogs/${id}`, {
-      method: "PUT",
-      headers: { ...authHeaders(token), "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }),
-    "Update blog"
-  );
+export async function updateBlog(
+  id: number,
+  body: UpdateBlogInput
+): Promise<Blog> {
+  const res = await authFetch(`/api/Blogs/${id}`, {
+    method: "PUT",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return parse<Blog>(res, "Update blog");
 }
 
 // ─── DELETE /api/Blogs/{id} ──────────────────────────────────────────────────
 
 export async function deleteBlog(id: number): Promise<void> {
-  const token = getToken();
-  const res = await fetch(`${API_BASE_URL}/api/Blogs/${id}`, {
+  const res = await authFetch(`/api/Blogs/${id}`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    headers: {
+      accept: "text/plain",
+    },
   });
+
   if (!res.ok) {
     let msg = `Delete blog failed (${res.status})`;
-    try { const j = await res.json(); if (j.message) msg = j.message; } catch { /* ignore */ }
+
+    try {
+      const j = await res.json();
+      if (j.message) msg = j.message;
+    } catch {
+      // ignore
+    }
+
     throw new Error(msg);
   }
 }
 
 // ─── POST /api/Blogs/image ───────────────────────────────────────────────────
 
-export async function uploadBlogImage(blogId: number, file: File): Promise<void> {
-  const token = getToken();
+export async function uploadBlogImage(
+  blogId: number,
+  file: File
+): Promise<void> {
   const form = new FormData();
   form.append("file", file);
-  const res = await fetch(`${API_BASE_URL}/api/Blogs/image?blogid=${blogId}`, {
-    method: "POST",
-    headers: authHeaders(token),
-    body: form,
-  });
+
+  const res = await authFetch(
+    `/api/Blogs/image?blogid=${blogId}`,
+    {
+      method: "POST",
+      headers: {
+        accept: "text/plain",
+      },
+      body: form,
+    }
+  );
+
   if (!res.ok) {
     let msg = `Upload blog image failed (${res.status})`;
-    try { const j = await res.json(); if (j.message) msg = j.message; } catch { /* ignore */ }
+
+    try {
+      const j = await res.json();
+      if (j.message) msg = j.message;
+    } catch {
+      // ignore
+    }
+
     throw new Error(msg);
   }
 }
@@ -186,16 +204,30 @@ export async function uploadBlogSectionImage(
   sectionId: number,
   file: File
 ): Promise<void> {
-  const token = getToken();
   const form = new FormData();
   form.append("file", file);
-  const res = await fetch(
-    `${API_BASE_URL}/api/Blogs/section/image?blogid=${blogId}&sectionid=${sectionId}`,
-    { method: "POST", headers: authHeaders(token), body: form }
+
+  const res = await authFetch(
+    `/api/Blogs/section/image?blogid=${blogId}&sectionid=${sectionId}`,
+    {
+      method: "POST",
+      headers: {
+        accept: "text/plain",
+      },
+      body: form,
+    }
   );
+
   if (!res.ok) {
     let msg = `Upload section image failed (${res.status})`;
-    try { const j = await res.json(); if (j.message) msg = j.message; } catch { /* ignore */ }
+
+    try {
+      const j = await res.json();
+      if (j.message) msg = j.message;
+    } catch {
+      // ignore
+    }
+
     throw new Error(msg);
   }
 }
@@ -203,29 +235,52 @@ export async function uploadBlogSectionImage(
 // ─── DELETE /api/Blogs/{id}/image ────────────────────────────────────────────
 
 export async function deleteBlogImage(blogId: number): Promise<void> {
-  const token = getToken();
-  const res = await fetch(`${API_BASE_URL}/api/Blogs/${blogId}/image`, {
+  const res = await authFetch(`/api/Blogs/${blogId}/image`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    headers: {
+      accept: "text/plain",
+    },
   });
+
   if (!res.ok) {
     let msg = `Delete blog image failed (${res.status})`;
-    try { const j = await res.json(); if (j.message) msg = j.message; } catch { /* ignore */ }
+
+    try {
+      const j = await res.json();
+      if (j.message) msg = j.message;
+    } catch {
+      // ignore
+    }
+
     throw new Error(msg);
   }
 }
 
 // ─── DELETE /api/Blogs/section/{sectionid}/image ─────────────────────────────
 
-export async function deleteBlogSectionImage(sectionId: number): Promise<void> {
-  const token = getToken();
-  const res = await fetch(`${API_BASE_URL}/api/Blogs/section/${sectionId}/image`, {
-    method: "DELETE",
-    headers: authHeaders(token),
-  });
+export async function deleteBlogSectionImage(
+  sectionId: number
+): Promise<void> {
+  const res = await authFetch(
+    `/api/Blogs/section/${sectionId}/image`,
+    {
+      method: "DELETE",
+      headers: {
+        accept: "text/plain",
+      },
+    }
+  );
+
   if (!res.ok) {
     let msg = `Delete section image failed (${res.status})`;
-    try { const j = await res.json(); if (j.message) msg = j.message; } catch { /* ignore */ }
+
+    try {
+      const j = await res.json();
+      if (j.message) msg = j.message;
+    } catch {
+      // ignore
+    }
+
     throw new Error(msg);
   }
 }

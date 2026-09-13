@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig";
+import { authFetch } from "@/utils/authFetch";
 
 export interface Review {
   id: number;
@@ -41,18 +41,16 @@ export interface GetReviewsParams {
   TripId?: number;
 }
 
-function authHeaders(token?: string, isJson = false): HeadersInit {
-  return {
-    accept: "text/plain",
-    ...(isJson ? { "Content-Type": "application/json" } : {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
 async function parseResponse<T>(
   res: Response,
   action: string
 ): Promise<T> {
+  if (res.status === 401) {
+    throw Object.assign(new Error("UNAUTHORIZED"), {
+      isUnauthorized: true,
+    });
+  }
+
   const text = await res.text();
 
   let json: {
@@ -80,67 +78,65 @@ export async function getReviews(
 ): Promise<Review[]> {
   const q = new URLSearchParams();
 
-  if (params.PageNumber !== undefined)
+  if (params.PageNumber !== undefined) {
     q.set("PageNumber", String(params.PageNumber));
+  }
 
-  if (params.PageSize !== undefined)
+  if (params.PageSize !== undefined) {
     q.set("PageSize", String(params.PageSize));
+  }
 
-  if (params.TripId !== undefined)
+  if (params.TripId !== undefined) {
     q.set("TripId", String(params.TripId));
+  }
 
   const query = q.toString();
 
-  return parseResponse<Review[]>(
-    await fetch(
-      `${API_BASE_URL}/api/Reviews${query ? `?${query}` : ""}`,
-      {
-        headers: authHeaders(token),
-        cache: "no-store",
-      }
-    ),
-    "Failed to fetch reviews"
+  const res = await authFetch(
+    `/api/Reviews${query ? `?${query}` : ""}`,
+    {
+      method: "GET",
+    }
   );
+
+  return parseResponse<Review[]>(res, "Failed to fetch reviews");
 }
 
 export async function getReviewById(
   id: number,
   token?: string
 ): Promise<Review> {
-  return parseResponse<Review>(
-    await fetch(`${API_BASE_URL}/api/Reviews/${id}`, {
-      headers: authHeaders(token),
-      cache: "no-store",
-    }),
-    "Failed to fetch review"
-  );
+  const res = await authFetch(`/api/Reviews/${id}`, {
+    method: "GET",
+  });
+
+  return parseResponse<Review>(res, "Failed to fetch review");
 }
 
 export async function createReview(
   body: CreateReviewRequest,
   token?: string
 ): Promise<Review> {
-  return parseResponse<Review>(
-    await fetch(`${API_BASE_URL}/api/Reviews`, {
-      method: "POST",
-      headers: authHeaders(token, true),
-      body: JSON.stringify(body),
-    }),
-    "Failed to create review"
-  );
+  const res = await authFetch("/api/Reviews", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return parseResponse<Review>(res, "Failed to create review");
 }
 
 export async function deleteReview(
   id: number,
   token: string
 ): Promise<string> {
-  return parseResponse<string>(
-    await fetch(`${API_BASE_URL}/api/Reviews/${id}`, {
-      method: "DELETE",
-      headers: authHeaders(token),
-    }),
-    "Failed to delete review"
-  );
+  const res = await authFetch(`/api/Reviews/${id}`, {
+    method: "DELETE",
+  });
+
+  return parseResponse<string>(res, "Failed to delete review");
 }
 
 export async function getTripReviewAverage(
@@ -150,14 +146,15 @@ export async function getTripReviewAverage(
   averageRate: number;
   totalReviews: number;
 }> {
-  return parseResponse(
-    await fetch(
-      `${API_BASE_URL}/api/Reviews/trip/${tripId}/average`,
-      {
-        headers: authHeaders(token),
-        cache: "no-store",
-      }
-    ),
-    "Failed to fetch review average"
+  const res = await authFetch(
+    `/api/Reviews/trip/${tripId}/average`,
+    {
+      method: "GET",
+    }
   );
+
+  return parseResponse<{
+    averageRate: number;
+    totalReviews: number;
+  }>(res, "Failed to fetch review average");
 }

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface BreadcrumbItem {
   label: string;
@@ -21,6 +24,8 @@ interface BreadcrumbProps {
  *   <Breadcrumb className="pt-20 sm:pt-24" items={[...]} />
  */
 export default function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
+  const { localizedHref } = useLanguage();
+
   return (
     <div className={`py-4 sm:py-6 text-center border-b border-gray-100 ${className}`}>
       <nav
@@ -36,7 +41,7 @@ export default function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
             )}
             {item.href ? (
               <Link
-                href={item.href}
+                href={localizedHref(item.href)}
                 className="text-[#5B6472] hover:text-[#004560] transition-colors"
               >
                 {item.label}

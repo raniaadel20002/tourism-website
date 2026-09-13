@@ -53,11 +53,12 @@ export default function TourCard({ tour }: TourCardProps) {
     };
   }, [tour.id]);
 
-  // Generate slug from trip name
-  const slug = tour.name
+  // Generate slug from trip id and name
+  const nameSlug = tour.name
     ?.toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "") || String(tour.id);
+    .replace(/^-|-$/g, "") || "tour";
+  const slug = `${tour.id}-${nameSlug}`;
 
   // Get primary image or first image
   const primaryImage = tour.images?.find(img => img.isPrimary);
@@ -166,4 +167,3 @@ export default function TourCard({ tour }: TourCardProps) {
     </motion.div>
   );
 }
-

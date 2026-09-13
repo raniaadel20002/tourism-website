@@ -9,6 +9,9 @@ import {
   type Booking,
   type GetBookingsParams,
 } from "@/api/bookings";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
 
@@ -72,10 +75,10 @@ const PAGE_SIZES = [10, 25, 50];
 // ─── Page Component ───────────────────────────────────────────────────────────
 
 export default function BookingsPage() {
+  const { confirm } = useAdminModal();
+  const toast = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
 
   // Filters
@@ -99,8 +102,6 @@ export default function BookingsPage() {
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
-    setError(null);
-    setActionError(null);
 
     try {
       const token = getToken();
@@ -117,9 +118,8 @@ export default function BookingsPage() {
       const data = await getBookings(token, params);
       setBookings(data);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch bookings"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to fetch bookings");
     } finally {
       setLoading(false);
     }
@@ -141,7 +141,6 @@ export default function BookingsPage() {
 
   const handleConfirm = async (id: number) => {
     setActionLoading(id);
-    setActionError(null);
     try {
       const token = getToken();
       await confirmBooking(id, token);
@@ -149,10 +148,10 @@ export default function BookingsPage() {
       setBookings((prev) =>
         prev.map((b) => (b.id === id ? { ...b, status: 1 } : b))
       );
+      toast.success("Booking confirmed successfully");
     } catch (err) {
-      setActionError(
-        err instanceof Error ? err.message : "Failed to confirm booking"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to confirm booking");
     } finally {
       setActionLoading(null);
     }
@@ -160,36 +159,34 @@ export default function BookingsPage() {
 
   const handleFinish = async (id: number) => {
     setActionLoading(id);
-    setActionError(null);
     try {
       const token = getToken();
       await finishBooking(id, token);
       setBookings((prev) =>
         prev.map((b) => (b.id === id ? { ...b, status: 2 } : b))
       );
+      toast.success("Booking finished successfully");
     } catch (err) {
-      setActionError(
-        err instanceof Error ? err.message : "Failed to finish booking"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to finish booking");
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this booking?")) {
+    if (!(await confirm("Are you sure you want to delete this booking?"))) {
       return;
     }
     setActionLoading(id);
-    setActionError(null);
     try {
       const token = getToken();
       await deleteBooking(id, token);
       setBookings((prev) => prev.filter((b) => b.id !== id));
+      toast.success("Booking deleted successfully");
     } catch (err) {
-      setActionError(
-        err instanceof Error ? err.message : "Failed to delete booking"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to delete booking");
     } finally {
       setActionLoading(null);
     }
@@ -210,14 +207,6 @@ export default function BookingsPage() {
           </p>
         </div>
       </div>
-
-      {/* Action error banner */}
-      {actionError && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-          <strong className="font-bold">Error: </strong>
-          {actionError}
-        </div>
-      )}
 
       {/* Filters and Tabs */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6 flex flex-col gap-6">
@@ -323,17 +312,13 @@ export default function BookingsPage() {
           )}
         </div>
 
-        {error && (
-          <div className="p-6 text-center text-red-600 text-sm">{error}</div>
-        )}
-
-        {!error && !loading && bookings.length === 0 && (
+        {!loading && bookings.length === 0 && (
           <div className="p-6 text-center text-gray-400 text-sm">
             No bookings found.
           </div>
         )}
 
-        {!error && bookings.length > 0 && (
+        {bookings.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[1000px]">
               <thead>
@@ -535,7 +520,7 @@ export default function BookingsPage() {
         )}
 
         {/* Pagination controls */}
-        {!error && bookings.length > 0 && (
+        {bookings.length > 0 && (
           <div className="p-4 border-t border-gray-100 flex items-center justify-between">
             <span className="text-xs text-gray-500">
               Page {pageNumber}

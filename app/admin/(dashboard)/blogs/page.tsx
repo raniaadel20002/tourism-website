@@ -17,6 +17,10 @@ import {
   type UpdateBlogSectionInput,
 } from "@/api/blogs";
 import { buildImageUrl } from "@/api/gallery";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -49,16 +53,16 @@ const emptyForm = (): FormState => ({
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AdminBlogsPage() {
+  const { alert } = useAdminModal();
+  const toast = useToast();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [editBlog, setEditBlog] = useState<Blog | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm());
   const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Delete confirm
   const [deleteTarget, setDeleteTarget] = useState<Blog | null>(null);
@@ -70,11 +74,11 @@ export default function AdminBlogsPage() {
 
   const load = async () => {
     setLoading(true);
-    setError(null);
     try {
       setBlogs(await getBlogs(1, 100));
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load blogs");
+      const msg = parseApiError(e);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load blogs");
     } finally {
       setLoading(false);
     }
@@ -87,7 +91,6 @@ export default function AdminBlogsPage() {
   const openAdd = () => {
     setEditBlog(null);
     setForm(emptyForm());
-    setSaveError(null);
     setModalOpen(true);
   };
 
@@ -111,7 +114,6 @@ export default function AdminBlogsPage() {
       imageFile: null,
       deleteMainImage: false,
     });
-    setSaveError(null);
     setModalOpen(true);
   };
 
@@ -119,7 +121,6 @@ export default function AdminBlogsPage() {
     setModalOpen(false);
     setEditBlog(null);
     setForm(emptyForm());
-    setSaveError(null);
   };
 
   // ── Sections helpers ──────────────────────────────────────────────────────
@@ -153,10 +154,9 @@ export default function AdminBlogsPage() {
   // ── Save ──────────────────────────────────────────────────────────────────
 
   const handleSave = async () => {
-    if (!form.title.trim()) { setSaveError("Title is required"); return; }
-    if (!form.content.trim()) { setSaveError("Content is required"); return; }
+    if (!form.title.trim()) { toast.error("Title is required"); return; }
+    if (!form.content.trim()) { toast.error("Content is required"); return; }
     setSaving(true);
-    setSaveError(null);
     try {
       if (editBlog) {
         // PUT
@@ -194,6 +194,7 @@ export default function AdminBlogsPage() {
             await uploadBlogSectionImage(updated.id, saved.id, draft.imageFile);
           }
         }
+        toast.success("Blog updated successfully");
       } else {
         // POST
         const body: CreateBlogInput = {
@@ -221,12 +222,14 @@ export default function AdminBlogsPage() {
             await uploadBlogSectionImage(created.id, saved.id, draft.imageFile);
           }
         }
+        toast.success("Blog created successfully");
       }
 
       closeModal();
       await load();
     } catch (e) {
-      setSaveError(e instanceof Error ? e.message : "Save failed");
+      const msg = parseApiError(e);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Save failed");
     } finally {
       setSaving(false);
     }
@@ -240,9 +243,11 @@ export default function AdminBlogsPage() {
     try {
       await deleteBlog(deleteTarget.id);
       setDeleteTarget(null);
+      toast.success("Blog deleted successfully");
       await load();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Delete failed");
+      const msg = parseApiError(e);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Delete failed");
     } finally {
       setDeleting(false);
     }
@@ -292,17 +297,12 @@ export default function AdminBlogsPage() {
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-400 text-sm">Loading...</td>
                 </tr>
               )}
-              {!loading && error && (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-red-500 text-sm">{error}</td>
-                </tr>
-              )}
-              {!loading && !error && blogs.length === 0 && (
+              {!loading && blogs.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-400 text-sm">No blogs yet. Click &ldquo;Add blog&rdquo; to create one.</td>
                 </tr>
               )}
-              {!loading && !error && blogs.map((blog) => {
+              {!loading && blogs.map((blog) => {
                 const imgUrl = blog.imageUrl ? buildImageUrl(blog.imageUrl) : null;
                 return (
                   <tr key={blog.id} className="hover:bg-gray-50/50 transition-colors">
@@ -368,11 +368,6 @@ export default function AdminBlogsPage() {
 
             {/* Modal Body */}
             <div className="px-6 py-6 flex flex-col gap-5 overflow-y-auto max-h-[75vh]">
-
-              {saveError && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{saveError}</div>
-              )}
-
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Title <span className="text-red-500">*</span></label>

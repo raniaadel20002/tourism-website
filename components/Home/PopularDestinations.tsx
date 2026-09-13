@@ -1,41 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
+import { getDestinations, type Destination } from "@/api/destinations";
+import { API_BASE_URL } from "@/api/apiConfig";
 
-interface Destination {
-  id: string;
-  name: string;
-  nameKey: string;
-  image: string;
-  href: string;
+function buildImageUrl(imageUrl: string | null): string {
+  if (!imageUrl) return "/images/destination/hurghada.png";
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return imageUrl;
+  }
+  return `${API_BASE_URL}/${imageUrl}`;
 }
-
-const destinationsData: Destination[] = [
-  {
-    id: "hurghada",
-    name: "Hurghada",
-    nameKey: "destinations.hurghada",
-    image: "/images/destination/hurghada.png",
-    href: "/trips?destination=Hurghada",
-  },
-  {
-    id: "giza",
-    name: "Giza",
-    nameKey: "destinations.giza",
-    image: "/images/destination/giza.png",
-    href: "/trips?destination=Giza",
-  },
-  {
-    id: "aswan",
-    name: "Aswan",
-    nameKey: "destinations.aswan",
-    image: "/images/destination/aswan.png",
-    href: "/trips?destination=Aswan",
-  },
-];
 
 const headerVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -72,7 +51,27 @@ const cardVariants: Variants = {
 };
 
 export default function PopularDestinations() {
-  const { t } = useLanguage();
+  const { t, language, localizedHref } = useLanguage();
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    getDestinations(undefined, { lang: language, pageNumber: 1, pageSize: 3 })
+      .then(data => {
+        if (!cancelled) {
+          setDestinations(data);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        if (!cancelled) {
+          console.error(err);
+          setLoading(false);
+        }
+      });
+    return () => { cancelled = true; };
+  }, [language]);
 
   return (
     <section className="w-full py-10 sm:py-12 lg:py-14 bg-[#F4F9FB] overflow-hidden">
@@ -103,7 +102,7 @@ export default function PopularDestinations() {
         {/* View More Button Row (Aligned to the Right above cards) */}
         <div className="w-full flex justify-end mb-4 sm:mb-5 px-2 sm:px-0">
           <Link
-            href="/destinations"
+            href={localizedHref("/destinations")}
             className="border border-[#006993] text-[#006993] hover:bg-[#006993] hover:text-white font-roboto font-medium text-xs sm:text-sm px-5 sm:px-6 py-1.5 sm:py-2 rounded-full transition-all duration-300 shadow-xs hover:shadow-md cursor-pointer"
           >
             {t("bestselling.moreTours", "View More")}
@@ -118,7 +117,14 @@ export default function PopularDestinations() {
           viewport={{ once: true, amount: 0.2 }}
           variants={containerVariants}
         >
-          {destinationsData.map((dest) => (
+          {loading && destinations.length === 0 ? (
+            Array.from({ length: 3 }).map((_, idx) => (
+              <div
+                key={`dest-skel-${idx}`}
+                className="flex-shrink-0 w-[240px] sm:w-[270px] md:flex-1 md:w-auto md:max-w-[360px] snap-center h-[170px] sm:h-[195px] lg:h-[220px] rounded-[20px] sm:rounded-[24px] bg-gray-200 animate-pulse"
+              />
+            ))
+          ) : destinations.map((dest) => (
             <motion.div
               key={dest.id}
               variants={cardVariants}
@@ -126,11 +132,11 @@ export default function PopularDestinations() {
               transition={{ type: "spring", stiffness: 300, damping: 22 }}
               className="flex-shrink-0 w-[240px] sm:w-[270px] md:flex-1 md:w-auto md:max-w-[360px] snap-center cursor-pointer group"
             >
-              <Link href={dest.href} className="block w-full">
+              <Link href={localizedHref(`/trips?destinationId=${dest.id}`)} className="block w-full">
                 <div className="relative w-full h-[170px] sm:h-[195px] lg:h-[220px] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-md group-hover:shadow-xl transition-shadow duration-300 bg-gray-100">
                   <Image
-                    src={dest.image}
-                    alt={t(dest.nameKey, dest.name)}
+                    src={buildImageUrl(dest.imageUrl)}
+                    alt={dest.name || ""}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -139,7 +145,7 @@ export default function PopularDestinations() {
                   {/* Localized destination name overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-4 sm:pb-5 pointer-events-none">
                     <span className="font-roboto font-bold text-white text-base sm:text-lg lg:text-xl drop-shadow-md tracking-wide">
-                      {t(dest.nameKey, dest.name)}
+                      {dest.name}
                     </span>
                   </div>
                 </div>

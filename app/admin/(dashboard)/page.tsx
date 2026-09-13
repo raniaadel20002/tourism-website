@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { API_BASE_URL } from "@/api/apiConfig";
+import { authFetch } from "@/utils/authFetch";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 type TimeRange = "Daily" | "Monthly" | "Yearly";
 
@@ -25,12 +27,11 @@ interface ReportResponse {
 export default function AdminDashboardPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("Daily");
   const [report, setReport] = useState<ReportData | null>(null);
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchReport = useCallback(async (range: TimeRange) => {
     setLoading(true);
-    setError("");
 
     try {
       const endpoint =
@@ -40,14 +41,10 @@ export default function AdminDashboardPage() {
             ? "/api/Reports/monthly"
             : "/api/Reports/yearly";
 
-      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      const res = await authFetch(endpoint, {
         method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${localStorage.getItem("admin_access_token")}`,
-        },
-        cache: "no-store",
       });
+
 
       const text = await res.text();
 
@@ -76,14 +73,14 @@ export default function AdminDashboardPage() {
       setReport(json.data);
     } catch (err) {
       console.error("Dashboard report error:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to load dashboard data."
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load dashboard data.");
       setReport(null);
     } finally {
       setLoading(false);
     }
   }, []);
+
 
   useEffect(() => {
     fetchReport(timeRange);
@@ -151,12 +148,6 @@ export default function AdminDashboardPage() {
           </button>
         </div>
       </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-100 text-red-600 rounded-xl px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
 
       {/* Top Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

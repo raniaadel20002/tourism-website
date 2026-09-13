@@ -9,6 +9,9 @@ import {
   updateTripType,
 } from "@/api/tripType";
 import type { TripType, TripTypeNameLocalized } from "@/modules/tripType.model";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 const emptyName: TripTypeNameLocalized = { en: "", fr: "", ru: "", ro: "" };
 
@@ -26,8 +29,8 @@ function TripTypeModal({ isOpen, onClose, onSuccess, editId }: TripTypeModalProp
   const [name, setName] = useState<TripTypeNameLocalized>(emptyName);
   const [saving, setSaving] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   const isEditMode = editId != null;
 
@@ -37,19 +40,17 @@ function TripTypeModal({ isOpen, onClose, onSuccess, editId }: TripTypeModalProp
 
     if (!isEditMode) {
       setName(emptyName);
-      setError(null);
       setSaving(false);
       return;
     }
 
     const token = localStorage.getItem("admin_access_token");
     if (!token) {
-      setError("Your session has expired. Please sign in again.");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
 
     setLoadingEdit(true);
-    setError(null);
     setName(emptyName);
 
     getTripTypeById(editId!, token)
@@ -58,7 +59,8 @@ function TripTypeModal({ isOpen, onClose, onSuccess, editId }: TripTypeModalProp
         setName({ en: type.name, fr: "", ru: "", ro: "" });
       })
       .catch((err) => {
-        setError(err instanceof Error ? err.message : "Failed to load trip type.");
+        const msg = parseApiError(err);
+        if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load trip type.");
       })
       .finally(() => {
         setLoadingEdit(false);
@@ -66,12 +68,50 @@ function TripTypeModal({ isOpen, onClose, onSuccess, editId }: TripTypeModalProp
   }, [isOpen, isEditMode, editId]);
 
   // Auto-focus first field after opening
-  useEffect(() => {
-    if (isOpen && !loadingEdit) {
-      const id = window.setTimeout(() => firstInputRef.current?.focus(), 50);
-      return () => window.clearTimeout(id);
+useEffect(() => {
+  if (!isOpen) return;
+
+  if (!isEditMode) {
+    setName(emptyName);
+    setSaving(false);
+    return;
+  }
+
+  const token = localStorage.getItem("admin_access_token");
+
+  if (!token) {
+    toast.error("Your session has expired. Please sign in again.");
+    return;
+  }
+
+  setLoadingEdit(true);
+  setName(emptyName);
+
+  const loadTranslations = async () => {
+    try {
+      const [enType, frType, ruType, roType] = await Promise.all([
+        getTripTypeById(editId!, token, "en"),
+        getTripTypeById(editId!, token, "fr"),
+        getTripTypeById(editId!, token, "ru"),
+        getTripTypeById(editId!, token, "ro"),
+      ]);
+
+      setName({
+        en: enType.name ?? "",
+        fr: frType.name ?? "",
+        ru: ruType.name ?? "",
+        ro: roType.name ?? "",
+      });
+    } catch (err) {
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load trip type.");
+    } finally {
+      setLoadingEdit(false);
     }
-  }, [isOpen, loadingEdit]);
+  };
+
+  void loadTranslations();
+}, [isOpen, isEditMode, editId]);
 
   // Close on Escape
   useEffect(() => {
@@ -87,31 +127,15 @@ function TripTypeModal({ isOpen, onClose, onSuccess, editId }: TripTypeModalProp
     e.preventDefault();
 
     // Client-side validation
-    if (!name.en.trim()) {
-      setError("The English name is required.");
-      return;
-    }
-    if (!name.fr.trim()) {
-      setError("The French name is required.");
-      return;
-    }
-    if (!name.ru.trim()) {
-      setError("The Russian name is required.");
-      return;
-    }
-    if (!name.ro.trim()) {
-      setError("The Romanian name is required.");
-      return;
-    }
+    if (!name.en.trim()) { toast.error("The English name is required."); return; }
+    if (!name.fr.trim()) { toast.error("The French name is required."); return; }
+    if (!name.ru.trim()) { toast.error("The Russian name is required."); return; }
+    if (!name.ro.trim()) { toast.error("The Romanian name is required."); return; }
 
     const token = localStorage.getItem("admin_access_token");
-    if (!token) {
-      setError("Your session has expired. Please sign in again.");
-      return;
-    }
+    if (!token) { toast.error("Your session has expired. Please sign in again."); return; }
 
     setSaving(true);
-    setError(null);
 
     try {
       const result = isEditMode
@@ -121,8 +145,8 @@ function TripTypeModal({ isOpen, onClose, onSuccess, editId }: TripTypeModalProp
       onSuccess(result, isEditMode);
       onClose();
     } catch (err) {
-      // Surface the exact API error to the user
-      setError(err instanceof Error ? err.message : "Failed to save trip type.");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to save trip type.");
     } finally {
       setSaving(false);
     }
@@ -172,15 +196,6 @@ function TripTypeModal({ isOpen, onClose, onSuccess, editId }: TripTypeModalProp
             </div>
           ) : (
             <>
-              {error && (
-                <div
-                  role="alert"
-                  className="rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-600"
-                >
-                  {error}
-                </div>
-              )}
-
               <p className="text-xs text-gray-500">
                 All four language names are required by the API.
               </p>
@@ -262,11 +277,11 @@ function TripTypeModal({ isOpen, onClose, onSuccess, editId }: TripTypeModalProp
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function TripTypesPage() {
+  const { confirm } = useAdminModal();
+  const toast = useToast();
   const [types, setTypes] = useState<TripType[]>([]);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Modal state
@@ -277,18 +292,16 @@ export default function TripTypesPage() {
     async (size = pageSize) => {
       const token = localStorage.getItem("admin_access_token");
       if (!token) {
-        setError("Your session has expired. Please sign in again.");
+        toast.error("Your session has expired. Please sign in again.");
         setLoading(false);
         return;
       }
       setLoading(true);
-      setError(null);
       try {
         setTypes(await getTripTypes(token, { pageNumber: 1, pageSize: size }));
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load trip types."
-        );
+        const msg = parseApiError(err);
+        if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load trip types.");
       } finally {
         setLoading(false);
       }
@@ -303,15 +316,11 @@ export default function TripTypesPage() {
 
   const openAdd = () => {
     setEditingId(null);
-    setError(null);
-    setSuccess(null);
     setModalOpen(true);
   };
 
   const openEdit = (id: number) => {
     setEditingId(id);
-    setError(null);
-    setSuccess(null);
     setModalOpen(true);
   };
 
@@ -321,7 +330,7 @@ export default function TripTypesPage() {
         ? current.map((item) => (item.id === result.id ? result : item))
         : [result, ...current]
     );
-    setSuccess(
+    toast.success(
       isEdit
         ? "Trip type updated successfully."
         : "Trip type created successfully."
@@ -331,27 +340,24 @@ export default function TripTypesPage() {
   const remove = async (type: TripType) => {
     const token = localStorage.getItem("admin_access_token");
     if (!token) {
-      setError("Your session has expired. Please sign in again.");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
     if (
-      !window.confirm(
+      !(await confirm(
         `Delete trip type "${type.name}"? This cannot be undone.`
-      )
+      ))
     )
       return;
 
     setDeletingId(type.id);
-    setError(null);
-    setSuccess(null);
     try {
       await deleteTripType(type.id, token);
       setTypes((current) => current.filter((item) => item.id !== type.id));
-      setSuccess("Trip type deleted successfully.");
+      toast.success("Trip type deleted successfully.");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to delete trip type."
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to delete trip type.");
     } finally {
       setDeletingId(null);
     }
@@ -381,20 +387,6 @@ export default function TripTypesPage() {
           Add trip type
         </button>
       </div>
-
-      {/* Feedback banner */}
-      {(error || success) && (
-        <div
-          role={error ? "alert" : "status"}
-          className={`rounded-lg border p-3 text-sm ${
-            error
-              ? "border-red-100 bg-red-50 text-red-600"
-              : "border-emerald-100 bg-emerald-50 text-emerald-700"
-          }`}
-        >
-          {error ?? success}
-        </div>
-      )}
 
       {/* Page size control */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex gap-4">
@@ -447,7 +439,7 @@ export default function TripTypesPage() {
                   </td>
                 </tr>
               )}
-              {!loading && !error && types.length === 0 && (
+              {!loading && types.length === 0 && (
                 <tr>
                   <td
                     colSpan={3}

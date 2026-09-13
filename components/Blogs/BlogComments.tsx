@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useToast } from "@/context/ToastContext";
 
 interface LocalComment {
   id: string;
@@ -14,8 +15,8 @@ export default function BlogComments() {
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formComment, setFormComment] = useState("");
-  const [submittedMessage, setSubmittedMessage] = useState(false);
   const { t } = useLanguage();
+  const toast = useToast();
 
   const handlePostComment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +29,7 @@ export default function BlogComments() {
     setFormName("");
     setFormEmail("");
     setFormComment("");
-    setSubmittedMessage(true);
-    setTimeout(() => setSubmittedMessage(false), 4000);
+    toast.success(t("blogs.commentSuccess", "Thank you! Your comment has been posted."));
   };
 
   return (
@@ -71,15 +71,6 @@ export default function BlogComments() {
         <h3 className="font-roboto font-bold text-[#000C09] text-lg sm:text-xl mb-5">
           {t("blogs.addComment", "Add Comment")}
         </h3>
-
-        {submittedMessage && (
-          <div className="mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-roboto text-sm flex items-center gap-2">
-            <svg className="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <span>{t("blogs.commentSuccess", "Thank you! Your comment has been posted.")}</span>
-          </div>
-        )}
 
         <form onSubmit={handlePostComment} className="flex flex-col gap-4">
 

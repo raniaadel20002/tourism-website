@@ -55,6 +55,7 @@ function MarqueeCard({
         fill
         sizes="(max-width: 640px) 33vw, (max-width: 1024px) 30vw, 25vw"
         className="object-cover group-hover:scale-105 transition-transform duration-300"
+        // quality={60}
       />
     </button>
   );

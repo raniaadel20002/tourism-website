@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
-import { getTrips, type Trip as ApiTrip } from "@/api/trips";
+import { getTripById, type Trip as ApiTrip } from "@/api/trips";
 import { buildImageUrl } from "@/api/gallery";
 import {
   getReviews,
@@ -57,17 +57,18 @@ export default function TripDetailsPage() {
           setLoading(true);
         }
 
-        const trips = await getTrips(undefined, 1, 100, { lang: apiLang });
+        const match = slug.match(/^(\d+)/);
+        const tripId = match ? parseInt(match[1], 10) : NaN;
+
+        if (isNaN(tripId)) {
+          setError("Invalid trip URL format");
+          setLoading(false);
+          return;
+        }
+
+        const foundTrip = await getTripById(tripId, undefined, apiLang);
+
         if (cancelled) return;
-
-        const foundTrip = trips.find((t) => {
-          const tripSlug = t.name
-            ?.toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-|-$/g, "");
-
-          return tripSlug === slug || String(t.id) === slug;
-        });
 
         if (foundTrip && foundTrip.isActive) {
           setTrip(foundTrip);
@@ -77,6 +78,7 @@ export default function TripDetailsPage() {
         }
       } catch (err) {
         if (cancelled) return;
+
         setError(
           err instanceof Error ? err.message : "Failed to fetch trip"
         );
@@ -163,17 +165,21 @@ export default function TripDetailsPage() {
   }
 
   // Build primary image from API data only
-  const rawPrimary =
-    trip.images?.find((img) => img.isPrimary)?.imageUrl ||
-    trip.images?.[0]?.imageUrl ||
-    trip.destinationInfo?.imageUrl ||
-    null;
+  const primaryImgObj = trip.images?.find((img) => img.isPrimary) || trip.images?.[0];
+  const rawPrimary = primaryImgObj?.imageUrl || trip.destinationInfo?.imageUrl || null;
 
   const primaryImage = rawPrimary ? buildImageUrl(rawPrimary) : "";
 
   // Gallery images from API only
   const galleryImages =
     trip.images
+      ?.filter((img) => {
+        if (primaryImgObj) {
+          if (img.id === primaryImgObj.id) return false;
+          if (img.imageUrl === primaryImgObj.imageUrl) return false;
+        }
+        return true;
+      })
       ?.map((img) =>
         img.imageUrl ? buildImageUrl(img.imageUrl) : ""
       )
@@ -318,7 +324,7 @@ export default function TripDetailsPage() {
               ""
             }
             rating={currentRating}
-            reviewCount={reviewTotalCount}            
+            reviewCount={reviewTotalCount}
             duration={`${trip.durationValue} ${trip.durationTypeName || ""
               }`}
             tourType={trip.tripTypeName || ""}

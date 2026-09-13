@@ -12,12 +12,26 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const { itemCount } = useCart();
-  const { t } = useLanguage();
-  const isActive = (href: string) => pathname === href;
+  const { t, language, localizedHref } = useLanguage();
+
+  const isActive = (href: string) => {
+    // Strip language suffix from pathname for comparison
+    const segments = pathname.split("/").filter(Boolean);
+    const langCodes = ["en", "fr", "ru", "ro"];
+    const lastSeg = segments[segments.length - 1];
+    const pathWithoutLang = lastSeg && langCodes.includes(lastSeg)
+      ? "/" + segments.slice(0, -1).join("/")
+      : pathname;
+    const normalizedPath = pathWithoutLang === "" ? "/" : pathWithoutLang;
+    return normalizedPath === href;
+  };
 
   const navLinks = [
     { label: t("nav.home", "Home"), href: "/" },
-    { label: t("nav.destinations", "Destinations"), href: "/destinations" },
+    {
+      label: t("nav.destinations", "Destinations"),
+      href: "/destinations",
+    },
     { label: t("nav.trips", "Trips"), href: "/trips" },
     { label: t("nav.gallery", "Gallery"), href: "/gallery" },
     { label: t("nav.blogs", "Blogs"), href: "/blogs" },
@@ -26,6 +40,7 @@ export default function Navbar() {
   ];
 
   const { scrollY } = useScroll();
+
   const navShadow = useTransform(
     scrollY,
     [0, 60],
@@ -38,13 +53,17 @@ export default function Navbar() {
       style={{ boxShadow: navShadow }}
       initial={{ y: -64, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 280, damping: 28, mass: 0.8 }}
+      transition={{
+        type: "spring",
+        stiffness: 280,
+        damping: 28,
+        mass: 0.8,
+      }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo and Mobile Language Switcher */}
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center">
+            <Link href={localizedHref("/")} className="flex items-center">
               <img
                 src="/images/home/hero/Logo.png"
                 alt={t("nav.logoAlt", "Logo")}
@@ -53,17 +72,20 @@ export default function Navbar() {
                 className="h-7 w-auto object-contain aspect-[160/38]"
               />
             </Link>
+
             <div className="md:hidden">
-              <LanguageSwitcher variant="desktop" dropdownAlign="left" />
+              <LanguageSwitcher
+                variant="desktop"
+                dropdownAlign="left"
+              />
             </div>
           </div>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={localizedHref(link.href)}
                 className={`text-sm font-medium transition-colors hover:text-emerald-600 flex items-center gap-1 ${
                   isActive(link.href)
                     ? "text-emerald-600 border-b-2 border-emerald-600 pb-0.5"
@@ -75,10 +97,9 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Icons & Language Switcher */}
           <div className="hidden md:flex items-center gap-4">
             <Link
-              href="/cart"
+              href={localizedHref("/cart")}
               className="text-gray-600 hover:text-emerald-600 transition-colors relative p-1"
               aria-label={t("nav.viewCart", "View booking cart")}
             >
@@ -95,6 +116,7 @@ export default function Navbar() {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>
+
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {itemCount}
@@ -102,14 +124,12 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Language Switcher Dropdown */}
             <LanguageSwitcher variant="desktop" />
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-3">
             <Link
-              href="/cart"
+              href={localizedHref("/cart")}
               className="text-gray-600 hover:text-emerald-600 relative p-1"
               aria-label={t("nav.viewCart", "View booking cart")}
             >
@@ -126,12 +146,14 @@ export default function Navbar() {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>
+
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
             </Link>
+
             <button
               className="text-gray-600 cursor-pointer"
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -164,26 +186,33 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       <motion.div
         className="md:hidden overflow-hidden"
         initial={false}
-        animate={mobileOpen ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
-        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+        animate={
+          mobileOpen
+            ? { height: "auto", opacity: 1 }
+            : { height: 0, opacity: 0 }
+        }
+        transition={{
+          duration: 0.22,
+          ease: [0.4, 0, 0.2, 1],
+        }}
       >
         <div className="bg-white border-t border-gray-100 px-4 py-3 space-y-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
-              href={link.href}
+              href={localizedHref(link.href)}
               className="block text-sm text-gray-700 hover:text-emerald-600 py-1"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
             </Link>
           ))}
+
           <Link
-            href="/cart"
+            href={localizedHref("/cart")}
             className="block text-sm text-emerald-600 font-medium py-1"
             onClick={() => setMobileOpen(false)}
           >

@@ -8,7 +8,7 @@ interface ConfirmationMessageProps {
 }
 
 export default function ConfirmationMessage({ bookingId }: ConfirmationMessageProps) {
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   return (
     <div className="text-center w-full mt-2 sm:mt-4">
@@ -23,13 +23,13 @@ export default function ConfirmationMessage({ bookingId }: ConfirmationMessagePr
 
       <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
         <Link
-          href="/"
+          href={localizedHref("/")}
           className="px-8 py-2.5 rounded-full bg-[#004360] hover:bg-[#00344b] text-white font-roboto font-semibold text-xs sm:text-sm transition-all shadow-xs"
         >
           {t("confirmation.backHome", "Back to Home")}
         </Link>
         <Link
-          href="/trips"
+          href={localizedHref("/trips")}
           className="px-8 py-2.5 rounded-full border border-gray-300 text-slate-700 hover:bg-slate-50 font-roboto font-medium text-xs sm:text-sm transition-all"
         >
           {t("confirmation.exploreMore", "Explore More Trips")}

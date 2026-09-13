@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig";
+import { authFetch } from "@/utils/authFetch";
 import {
   Admin,
   AdminCreateDto,
@@ -10,15 +10,6 @@ import {
 // Re-export types so callers can import from one place if needed
 export type { Admin, AdminCreateDto, AdminUpdateDto, GetAdminsParams };
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function authHeaders(token: string): HeadersInit {
-  return {
-    accept: "text/plain",
-    Authorization: `Bearer ${token}`,
-  };
-}
-
 // ─── API Functions ────────────────────────────────────────────────────────────
 
 /** GET /api/Admins — list all admins (paginated) */
@@ -27,16 +18,17 @@ export async function getAdmins(
   params: GetAdminsParams = {}
 ): Promise<Admin[]> {
   const query = new URLSearchParams();
+
   if (params.pageNumber !== undefined)
     query.set("PageNumber", String(params.pageNumber));
+
   if (params.pageSize !== undefined)
     query.set("PageSize", String(params.pageSize));
 
-  const url = `${API_BASE_URL}/api/Admins${query.size ? `?${query}` : ""}`;
+  const endpoint = `/api/Admins${query.size ? `?${query}` : ""}`;
 
-  const res = await fetch(url, {
-    headers: authHeaders(token),
-    cache: "no-store",
+  const res = await authFetch(endpoint, {
+    method: "GET"
   });
 
   if (!res.ok) {
@@ -57,9 +49,8 @@ export async function getAdminById(
   id: number,
   token: string
 ): Promise<Admin> {
-  const res = await fetch(`${API_BASE_URL}/api/Admins/${id}`, {
-    headers: authHeaders(token),
-    cache: "no-store",
+  const res = await authFetch(`/api/Admins/${id}`, {
+    method: "GET"
   });
 
   if (!res.ok) {
@@ -80,10 +71,9 @@ export async function createAdmin(
   dto: AdminCreateDto,
   token: string
 ): Promise<Admin> {
-  const res = await fetch(`${API_BASE_URL}/api/Admins`, {
+  const res = await authFetch("/api/Admins", {
     method: "POST",
     headers: {
-      ...authHeaders(token),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(dto),
@@ -107,10 +97,9 @@ export async function updateAdmin(
   dto: AdminUpdateDto,
   token: string
 ): Promise<Admin> {
-  const res = await fetch(`${API_BASE_URL}/api/Admins`, {
+  const res = await authFetch("/api/Admins", {
     method: "PUT",
     headers: {
-      ...authHeaders(token),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(dto),
@@ -134,9 +123,8 @@ export async function deleteAdmin(
   id: number,
   token: string
 ): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/api/Admins/${id}`, {
+  const res = await authFetch(`/api/Admins/${id}`, {
     method: "DELETE",
-    headers: authHeaders(token),
   });
 
   if (!res.ok) {

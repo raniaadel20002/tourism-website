@@ -4,16 +4,21 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   createTrip,
   updateTrip,
+  getTripById,
   addTripImages,
   deleteTripImage,
   setPrimaryTripImage,
   type TripMutation,
   type Trip,
   type TripImage,
+  type TranslationInput,
 } from "@/api/trips";
 import { getTripTypes, type TripType } from "@/api/tripType";
 import { getDestinations, type Destination } from "@/api/destinations";
 import { buildImageUrl } from "@/api/gallery";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 interface AddTripModalProps {
   isOpen: boolean;
@@ -35,15 +40,75 @@ const AVAILABLE_DAYS = [
   "Sunday",
 ];
 
+const TranslationListInput = ({
+  label,
+  items,
+  setItems,
+}: {
+  label: string;
+  items: TranslationInput[];
+  setItems: React.Dispatch<React.SetStateAction<TranslationInput[]>>;
+}) => {
+  return (
+    <div className="mb-4">
+      <div className="flex items-center justify-between mb-2">
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        <button
+          type="button"
+          onClick={() => setItems([...items, { en: "", fr: "", ru: "", ro: "" }])}
+          className="text-xs font-medium text-[#006993] hover:text-[#004560]"
+        >
+          + Add Item
+        </button>
+      </div>
+      {items.map((item, index) => (
+        <div key={index} className="flex flex-col gap-2 mb-3 p-3 border border-gray-200 rounded-lg bg-gray-50/50">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-gray-500">Item {index + 1}</span>
+            <button
+              type="button"
+              onClick={() => setItems(items.filter((_, i) => i !== index))}
+              className="text-xs text-red-500 hover:text-red-700"
+            >
+              Remove
+            </button>
+          </div>
+          <input
+            placeholder="English *"
+            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#006993]"
+            value={item.en}
+            onChange={(e) => {
+              const newItems = [...items];
+              newItems[index].en = e.target.value;
+              setItems(newItems);
+            }}
+            required
+          />
+          <details>
+            <summary className="text-xs text-[#006993] cursor-pointer hover:underline mb-1">Translations (optional)</summary>
+            <div className="flex flex-col gap-2 mt-2">
+              <input placeholder="French" className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#006993]" value={item.fr} onChange={(e) => { const newItems = [...items]; newItems[index].fr = e.target.value; setItems(newItems); }} />
+              <input placeholder="Russian" className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#006993]" value={item.ru} onChange={(e) => { const newItems = [...items]; newItems[index].ru = e.target.value; setItems(newItems); }} />
+              <input placeholder="Romanian" className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#006993]" value={item.ro} onChange={(e) => { const newItems = [...items]; newItems[index].ro = e.target.value; setItems(newItems); }} />
+            </div>
+          </details>
+        </div>
+      ))}
+      {items.length === 0 && <p className="text-xs text-gray-400 italic">No items added.</p>}
+    </div>
+  );
+};
+
 export default function AddTripModal({
   isOpen,
   onClose,
   onSuccess,
   editTrip,
 }: AddTripModalProps) {
+  const { confirm } = useAdminModal();
+  const toast = useToast();
   const isEditMode = editTrip != null;
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [tripTypes, setTripTypes] = useState<TripType[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
@@ -68,6 +133,12 @@ export default function AddTripModal({
   const [adultPrice, setAdultPrice] = useState<number>(0);
   const [childPrice, setChildPrice] = useState<number>(0);
   const [tripTypeId, setTripTypeId] = useState<number>(0);
+
+  // Lists (multi-lingual)
+  const [highlights, setHighlights] = useState<TranslationInput[]>([]);
+  const [includes, setIncludes] = useState<TranslationInput[]>([]);
+  const [excludes, setExcludes] = useState<TranslationInput[]>([]);
+  const [whatToBring, setWhatToBring] = useState<TranslationInput[]>([]);
 
   // Available days
   const [availableDays, setAvailableDays] = useState<string[]>([]);
@@ -119,16 +190,10 @@ export default function AddTripModal({
       });
 
       // Pre-fill all other form fields when editing
-      if (editTrip) {
-        setDestinationId(0); // reset; real value set after destinations load in .then() above
+      if (editTrip) { 
+        
         setNameEn(editTrip.name ?? "");
-        setNameFr("");
-        setNameRu("");
-        setNameRo("");
         setDescriptionEn(editTrip.description ?? "");
-        setDescriptionFr("");
-        setDescriptionRu("");
-        setDescriptionRo("");
         setTimeFrom(editTrip.timeFrom ?? "");
         setDurationValue(editTrip.durationValue ?? 1);
         setDurationType(
@@ -137,11 +202,44 @@ export default function AddTripModal({
         setAdultPrice(editTrip.adultPrice ?? 0);
         setChildPrice(editTrip.childPrice ?? 0);
         setExistingImages(editTrip.images || []);
-
-        // Pre-select available days when editing — deduplicate in case the API
-        // returns repeated day-name strings (which would propagate to duplicate
-        // day numbers in the PUT payload and trigger a 400 from the server).
         setAvailableDays([...new Set(editTrip.availableDays ?? [])]);
+
+        // Fetch translations for the other languages so they are pre-filled
+        const fetchTranslations = async () => {
+          const token = getToken();
+          const [frTrip, ruTrip, roTrip] = await Promise.all([
+            getTripById(editTrip.id, token, "fr").catch(() => null),
+            getTripById(editTrip.id, token, "ru").catch(() => null),
+            getTripById(editTrip.id, token, "ro").catch(() => null),
+          ]);
+          setNameFr(frTrip?.name ?? "");
+          setDescriptionFr(frTrip?.description ?? "");
+          setNameRu(ruTrip?.name ?? "");
+          setDescriptionRu(ruTrip?.description ?? "");
+          setNameRo(roTrip?.name ?? "");
+          setDescriptionRo(roTrip?.description ?? "");
+
+          const buildTranslations = (
+            enArr: string[] = [],
+            frArr: string[] = [],
+            ruArr: string[] = [],
+            roArr: string[] = []
+          ): TranslationInput[] => {
+            const length = Math.max(enArr.length, frArr.length, ruArr.length, roArr.length);
+            return Array.from({ length }).map((_, i) => ({
+              en: enArr[i] || "",
+              fr: frArr[i] || "",
+              ru: ruArr[i] || "",
+              ro: roArr[i] || ""
+            }));
+          };
+
+          setHighlights(buildTranslations(editTrip.highlights || [], frTrip?.highlights || [], ruTrip?.highlights || [], roTrip?.highlights || []));
+          setIncludes(buildTranslations(editTrip.includes || [], frTrip?.includes || [], ruTrip?.includes || [], roTrip?.includes || []));
+          setExcludes(buildTranslations(editTrip.excludes || [], frTrip?.excludes || [], ruTrip?.excludes || [], roTrip?.excludes || []));
+          setWhatToBring(buildTranslations(editTrip.whatToBring || [], frTrip?.whatToBring || [], ruTrip?.whatToBring || [], roTrip?.whatToBring || []));
+        };
+        fetchTranslations();
       } else {
         // Reset for add mode
         resetForm();
@@ -171,59 +269,23 @@ export default function AddTripModal({
 
 
     // Validation
-    if (!destinationId || destinationId === 0) {
-      setError("Please select a destination");
-      return;
-    }
-
-    if (!tripTypeId || tripTypeId === 0) {
-      setError("Please select a trip type");
-      return;
-    }
-
-    if (!nameEn.trim()) {
-      setError("English name is required");
-      return;
-    }
-
-    if (!descriptionEn.trim()) {
-      setError("English description is required");
-      return;
-    }
-
-    if (adultPrice <= 0) {
-      setError("Adult price must be greater than 0");
-      return;
-    }
-
-    if (childPrice < 0) {
-      setError("Child price cannot be negative");
-      return;
-    }
-
-    if (durationValue <= 0) {
-      setError("Duration must be greater than 0");
-      return;
-    }
-
-    if (availableDays.length === 0) {
-      setError("Please select at least one available day");
-      return;
-    }
-
-    if (!isEditMode && imageFiles.length === 0) {
-      setError("Please select at least one image for the new trip");
-      return;
-    }
+    if (!destinationId || destinationId === 0) { toast.error("Please select a destination"); return; }
+    if (!tripTypeId || tripTypeId === 0) { toast.error("Please select a trip type"); return; }
+    if (!nameEn.trim()) { toast.error("English name is required"); return; }
+    if (!descriptionEn.trim()) { toast.error("English description is required"); return; }
+    if (adultPrice <= 0) { toast.error("Adult price must be greater than 0"); return; }
+    if (childPrice < 0) { toast.error("Child price cannot be negative"); return; }
+    if (durationValue <= 0) { toast.error("Duration must be greater than 0"); return; }
+    if (availableDays.length === 0) { toast.error("Please select at least one available day"); return; }
+    if (!isEditMode && imageFiles.length === 0) { toast.error("Please select at least one image for the new trip"); return; }
 
     try {
       setLoading(true);
-      setError(null);
 
       const token = getToken();
 
       if (!token) {
-        setError("You must be logged in to save a trip");
+        toast.error("You must be logged in to save a trip");
         return;
       }
 
@@ -231,15 +293,15 @@ export default function AddTripModal({
         destinationId,
         name: {
           en: nameEn,
-          fr: nameFr || nameEn,
-          ru: nameRu || nameEn,
-          ro: nameRo || nameEn,
+          fr: nameFr,
+          ru: nameRu,
+          ro: nameRo,
         },
         description: {
           en: descriptionEn,
-          fr: descriptionFr || descriptionEn,
-          ru: descriptionRu || descriptionEn,
-          ro: descriptionRo || descriptionEn,
+          fr: descriptionFr,
+          ru: descriptionRu,
+          ro: descriptionRo,
         },
         timeFrom: timeFrom || null,
         durationValue,
@@ -247,6 +309,10 @@ export default function AddTripModal({
         adultPrice,
         childPrice,
         tripTypeId,
+        highlights: highlights.filter(h => h.en.trim() !== ""),
+        includes: includes.filter(h => h.en.trim() !== ""),
+        excludes: excludes.filter(h => h.en.trim() !== ""),
+        whatToBring: whatToBring.filter(h => h.en.trim() !== ""),
         availabilityDayNo: availableDays.map((day) => {
           const dayNumbers: Record<string, number> = {
             Monday: 0,
@@ -280,16 +346,14 @@ export default function AddTripModal({
       resetForm();
 
       // Notify parent
+      toast.success(isEditMode ? "Trip updated successfully" : "Trip created successfully");
       onSuccess();
       onClose();
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : isEditMode
-            ? "Failed to update trip"
-            : "Failed to create trip"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") {
+        toast.error(msg || (isEditMode ? "Failed to update trip" : "Failed to create trip"));
+      }
     } finally {
       setLoading(false);
     }
@@ -305,7 +369,7 @@ export default function AddTripModal({
 
   const handleDeleteExistingImage = async (imageId: number) => {
     if (!editTrip) return;
-    if (!window.confirm("Delete this image?")) return;
+    if (!(await confirm("Delete this image?"))) return;
 
 
     const token = getToken();
@@ -317,12 +381,10 @@ export default function AddTripModal({
       setExistingImages((prev) =>
         prev.filter((img) => img.id !== imageId)
       );
+      toast.success("Image deleted successfully");
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to delete image"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to delete image");
     } finally {
       setLoading(false);
     }
@@ -346,12 +408,10 @@ export default function AddTripModal({
           isPrimary: img.id === imageId,
         }))
       );
+      toast.success("Primary image updated");
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to set primary image"
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to set primary image");
     } finally {
       setLoading(false);
     }
@@ -375,6 +435,10 @@ export default function AddTripModal({
     setAdultPrice(0);
     setChildPrice(0);
     setTripTypeId(0);
+    setHighlights([]);
+    setIncludes([]);
+    setExcludes([]);
+    setWhatToBring([]);
     setAvailableDays([]);
     setImageFiles([]);
     setExistingImages([]);
@@ -383,10 +447,6 @@ export default function AddTripModal({
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-
-    setError(null);
-
-
   };
 
   const handleClose = () => {
@@ -419,12 +479,6 @@ export default function AddTripModal({
       onSubmit={handleSubmit}
       className="flex-1 overflow-y-auto px-6 py-4"
     >
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-          {error}
-        </div>
-      )}
-
       {destinations.length === 0 && (
         <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-sm">
           <strong>Warning:</strong> No destinations found. Please
@@ -755,6 +809,37 @@ export default function AddTripModal({
             />
           </div>
         </div>
+      </div>
+
+      {/* Trip Details */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-[#004560] mb-4">
+          Trip Details (Multi-lingual)
+        </h3>
+        
+        <TranslationListInput
+          label="Highlights"
+          items={highlights}
+          setItems={setHighlights}
+        />
+        
+        <TranslationListInput
+          label="Included"
+          items={includes}
+          setItems={setIncludes}
+        />
+        
+        <TranslationListInput
+          label="Excluded"
+          items={excludes}
+          setItems={setExcludes}
+        />
+        
+        <TranslationListInput
+          label="What To Bring"
+          items={whatToBring}
+          setItems={setWhatToBring}
+        />
       </div>
 
       {/* Images */}

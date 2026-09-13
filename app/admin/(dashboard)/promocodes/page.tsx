@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { getPromoCodes, createPromoCode, type PromoCode, type PromoCodeMutation } from "@/api/promoCode";
 import { getTrips, type Trip } from "@/api/trips";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 export default function PromoCodesPage() {
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [trips, setTrips] = useState<Trip[]>([]);
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "related" | "general">("all");
 
@@ -33,9 +35,9 @@ export default function PromoCodesPage() {
       ]);
       setPromoCodes(promoData);
       setTrips(tripsData);
-      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch data");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to fetch data");
     } finally {
       setLoading(false);
     }
@@ -120,8 +122,6 @@ export default function PromoCodesPage() {
 
         {loading ? (
           <div className="p-8 text-center text-gray-500">Loading promo codes...</div>
-        ) : error ? (
-          <div className="p-8 text-center text-red-500">{error}</div>
         ) : filteredPromoCodes.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
             No promo codes found. Click 'New Promo Code' to create one.
@@ -237,8 +237,8 @@ function PromoCodeModal({
   onSuccess: () => void;
   trips: Trip[];
 }) {
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   
   const [discountEuro, setDiscountEuro] = useState<number>(0);
   const [discountPercent, setDiscountPercent] = useState<number>(0);
@@ -256,25 +256,24 @@ function PromoCodeModal({
     e.preventDefault();
     
     if (discountEuro <= 0 && discountPercent <= 0) {
-      setError("Please specify either euro discount or percentage discount");
+      toast.error("Please specify either euro discount or percentage discount");
       return;
     }
     if (discountEuro > 0 && discountPercent > 0) {
-      setError("Please specify only one type of discount (euro OR percentage)");
+      toast.error("Please specify only one type of discount (euro OR percentage)");
       return;
     }
     if (discountPercent > 100) {
-      setError("Percentage discount cannot exceed 100%");
+      toast.error("Percentage discount cannot exceed 100%");
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
-      
+
       const token = getToken();
       if (!token) {
-        setError("You must be logged in");
+        toast.error("You must be logged in");
         return;
       }
 
@@ -286,9 +285,11 @@ function PromoCodeModal({
       };
 
       await createPromoCode(promoData, token);
+      toast.success("Promo code created successfully");
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create promo code");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to create promo code");
     } finally {
       setLoading(false);
     }
@@ -311,12 +312,6 @@ function PromoCodeModal({
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-4">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-              {error}
-            </div>
-          )}
-
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

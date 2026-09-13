@@ -2,6 +2,9 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { API_BASE_URL } from "@/api/apiConfig";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 type Admin = {
   id: number;
@@ -48,9 +51,10 @@ const emptyForm: FormData = {
 };
 
 export default function AdminsPage() {
+  const { confirm } = useAdminModal();
+  const toast = useToast();
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
@@ -70,7 +74,6 @@ export default function AdminsPage() {
 
   const fetchAdmins = useCallback(async () => {
     setLoading(true);
-    setError("");
 
     try {
       const token = localStorage.getItem("admin_access_token");
@@ -116,11 +119,8 @@ export default function AdminsPage() {
       setAdmins(json.data);
     } catch (err) {
       console.error("Admins GET error:", err);
-
-      setError(
-        err instanceof Error ? err.message : "Failed to load admins."
-      );
-
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load admins.");
       setAdmins([]);
     } finally {
       setLoading(false);
@@ -138,7 +138,6 @@ export default function AdminsPage() {
   const openAddModal = () => {
     setEditingAdmin(null);
     setFormData(emptyForm);
-    setError("");
     setModalOpen(true);
   };
 
@@ -159,7 +158,6 @@ export default function AdminsPage() {
       notes: admin.notes || "",
     });
 
-    setError("");
     setModalOpen(true);
   };
 
@@ -198,7 +196,6 @@ export default function AdminsPage() {
     e.preventDefault();
 
     setSaving(true);
-    setError("");
 
     try {
       const token = localStorage.getItem("admin_access_token");
@@ -281,13 +278,12 @@ export default function AdminsPage() {
       setEditingAdmin(null);
       setFormData(emptyForm);
 
+      toast.success(editingAdmin ? "Admin updated successfully." : "Admin created successfully.");
       await fetchAdmins();
     } catch (err) {
       console.error(`Admins ${editingAdmin ? "PUT" : "POST"} error:`, err);
-
-      setError(
-        err instanceof Error ? err.message : "Operation failed."
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Operation failed.");
     } finally {
       setSaving(false);
     }
@@ -298,14 +294,13 @@ export default function AdminsPage() {
   // ─────────────────────────────────────────────────────────────────────────
 
   const handleDelete = async (admin: Admin) => {
-    const confirmed = window.confirm(
+    const confirmed = await confirm(
       `Are you sure you want to delete ${admin.firstName} ${admin.lastName}?`
     );
 
     if (!confirmed) return;
 
     setDeletingId(admin.id);
-    setError("");
 
     try {
       const token = localStorage.getItem("admin_access_token");
@@ -360,13 +355,12 @@ export default function AdminsPage() {
         }
       }
 
+      toast.success("Admin deleted successfully.");
       await fetchAdmins();
     } catch (err) {
       console.error("Admins DELETE error:", err);
-
-      setError(
-        err instanceof Error ? err.message : "Failed to delete admin."
-      );
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to delete admin.");
     } finally {
       setDeletingId(null);
     }
@@ -447,13 +441,6 @@ export default function AdminsPage() {
           ↻
         </button>
       </div>
-
-      {/* Error */}
-      {error && (
-        <div className="bg-red-50 border border-red-100 text-red-600 rounded-xl px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
 
       {/* Table Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">

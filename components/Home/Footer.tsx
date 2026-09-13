@@ -101,7 +101,13 @@ function InstagramIcon() {
     >
       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
       <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+      <circle
+        cx="17.5"
+        cy="6.5"
+        r="0.5"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   );
 }
@@ -113,7 +119,7 @@ function TikTokIcon() {
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.79a8.27 8.27 0 004.83 1.54V6.88a4.85 4.85 0 01-1.06-.19z" />
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 0 006.34 6.34 6.33 6.33 0 006.33-6.34V8.79a8.27 8.27 0 004.83 1.54V6.88a4.85 4.85 0 01-1.06-.19z" />
     </svg>
   );
 }
@@ -137,7 +143,6 @@ const socialLinks = [
   { label: "X", icon: <XIcon />, href: "#" },
 ];
 
-/* ─── Framer Motion Variants ─── */
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -165,11 +170,15 @@ const cardVariants: Variants = {
 };
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, language, localizedHref } = useLanguage();
 
   const quickLinks = [
     { label: t("nav.home", "Home"), href: "/" },
-    { label: t("nav.destinations", "Destinations"), href: "/destinations", hasDropdown: true },
+    {
+      label: t("nav.destinations", "Destinations"),
+      href: "/destinations",
+      hasDropdown: true,
+    },
     { label: t("nav.trips", "Trips"), href: "/trips" },
     { label: t("nav.gallery", "Gallery"), href: "/gallery" },
     { label: t("nav.about", "About Us"), href: "/about" },
@@ -180,8 +189,6 @@ export default function Footer() {
   return (
     <footer className="bg-[#006993] pt-8 sm:pt-10 pb-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="max-w-[1320px] mx-auto">
-        
-        {/* ── Large white rounded container ── */}
         <motion.div
           className="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[36px] px-6 sm:px-10 lg:px-12 py-8 sm:py-10 lg:py-12 shadow-lg"
           variants={cardVariants}
@@ -189,7 +196,6 @@ export default function Footer() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
         >
-
           <motion.div
             className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-between gap-8 lg:gap-6"
             variants={containerVariants}
@@ -197,9 +203,10 @@ export default function Footer() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
           >
-            
-            {/* ── Column 1: Logo + Description ── */}
-            <motion.div variants={columnVariants} className="w-full sm:w-[45%] lg:w-[28%] flex flex-col items-start">
+            <motion.div
+              variants={columnVariants}
+              className="w-full sm:w-[45%] lg:w-[28%] flex flex-col items-start"
+            >
               <div className="mb-5">
                 <Image
                   src="/images/home/Footer/Logo.png"
@@ -209,24 +216,32 @@ export default function Footer() {
                   className="h-auto w-36 sm:w-40 object-contain"
                 />
               </div>
+
               <p className="font-roboto text-[#000C09] text-xs sm:text-sm leading-relaxed max-w-[260px]">
-                {t("footer.description", "Every journey is an opportunity to explore, relax, and create unforgettable memories crafted with care, comfort, and local expertise.")}
+                {t(
+                  "footer.description",
+                  "Every journey is an opportunity to explore, relax, and create unforgettable memories crafted with care, comfort, and local expertise."
+                )}
               </p>
             </motion.div>
 
-            {/* ── Column 2: Quick Action Links ── */}
-            <motion.div variants={columnVariants} className="w-full sm:w-[45%] lg:w-[22%] flex flex-col items-start">
+            <motion.div
+              variants={columnVariants}
+              className="w-full sm:w-[45%] lg:w-[22%] flex flex-col items-start"
+            >
               <h3 className="font-roboto font-semibold text-[#004560] text-base sm:text-lg mb-4 sm:mb-5">
                 {t("footer.quickAction", "Quick action")}
               </h3>
+
               <ul className="flex flex-col gap-2.5 sm:gap-3">
                 {quickLinks.map(({ label, href, hasDropdown }) => (
                   <li key={label}>
                     <Link
-                      href={href}
+                      href={localizedHref(href)}
                       className="font-roboto text-[#000C09] hover:text-[#006993] text-xs sm:text-sm transition-colors duration-150 inline-flex items-center gap-1.5"
                     >
                       <span>{label}</span>
+
                       {hasDropdown && (
                         <svg
                           className="w-3.5 h-3.5 text-[#000C09]"
@@ -249,26 +264,34 @@ export default function Footer() {
               </ul>
             </motion.div>
 
-            {/* ── Column 3: Contact Us ── */}
-            <motion.div variants={columnVariants} className="w-full sm:w-[45%] lg:w-[26%] flex flex-col items-start">
+            <motion.div
+              variants={columnVariants}
+              className="w-full sm:w-[45%] lg:w-[26%] flex flex-col items-start"
+            >
               <h3 className="font-roboto font-semibold text-[#004560] text-base sm:text-lg mb-4 sm:mb-5">
                 {t("footer.contactUs", "Contact Us")}
               </h3>
+
               <ul className="flex flex-col gap-4 sm:gap-5">
                 <li className="flex items-center gap-3">
                   <PhoneIcon />
+
                   <span className="font-roboto text-[#000C09] text-xs sm:text-sm">
                     {t("footer.phone", "+00 (123) 456 889")}
                   </span>
                 </li>
+
                 <li className="flex items-center gap-3">
                   <GlobeIcon />
+
                   <span className="font-roboto text-[#000C09] text-xs sm:text-sm">
                     {t("footer.email", "contact@example.com")}
                   </span>
                 </li>
+
                 <li className="flex items-center gap-3">
                   <LocationPinIcon />
+
                   <span className="font-roboto text-[#000C09] text-xs sm:text-sm leading-relaxed">
                     {t("footer.address", "583 Main Street, NY, USA")}
                   </span>
@@ -276,11 +299,14 @@ export default function Footer() {
               </ul>
             </motion.div>
 
-            {/* ── Column 4: Follow Us + Social Icons ── */}
-            <motion.div variants={columnVariants} className="w-full sm:w-[45%] lg:w-[20%] flex flex-col items-start">
+            <motion.div
+              variants={columnVariants}
+              className="w-full sm:w-[45%] lg:w-[20%] flex flex-col items-start"
+            >
               <h3 className="font-roboto font-semibold text-[#004560] text-base sm:text-lg mb-4 sm:mb-5">
                 {t("footer.followUs", "Follow Us")}
               </h3>
+
               <div className="flex items-center gap-4 sm:gap-5">
                 {socialLinks.map(({ label, icon, href }) => (
                   <a
@@ -294,24 +320,27 @@ export default function Footer() {
                 ))}
               </div>
             </motion.div>
-
           </motion.div>
-
         </motion.div>
 
-        {/* ── Copyright Text Below Container ── */}
         <motion.div
           className="mt-6 sm:mt-8 text-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+          transition={{
+            duration: 0.6,
+            delay: 0.3,
+            ease: "easeOut",
+          }}
         >
           <p className="font-roboto text-white text-xs sm:text-[13px] tracking-wide">
-            {t("footer.copyright", "Powered By Tech Gear Solutions © 2026 All Rights Reserved")}
+            {t(
+              "footer.copyright",
+              "Powered By Tech Gear Solutions © 2026 All Rights Reserved"
+            )}
           </p>
         </motion.div>
-
       </div>
     </footer>
   );

@@ -34,7 +34,7 @@ const cardVariants: Variants = {
 };
 
 export default function BlogSection() {
-  const { t, language } = useLanguage();
+  const { t, language, localizedHref } = useLanguage();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -106,7 +106,7 @@ export default function BlogSection() {
 
           <div className="mt-4 lg:mt-0 lg:absolute lg:right-0 lg:bottom-1">
             <Link
-              href="/blogs"
+              href={localizedHref("/blogs")}
               className="inline-block font-roboto font-semibold text-xs sm:text-sm text-[#004560] border border-[#004560] px-5 sm:px-6 py-1.5 sm:py-2 rounded-full hover:bg-[#004560] hover:text-white transition-colors duration-200"
             >
               {t("blogs.moreArticles", "More Articles")}
@@ -151,7 +151,7 @@ export default function BlogSection() {
                   className="w-full sm:w-[calc(50%-10px)] lg:w-[360px] min-w-0"
                 >
                   <Link
-                    href={`/blogs/${blog.id}`}
+                    href={localizedHref(`/blogs/${blog.id}`)}
                     className="group w-full h-full bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border border-gray-100/90 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col cursor-pointer"
                   >
                     <div className="relative w-full h-40 sm:h-44 md:h-48 overflow-hidden flex-shrink-0">

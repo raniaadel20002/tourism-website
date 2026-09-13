@@ -23,7 +23,7 @@ const cardVariants: Variants = {
 };
 
 export default function DestinationCard({ dest }: DestinationCardProps) {
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   return (
     <motion.div
@@ -37,7 +37,7 @@ export default function DestinationCard({ dest }: DestinationCardProps) {
       className="w-full"
     >
       <Link
-        href={dest.href}
+        href={localizedHref(dest.href)}
         className="relative block h-64 sm:h-72 md:h-80 rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 group cursor-pointer"
       >
         {/* Background Destination Photo */}

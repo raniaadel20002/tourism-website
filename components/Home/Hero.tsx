@@ -76,7 +76,7 @@ const sliderEntranceVariants: Variants = {
 
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, localizedHref } = useLanguage();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -159,7 +159,7 @@ export default function Hero() {
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
               <Link
-                href="/trips"
+                href={localizedHref("/trips")}
                 className="inline-flex items-center justify-center bg-[#F5FCFF] text-[#00266D] font-roboto font-semibold text-sm sm:text-base px-8 sm:px-10 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:bg-white transition-shadow duration-300"
               >
                 {t("hero.exploreTrips", "Explore Trips")}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -9,12 +9,15 @@ import {
   getAllGalleryImages,
 } from "@/api/gallery";
 import { GalleryImageAPI } from "@/modules/gallery.model";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 export default function GalleryPage() {
+  const { confirm } = useAdminModal();
+  const toast = useToast();
   const [images, setImages] = useState<GalleryImageAPI[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isFeatured, setIsFeatured] = useState(false);
@@ -24,16 +27,16 @@ export default function GalleryPage() {
 
   const loadImages = useCallback(async () => {
     setLoading(true);
-    setError(null);
 
     try {
       setImages(await getAllGalleryImages());
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load gallery images.");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load gallery images.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     const requestId = window.setTimeout(() => void loadImages(), 0);
@@ -58,25 +61,24 @@ export default function GalleryPage() {
     const token = localStorage.getItem("admin_access_token");
 
     if (!token) {
-      setError("Your session has expired. Please sign in again.");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
     if (!selectedFile) {
-      setError("Select an image to upload.");
+      toast.error("Select an image to upload.");
       return;
     }
 
     setIsSaving(true);
-    setError(null);
-    setSuccess(null);
 
     try {
       const createdImage = await addGalleryImage(selectedFile, isFeatured, token);
       setImages((current) => [createdImage, ...current]);
-      setSuccess("Gallery image uploaded successfully.");
+      toast.success("Gallery image uploaded successfully.");
       closeUpload();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to upload the gallery image.");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to upload the gallery image.");
     } finally {
       setIsSaving(false);
     }
@@ -85,21 +87,20 @@ export default function GalleryPage() {
   const handleDelete = async (image: GalleryImageAPI) => {
     const token = localStorage.getItem("admin_access_token");
     if (!token) {
-      setError("Your session has expired. Please sign in again.");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
-    if (!window.confirm(`Delete gallery image ${image.id}? This cannot be undone.`)) return;
+    if (!(await confirm(`Delete gallery image ${image.id}? This cannot be undone.`))) return;
 
     setDeletingId(image.id);
-    setError(null);
-    setSuccess(null);
 
     try {
       await deleteGalleryImage(image.id, token);
       setImages((current) => current.filter((item) => item.id !== image.id));
-      setSuccess("Gallery image deleted successfully.");
+      toast.success("Gallery image deleted successfully.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete the gallery image.");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to delete the gallery image.");
     } finally {
       setDeletingId(null);
     }
@@ -115,18 +116,11 @@ export default function GalleryPage() {
           <h1 className="text-3xl font-bold text-[#004560] mb-2">Gallery</h1>
           <p className="text-gray-500 text-sm">Curate the images used across the travel experience. Featured images can be surfaced more prominently in the client app.</p>
         </div>
-        <button type="button" onClick={() => { setError(null); setSuccess(null); setIsUploadOpen(true); }} className="flex items-center gap-2 bg-[#006993] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-[#004560] transition-colors">
+        <button type="button" onClick={() => { setIsUploadOpen(true); }} className="flex items-center gap-2 bg-[#006993] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-[#004560] transition-colors">
           <PlusIcon className="w-4 h-4" />
           Add image
         </button>
       </div>
-
-      {(error || success) && (
-        <div className={`flex items-center justify-between gap-4 rounded-lg border p-3 text-sm ${error ? "border-red-100 bg-red-50 text-red-600" : "border-emerald-100 bg-emerald-50 text-emerald-700"}`} role={error ? "alert" : "status"}>
-          <span>{error ?? success}</span>
-          {error && <button type="button" onClick={() => void loadImages()} className="font-semibold underline">Try again</button>}
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <SummaryCard label="Total images" value={loading ? "—" : images.length} />
@@ -136,7 +130,7 @@ export default function GalleryPage() {
 
       {loading && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">{Array.from({ length: 4 }).map((_, index) => <div key={index} className="h-72 rounded-xl bg-gray-100 animate-pulse" />)}</div>}
 
-      {!loading && !error && images.length === 0 && (
+      {!loading && images.length === 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center text-gray-500">No gallery images have been added yet.</div>
       )}
 

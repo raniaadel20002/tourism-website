@@ -6,10 +6,11 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function BookingModal() {
   const router = useRouter();
-
+  const toast = useToast();
   const {
     isBookingModalOpen,
     closeBookingModal,
@@ -18,7 +19,7 @@ export default function BookingModal() {
     addItem,
   } = useCart();
 
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   /**
    * Maps JS getDay() (0=Sun,1=Mon,...6=Sat) to the backend day names.
@@ -112,12 +113,12 @@ export default function BookingModal() {
 
   const handleProceedToCheckout = () => {
     if (!activeBooking.tourDate) {
-      alert(t("booking.selectDateAlert", "Please select a tour date."));
+      toast.warning(t("booking.selectDateAlert", "Please select a tour date."));
       return;
     }
 
     if (!activeBooking.tripId) {
-      alert(t("booking.invalidTrip", "Invalid trip."));
+      toast.error(t("booking.invalidTrip", "Invalid trip."));
       return;
     }
 
@@ -141,7 +142,7 @@ export default function BookingModal() {
 
     closeBookingModal();
 
-    router.push("/cart");
+    router.push(localizedHref("/cart"));
   };
 
   return (

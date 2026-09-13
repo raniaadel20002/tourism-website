@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -10,36 +9,33 @@ import BillingForm, {
 } from "@/components/Checkout/BillingForm";
 import CheckoutTourSummary from "@/components/Checkout/CheckoutTourSummary";
 import type { PromoCode } from "@/modules/promoCode.model";
-
 import { useLanguage } from "@/context/LanguageContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   const { activeBooking, completeBooking } = useCart();
 
   const [appliedPromoCode, setAppliedPromoCode] =
     useState<PromoCode | null>(null);
 
-  const [bookingError, setBookingError] = useState<string | null>(
-    null
-  );
+  const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (data: BillingFormData) => {
-    setBookingError(null);
     setIsSubmitting(true);
 
     try {
       await completeBooking(data);
-      router.push("/confirmation");
+      router.push(localizedHref("/confirmation"));
     } catch (err) {
       const message =
         err instanceof Error
           ? err.message
           : t("checkout.bookingFailedDesc", "Booking failed. Please try again.");
-      setBookingError(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +84,6 @@ export default function CheckoutPage() {
             onSubmit={handleSubmit}
             onCouponApplied={setAppliedPromoCode}
             isSubmitting={isSubmitting}
-            bookingError={bookingError}
           />
 
           <CheckoutTourSummary

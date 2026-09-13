@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useToast } from "@/context/ToastContext";
 import FormField from "./FormField";
 import { getPromoCodeByCode } from "@/api/promoCode";
 import type { PromoCode } from "@/modules/promoCode.model";
@@ -46,16 +47,15 @@ interface BillingFormProps {
   onSubmit: (data: BillingFormData) => void;
   onCouponApplied: (promoCode: PromoCode | null) => void;
   isSubmitting?: boolean;
-  bookingError?: string | null;
 }
 
 export default function BillingForm({
   onSubmit,
   onCouponApplied,
   isSubmitting = false,
-  bookingError,
 }: BillingFormProps) {
   const { t } = useLanguage();
+  const toast = useToast();
 
   const [formData, setFormData] = useState<BillingFormData>({
     firstName: "",
@@ -71,7 +71,6 @@ export default function BillingForm({
   });
 
   const [couponApplied, setCouponApplied] = useState(false);
-  const [couponError, setCouponError] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
 
   const set = (key: keyof BillingFormData) => (
@@ -89,7 +88,7 @@ export default function BillingForm({
 
     if (!codeText) {
       setCouponApplied(false);
-      setCouponError(
+      toast.error(
         t("checkout.invalidCoupon", "Please enter a valid coupon code")
       );
       onCouponApplied(null);
@@ -100,7 +99,7 @@ export default function BillingForm({
 
     if (!Number.isFinite(code)) {
       setCouponApplied(false);
-      setCouponError(
+      toast.error(
         t("checkout.invalidCoupon", "Please enter a valid coupon code")
       );
       onCouponApplied(null);
@@ -108,7 +107,6 @@ export default function BillingForm({
     }
 
     setCouponLoading(true);
-    setCouponError("");
     setCouponApplied(false);
 
     try {
@@ -138,7 +136,7 @@ export default function BillingForm({
       }
 
       setCouponApplied(true);
-      setCouponError("");
+      toast.success(t("checkout.couponApplied", "Coupon applied successfully!"));
       onCouponApplied(promoCode);
     } catch (error) {
       console.error("Coupon error:", error);
@@ -146,7 +144,7 @@ export default function BillingForm({
       setCouponApplied(false);
       onCouponApplied(null);
 
-      setCouponError(
+      toast.error(
         t(
           "checkout.invalidCoupon",
           "Invalid or unavailable coupon code"
@@ -164,13 +162,6 @@ export default function BillingForm({
 
   return (
     <div className="lg:col-span-7 xl:col-span-8">
-      {/* Booking API error banner */}
-      {bookingError && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-roboto">
-          <strong className="font-bold">{t("checkout.bookingFailed", "Booking failed")}: </strong>
-          {bookingError}
-        </div>
-      )}
 
       <h1 className="font-roboto font-bold text-slate-800 text-lg sm:text-xl mb-6">
         {t("checkout.billingDetails", "Billing Details")}
@@ -341,7 +332,6 @@ export default function BillingForm({
                   couponCode: e.target.value,
                 }));
 
-                setCouponError("");
                 setCouponApplied(false);
                 onCouponApplied(null);
               }}
@@ -359,21 +349,6 @@ export default function BillingForm({
                 : t("checkout.apply", "Apply")}
             </button>
           </div>
-
-          {couponApplied && (
-            <p className="text-xs text-emerald-600 font-roboto mt-1">
-              {t(
-                "checkout.couponApplied",
-                "Coupon applied successfully!"
-              )}
-            </p>
-          )}
-
-          {couponError && (
-            <p className="text-xs text-red-500 font-roboto mt-1">
-              {couponError}
-            </p>
-          )}
         </div>
 
         {/* Row 8 */}

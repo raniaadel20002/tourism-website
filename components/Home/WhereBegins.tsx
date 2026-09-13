@@ -33,7 +33,7 @@ const itemVariants: Variants = {
 };
 
 export default function WhereBegins() {
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   return (
     <section className="relative w-full bg-[#003853] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -119,7 +119,7 @@ export default function WhereBegins() {
               {/* CTA Button */}
               <motion.div variants={itemVariants}>
                 <Link
-                  href="/trips"
+                  href={localizedHref("/trips")}
                   className="inline-block bg-white text-[#004560] font-roboto font-semibold text-xs sm:text-sm px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-md hover:shadow-lg hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
                 >
                   {t("whereBegins.cta", "Explore Tour Now")}

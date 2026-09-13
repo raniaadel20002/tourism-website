@@ -20,7 +20,7 @@ const cardVariants: Variants = {
 };
 
 export default function TripCard({ trip }: TripCardProps) {
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
  console.log("TRIP CARD:", trip);
   return (
     <motion.div
@@ -30,7 +30,7 @@ export default function TripCard({ trip }: TripCardProps) {
       className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] flex flex-col"
     >
       <Link
-        href={`/trips/${trip.slug}`}
+        href={localizedHref(`/trips/${trip.slug}`)}
         className="w-full h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 group border border-gray-100 cursor-pointer"
       >
         {/* Card Image — taller to match reference */}

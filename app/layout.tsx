@@ -3,6 +3,7 @@ import { Montez, Roboto } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import PublicLayoutWrapper from "@/components/Layout/PublicLayoutWrapper";
+import { ToastProvider } from "@/context/ToastContext";
 
 const montez = Montez({
   weight: "400",
@@ -33,7 +34,9 @@ export default function RootLayout({
         className={`${montez.variable} ${roboto.variable} min-h-full flex flex-col`}
       >
         <LanguageProvider>
-          <PublicLayoutWrapper>{children}</PublicLayoutWrapper>
+            <ToastProvider>
+                <PublicLayoutWrapper>{children}</PublicLayoutWrapper>
+            </ToastProvider>
         </LanguageProvider>
       </body>
     </html>

@@ -21,7 +21,7 @@ const containerVariants = {
 };
 
 export default function CartFilled({ cartItems }: CartFilledProps) {
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   return (
     <>
@@ -53,7 +53,7 @@ export default function CartFilled({ cartItems }: CartFilledProps) {
       {/* Bottom Centered Action Button */}
       <div className="mt-12 sm:mt-16 flex justify-center">
         <Link
-          href="/checkout"
+          href={localizedHref("/checkout")}
           className="inline-flex items-center justify-center gap-2 px-10 sm:px-14 py-3 rounded-full border border-[#0f4c5c] text-[#0f4c5c] font-roboto font-medium text-sm sm:text-base hover:bg-[#0f4c5c] hover:text-white transition-all duration-200 shadow-xs group"
         >
           <span>{t("booking.proceedToCheckout", "Proceed to check out")}</span>

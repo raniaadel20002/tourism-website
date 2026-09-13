@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -10,8 +11,8 @@ export default function ContactForm() {
     Number: "",
     message: "",
   });
-  const [submitted, setSubmitted] = useState(false);
   const { t } = useLanguage();
+  const toast = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +31,8 @@ export default function ContactForm() {
     )}`;
 
     window.open(whatsappUrl, "_blank");
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4000);
+    toast.success(t("contact.successMessage", "Thank you! Your message has been sent successfully. We will get back to you soon."));
+    setFormData({ name: "", Number: "", message: "" });
   };
 
   return (
@@ -53,16 +54,6 @@ export default function ContactForm() {
         <p className="font-roboto font-normal text-[#484848] text-xs sm:text-sm md:text-[14px] leading-relaxed mb-8">
           {t("contact.formSubtitle", "Have a question or need more information about our products? Fill out the form below and we'll get back to you as soon as possible.")}
         </p>
-
-        {/* Success Notification Banner */}
-        {submitted && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-roboto text-xs sm:text-sm flex items-center gap-2.5 animate-fadeIn">
-            <svg className="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <span>{t("contact.successMessage", "Thank you! Your message has been sent successfully. We will get back to you soon.")}</span>
-          </div>
-        )}
 
         {/* Form Inputs */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6 flex-1 justify-between">

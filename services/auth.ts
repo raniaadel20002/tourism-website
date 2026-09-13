@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./apiConfig";
+import { authFetch } from "@/utils/authFetch";
 import {
   AuthApiResponse,
   LoginRequest,
@@ -29,13 +30,6 @@ const jsonHeaders: HeadersInit = {
   accept: "text/plain",
   "Content-Type": "application/json",
 };
-
-function authHeaders(token: string): HeadersInit {
-  return {
-    accept: "text/plain",
-    Authorization: `Bearer ${token}`,
-  };
-}
 
 // ─── API Functions ────────────────────────────────────────────────────────────
 
@@ -150,17 +144,23 @@ export async function updatePassword(
   body: UpdatePasswordRequest,
   token: string
 ): Promise<void> {
-  const res = await fetch(
-    `${API_BASE_URL}/api/Auth/updatepassword/${adminId}`,
+  const res = await authFetch(
+    `/api/Auth/updatepassword/${adminId}`,
     {
       method: "PUT",
       headers: {
-        ...authHeaders(token),
+        accept: "text/plain",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     }
   );
+
+  if (res.status === 401) {
+    throw Object.assign(new Error("UNAUTHORIZED"), {
+      isUnauthorized: true,
+    });
+  }
 
   if (!res.ok) {
     throw new Error(`Update password failed: ${res.status}`);

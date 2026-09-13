@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig";
+import { authFetch } from "@/utils/authFetch";
 import type {
   Destination,
   DestinationApiResponse,
@@ -9,18 +9,19 @@ export type { Destination, GetDestinationsParams };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function authHeaders(token?: string, lang = "en"): HeadersInit {
-  return {
-    accept: "text/plain",
-    "Accept-Language": lang,
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
 async function parse<T>(res: Response, action: string): Promise<T> {
+  if (res.status === 401) {
+    throw Object.assign(new Error("UNAUTHORIZED"), {
+      isUnauthorized: true,
+    });
+  }
+
   if (!res.ok) throw new Error(`${action}: ${res.status}`);
+
   const json: DestinationApiResponse<T> = await res.json();
+
   if (!json.success) throw new Error(json.message || action);
+
   return json.data;
 }
 
@@ -32,20 +33,32 @@ export async function getDestinations(
   params: GetDestinationsParams = {}
 ): Promise<Destination[]> {
   const query = new URLSearchParams();
+
   if (params.pageNumber !== undefined)
     query.set("PageNumber", String(params.pageNumber));
+
   if (params.pageSize !== undefined)
     query.set("PageSize", String(params.pageSize));
-  if (params.searchTerm) query.set("searchTerm", params.searchTerm);
 
-  const url = `${API_BASE_URL}/api/Destinations${query.size ? `?${query}` : ""}`;
+  if (params.searchTerm)
+    query.set("searchTerm", params.searchTerm);
 
-  const res = await fetch(url, {
-    headers: authHeaders(token, params.lang ?? "en"),
-    cache: "no-store",
+  const endpoint = `/api/Destinations${
+    query.size ? `?${query}` : ""
+  }`;
+
+  const res = await authFetch(endpoint, {
+    method: "GET",
+    headers: {
+      accept: "text/plain",
+      "Accept-Language": params.lang ?? "en",
+    },
   });
 
-  return parse<Destination[]>(res, "Failed to fetch destinations");
+  return parse<Destination[]>(
+    res,
+    "Failed to fetch destinations"
+  );
 }
 
 /** GET /api/Destinations/{id} — get a single destination */
@@ -54,11 +67,18 @@ export async function getDestinationById(
   token?: string,
   lang = "en"
 ): Promise<Destination> {
-  const res = await fetch(`${API_BASE_URL}/api/Destinations/${id}`, {
-    headers: authHeaders(token, lang),
-    cache: "no-store",
+  const res = await authFetch(`/api/Destinations/${id}`, {
+    method: "GET",
+    headers: {
+      accept: "text/plain",
+      "Accept-Language": lang,
+    },
   });
-  return parse<Destination>(res, `Failed to fetch destination ${id}`);
+
+  return parse<Destination>(
+    res,
+    `Failed to fetch destination ${id}`
+  );
 }
 
 /** POST /api/Destinations — create a destination (multipart/form-data) */
@@ -74,23 +94,29 @@ export async function createDestination(
   token: string
 ): Promise<Destination> {
   const form = new FormData();
+
   form.append("Name.En", data.nameEn);
   form.append("Name.Fr", data.nameFr);
   form.append("Name.Ru", data.nameRu);
   form.append("Name.Ro", data.nameRo);
   form.append("IsFeatured", String(data.isFeatured));
-  if (data.imageFile) form.append("imageFile", data.imageFile);
 
-  const res = await fetch(`${API_BASE_URL}/api/Destinations`, {
+  if (data.imageFile) {
+    form.append("imageFile", data.imageFile);
+  }
+
+  const res = await authFetch("/api/Destinations", {
     method: "POST",
     headers: {
       accept: "text/plain",
-      Authorization: `Bearer ${token}`,
     },
     body: form,
   });
 
-  return parse<Destination>(res, "Failed to create destination");
+  return parse<Destination>(
+    res,
+    "Failed to create destination"
+  );
 }
 
 /** PUT /api/Destinations — update a destination (multipart/form-data) */
@@ -107,24 +133,30 @@ export async function updateDestination(
   token: string
 ): Promise<Destination> {
   const form = new FormData();
+
   form.append("Id", String(data.id));
   form.append("Name.En", data.nameEn);
   form.append("Name.Fr", data.nameFr);
   form.append("Name.Ru", data.nameRu);
   form.append("Name.Ro", data.nameRo);
   form.append("IsFeatured", String(data.isFeatured));
-  if (data.imageFile) form.append("imageFile", data.imageFile);
 
-  const res = await fetch(`${API_BASE_URL}/api/Destinations`, {
+  if (data.imageFile) {
+    form.append("imageFile", data.imageFile);
+  }
+
+  const res = await authFetch("/api/Destinations", {
     method: "PUT",
     headers: {
       accept: "text/plain",
-      Authorization: `Bearer ${token}`,
     },
     body: form,
   });
 
-  return parse<Destination>(res, `Failed to update destination ${data.id}`);
+  return parse<Destination>(
+    res,
+    `Failed to update destination ${data.id}`
+  );
 }
 
 /** DELETE /api/Destinations/{id} — delete a destination */
@@ -132,11 +164,17 @@ export async function deleteDestination(
   id: number,
   token: string
 ): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/api/Destinations/${id}`, {
+  const res = await authFetch(`/api/Destinations/${id}`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    headers: {
+      accept: "text/plain",
+    },
   });
-  await parse<string>(res, `Failed to delete destination ${id}`);
+
+  await parse<string>(
+    res,
+    `Failed to delete destination ${id}`
+  );
 }
 
 /** PUT /api/Destinations/{id}/image — replace only the image */
@@ -148,16 +186,21 @@ export async function updateDestinationImage(
   const form = new FormData();
   form.append("imageFile", imageFile);
 
-  const res = await fetch(`${API_BASE_URL}/api/Destinations/${id}/image`, {
-    method: "PUT",
-    headers: {
-      accept: "text/plain",
-      Authorization: `Bearer ${token}`,
-    },
-    body: form,
-  });
+  const res = await authFetch(
+    `/api/Destinations/${id}/image`,
+    {
+      method: "PUT",
+      headers: {
+        accept: "text/plain",
+      },
+      body: form,
+    }
+  );
 
-  return parse<Destination>(res, `Failed to update image for destination ${id}`);
+  return parse<Destination>(
+    res,
+    `Failed to update image for destination ${id}`
+  );
 }
 
 /** DELETE /api/Destinations/{id}/image — remove the image */
@@ -165,9 +208,18 @@ export async function deleteDestinationImage(
   id: number,
   token: string
 ): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/api/Destinations/${id}/image`, {
-    method: "DELETE",
-    headers: authHeaders(token),
-  });
-  await parse<string>(res, `Failed to delete image for destination ${id}`);
+  const res = await authFetch(
+    `/api/Destinations/${id}/image`,
+    {
+      method: "DELETE",
+      headers: {
+        accept: "text/plain",
+      },
+    }
+  );
+
+  await parse<string>(
+    res,
+    `Failed to delete image for destination ${id}`
+  );
 }

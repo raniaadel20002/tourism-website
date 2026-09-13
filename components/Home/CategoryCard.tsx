@@ -23,7 +23,7 @@ const cardVariants: Variants = {
 };
 
 export default function CategoryCard({ item }: CategoryCardProps) {
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   return (
     <motion.div
@@ -34,7 +34,7 @@ export default function CategoryCard({ item }: CategoryCardProps) {
       className="flex flex-col items-center flex-shrink-0 cursor-pointer group snap-center"
     >
       <Link
-        href={`/trips?type=${encodeURIComponent(item.name)}`}
+        href={localizedHref(`/trips?type=${encodeURIComponent(item.name)}`)}
         className="flex flex-col items-center w-full outline-none focus:outline-none"
       >
         <motion.div

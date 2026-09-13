@@ -1,12 +1,24 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getFAQs, createFAQ, updateFAQ, deleteFAQ, type FAQ, type FAQMutation } from "@/api/faq";
+import {
+  getFAQs,
+  getFAQById,
+  createFAQ,
+  updateFAQ,
+  deleteFAQ,
+  type FAQ,
+  type FAQMutation,
+} from "@/api/faq";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 export default function FAQPage() {
+  const { confirm, alert } = useAdminModal();
+  const toast = useToast();
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingFAQ, setEditingFAQ] = useState<FAQ | null>(null);
@@ -28,23 +40,25 @@ export default function FAQPage() {
       const token = getToken();
       const data = await getFAQs(token);
       setFaqs(data);
-      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch FAQs");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to fetch FAQs");
     } finally {
       setLoading(false);
     }
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this FAQ?")) return;
-    
+    if (!(await confirm("Are you sure you want to delete this FAQ?"))) return;
+
     try {
       const token = getToken();
       await deleteFAQ(id, token);
+      toast.success("FAQ deleted successfully");
       await fetchFAQs();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete FAQ");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to delete FAQ");
     }
   };
 
@@ -113,8 +127,6 @@ export default function FAQPage() {
 
         {loading ? (
           <div className="p-8 text-center text-gray-500">Loading FAQs...</div>
-        ) : error ? (
-          <div className="p-8 text-center text-red-500">{error}</div>
         ) : filteredFAQs.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
             {searchQuery ? "No FAQs found matching your search" : "No FAQs yet. Click 'Add FAQ' to create one."}
@@ -183,18 +195,71 @@ function FAQModal({
   onSuccess: () => void;
   editingFAQ: FAQ | null;
 }) {
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const [textEn, setTextEn] = useState(editingFAQ?.text || "");
+
+  const [textEn, setTextEn] = useState("");
   const [textFr, setTextFr] = useState("");
   const [textRu, setTextRu] = useState("");
   const [textRo, setTextRo] = useState("");
-  
-  const [answerEn, setAnswerEn] = useState(editingFAQ?.answer || "");
+
+  const [answerEn, setAnswerEn] = useState("");
   const [answerFr, setAnswerFr] = useState("");
   const [answerRu, setAnswerRu] = useState("");
   const [answerRo, setAnswerRo] = useState("");
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (!editingFAQ) {
+      setTextEn("");
+      setTextFr("");
+      setTextRu("");
+      setTextRo("");
+      setAnswerEn("");
+      setAnswerFr("");
+      setAnswerRu("");
+      setAnswerRo("");
+      return;
+    }
+
+    const token = getToken();
+
+    if (!token) {
+      toast.error("You must be logged in");
+      return;
+    }
+
+    const loadTranslations = async () => {
+      try {
+        setLoading(true);
+
+        const [enFAQ, frFAQ, ruFAQ, roFAQ] = await Promise.all([
+          getFAQById(editingFAQ.id, token, "en"),
+          getFAQById(editingFAQ.id, token, "fr"),
+          getFAQById(editingFAQ.id, token, "ru"),
+          getFAQById(editingFAQ.id, token, "ro"),
+        ]);
+
+        setTextEn(enFAQ.text ?? "");
+        setTextFr(frFAQ.text ?? "");
+        setTextRu(ruFAQ.text ?? "");
+        setTextRo(roFAQ.text ?? "");
+
+        setAnswerEn(enFAQ.answer ?? "");
+        setAnswerFr(frFAQ.answer ?? "");
+        setAnswerRu(ruFAQ.answer ?? "");
+        setAnswerRo(roFAQ.answer ?? "");
+      } catch (err) {
+        const msg = parseApiError(err);
+        if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to load FAQ translations");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadTranslations();
+  }, [isOpen, editingFAQ]);
 
   const getToken = () => {
     if (typeof window !== "undefined") {
@@ -205,23 +270,22 @@ function FAQModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!textEn.trim()) {
-      setError("Question text (English) is required");
+      toast.error("Question text (English) is required");
       return;
     }
     if (!answerEn.trim()) {
-      setError("Answer (English) is required");
+      toast.error("Answer (English) is required");
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
-      
+
       const token = getToken();
       if (!token) {
-        setError("You must be logged in");
+        toast.error("You must be logged in");
         return;
       }
 
@@ -229,27 +293,30 @@ function FAQModal({
         ...(editingFAQ ? { id: editingFAQ.id } : {}),
         text: {
           en: textEn,
-          fr: textFr || textEn,
-          ru: textRu || textEn,
-          ro: textRo || textEn,
+          fr: textFr,
+          ru: textRu,
+          ro: textRo,
         },
         answer: {
           en: answerEn,
-          fr: answerFr || answerEn,
-          ru: answerRu || answerEn,
-          ro: answerRo || answerEn,
+          fr: answerFr,
+          ru: answerRu,
+          ro: answerRo,
         },
       };
 
       if (editingFAQ) {
         await updateFAQ(faqData, token);
+        toast.success("FAQ updated successfully");
       } else {
         await createFAQ(faqData, token);
+        toast.success("FAQ created successfully");
       }
-      
+
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save FAQ");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to save FAQ");
     } finally {
       setLoading(false);
     }
@@ -274,15 +341,9 @@ function FAQModal({
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-4">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-              {error}
-            </div>
-          )}
-
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-[#004560] mb-4">Question</h3>
-            
+
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Question (English) <span className="text-red-500">*</span>
@@ -329,7 +390,7 @@ function FAQModal({
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-[#004560] mb-4">Answer</h3>
-            
+
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Answer (English) <span className="text-red-500">*</span>

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig";
+import { authFetch } from "@/utils/authFetch";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -70,30 +70,28 @@ interface BookingApiResponse<T> {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function authHeaders(token: string, isJson: boolean = false): HeadersInit {
-  return {
-    accept: "text/plain",
-    ...(isJson ? { "Content-Type": "application/json" } : {}),
-    Authorization: `Bearer ${token}`,
-  };
-}
-
 async function parseResponse<T>(
   res: Response,
   action: string
 ): Promise<T> {
   let text = "";
+
   try {
     text = await res.text();
   } catch {
-    throw new Error(`${action} failed (${res.status}): could not read response body`);
+    throw new Error(
+      `${action} failed (${res.status}): could not read response body`
+    );
   }
 
   let json: BookingApiResponse<T>;
+
   try {
     json = JSON.parse(text);
   } catch {
-    throw new Error(`${action} failed (${res.status}). Response: ${text.slice(0, 100)}`);
+    throw new Error(
+      `${action} failed (${res.status}). Response: ${text.slice(0, 100)}`
+    );
   }
 
   if (!res.ok || !json.success) {
@@ -116,24 +114,39 @@ export async function getBookings(
 
   if (params.PageNumber !== undefined)
     q.set("PageNumber", String(params.PageNumber));
+
   if (params.PageSize !== undefined)
     q.set("PageSize", String(params.PageSize));
-  if (params.Nationality) q.set("Nationality", params.Nationality);
-  if (params.SearchItem) q.set("SearchItem", params.SearchItem);
-  if (params.Phone) q.set("Phone", params.Phone);
-  if (params.Date) q.set("Date", params.Date);
+
+  if (params.Nationality)
+    q.set("Nationality", params.Nationality);
+
+  if (params.SearchItem)
+    q.set("SearchItem", params.SearchItem);
+
+  if (params.Phone)
+    q.set("Phone", params.Phone);
+
+  if (params.Date)
+    q.set("Date", params.Date);
+
   if (params.Status !== undefined)
     q.set("Status", String(params.Status));
+
   if (params.TripId !== undefined)
     q.set("TripId", String(params.TripId));
 
   const queryString = q.toString();
-  const url = queryString ? `${API_BASE_URL}/api/Bookings?${queryString}` : `${API_BASE_URL}/api/Bookings`;
+  const endpoint = queryString
+    ? `/api/Bookings?${queryString}`
+    : "/api/Bookings";
 
   return parseResponse<Booking[]>(
-    await fetch(url, {
-      headers: authHeaders(token),
-      cache: "no-store",
+    await authFetch(endpoint, {
+      method: "GET",
+      headers: {
+        accept: "text/plain",
+      },
     }),
     "Failed to fetch bookings"
   );
@@ -145,9 +158,11 @@ export async function getBookingById(
   token: string
 ): Promise<Booking> {
   return parseResponse<Booking>(
-    await fetch(`${API_BASE_URL}/api/Bookings/${id}`, {
-      headers: authHeaders(token),
-      cache: "no-store",
+    await authFetch(`/api/Bookings/${id}`, {
+      method: "GET",
+      headers: {
+        accept: "text/plain",
+      },
     }),
     "Failed to fetch booking"
   );
@@ -159,9 +174,12 @@ export async function createBooking(
   token: string
 ): Promise<Booking> {
   return parseResponse<Booking>(
-    await fetch(`${API_BASE_URL}/api/Bookings`, {
+    await authFetch("/api/Bookings", {
       method: "POST",
-      headers: authHeaders(token, true),
+      headers: {
+        accept: "text/plain",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(body),
     }),
     "Failed to create booking"
@@ -173,22 +191,26 @@ export async function confirmBooking(
   id: number,
   token: string
 ): Promise<void> {
-  const res = await fetch(
-    `${API_BASE_URL}/api/Bookings/confirm?id=${id}`,
+  const res = await authFetch(
+    `/api/Bookings/confirm?id=${id}`,
     {
       method: "PUT",
-      headers: authHeaders(token, false),
+      headers: {
+        accept: "text/plain",
+      },
     }
   );
 
   if (!res.ok) {
     let msg = `Confirm booking failed (${res.status})`;
+
     try {
       const json = await res.json();
       if (json.message) msg = json.message;
     } catch {
       // ignore parse errors
     }
+
     throw new Error(msg);
   }
 }
@@ -198,22 +220,26 @@ export async function finishBooking(
   id: number,
   token: string
 ): Promise<void> {
-  const res = await fetch(
-    `${API_BASE_URL}/api/Bookings/finish?id=${id}`,
+  const res = await authFetch(
+    `/api/Bookings/finish?id=${id}`,
     {
       method: "PUT",
-      headers: authHeaders(token),
+      headers: {
+        accept: "text/plain",
+      },
     }
   );
 
   if (!res.ok) {
     let msg = `Finish booking failed (${res.status})`;
+
     try {
       const json = await res.json();
       if (json.message) msg = json.message;
     } catch {
       // ignore parse errors
     }
+
     throw new Error(msg);
   }
 }
@@ -223,19 +249,23 @@ export async function deleteBooking(
   id: number,
   token: string
 ): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/api/Bookings/${id}`, {
+  const res = await authFetch(`/api/Bookings/${id}`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    headers: {
+      accept: "text/plain",
+    },
   });
 
   if (!res.ok) {
     let msg = `Delete booking failed (${res.status})`;
+
     try {
       const json = await res.json();
       if (json.message) msg = json.message;
     } catch {
       // ignore parse errors
     }
+
     throw new Error(msg);
   }
 }

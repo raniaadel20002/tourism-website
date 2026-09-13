@@ -1,18 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { getTrips, deactivateTrip, reactivateTrip, type Trip } from "@/api/trips";
 import { getTripTypes, type TripType } from "@/api/tripType";
 import { getDestinations, type Destination } from "@/api/destinations";
 import AddTripModal from "@/components/Admin/AddTripModal";
 import { API_BASE_URL } from "@/api/apiConfig";
+import { useAdminModal } from "@/context/AdminModalContext";
+import { useToast } from "@/context/ToastContext";
+import { parseApiError } from "@/utils/error";
 
 export default function TripsPage() {
+  const { alert } = useAdminModal();
+  const toast = useToast();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [tripTypes, setTripTypes] = useState<TripType[]>([]);
   const [allDestinations, setAllDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -68,9 +72,11 @@ export default function TripsPage() {
           includeInactive: statusFilter === "All statuses"
         });
         setTrips(tripsData);
-        setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch data");
+        // 401 is handled by AdminGuard via the admin:401 event — don't show it as a banner
+        if ((err as any)?.isUnauthorized) return;
+        const msg = parseApiError(err);
+        if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to fetch data");
       } finally {
         setLoading(false);
       }
@@ -112,7 +118,8 @@ export default function TripsPage() {
         t.id === trip.id ? { ...t, isActive: !t.isActive } : t
       ));
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to toggle trip status");
+      const msg = parseApiError(err);
+      if (msg !== "UNAUTHORIZED_ERROR_SILENT") toast.error(msg || "Failed to toggle trip status");
     }
   };
 
@@ -267,8 +274,6 @@ export default function TripsPage() {
 
         {loading ? (
           <div className="p-8 text-center text-gray-500">Loading trips...</div>
-        ) : error ? (
-          <div className="p-8 text-center text-red-500">{error}</div>
         ) : filteredTrips.length === 0 ? (
           <div className="p-8 text-center text-gray-500">No trips found</div>
         ) : (

@@ -17,10 +17,11 @@ export function transformApiTripToUi(apiTrip: ApiTrip): UiTrip {
     : '/images/placeholder.jpg';
   
   // Create a slug from the trip name
-  const slug = apiTrip.name
+  const nameSlug = apiTrip.name
     ?.toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '') || `trip-${apiTrip.id}`;
+    .replace(/^-|-$/g, '') || 'trip';
+  const slug = `${apiTrip.id}-${nameSlug}`;
   
   return {
     id: String(apiTrip.id),

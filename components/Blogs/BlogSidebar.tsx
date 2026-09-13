@@ -13,7 +13,7 @@ interface BlogSidebarProps {
 }
 
 export default function BlogSidebar({ blog, recentPosts }: BlogSidebarProps) {
-  const { t } = useLanguage();
+  const { t, localizedHref } = useLanguage();
 
   // Build TOC from sorted sections
   const sortedSections = [...blog.blogSections].sort(
@@ -104,7 +104,7 @@ export default function BlogSidebar({ blog, recentPosts }: BlogSidebarProps) {
               return (
                 <Link
                   key={post.id}
-                  href={`/blogs/${post.id}`}
+                  href={localizedHref(`/blogs/${post.id}`)}
                   className="flex items-center gap-3 group p-1.5 rounded-xl hover:bg-gray-50 transition-colors"
                 >
                   {/* Thumbnail */}

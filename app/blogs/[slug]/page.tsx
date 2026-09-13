@@ -27,32 +27,56 @@ export default function BlogDetailsPage() {
 
   useEffect(() => {
     if (!slug) return;
+
     let cancelled = false;
+
     if (!blog) {
       setLoading(true);
     }
-    // slug may be the numeric id or a stringified id
-    const id = Number(slug);
-    if (!id) {
-      setError(t("blogs.blogNotFound", "Blog not found"));
-      setLoading(false);
-      return;
-    }
 
-    Promise.all([
-      getBlogById(id, language),
-      getBlogs(1, 10, language),
-    ])
-      .then(([b, all]) => {
+    const createSlug = (title: string) => {
+      return title
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+    };
+
+    getBlogs(1, 100, language)
+      .then(async (all) => {
+        if (cancelled) return;
+
+        const matchedBlog = all.find(
+          (post) => createSlug(post.title) === slug
+        );
+
+        if (!matchedBlog) {
+          setError(t("blogs.blogNotFound", "Blog not found"));
+          setBlog(null);
+          return;
+        }
+
+        const [fullBlog, recent] = await Promise.all([
+          getBlogById(matchedBlog.id, language),
+          Promise.resolve(all),
+        ]);
+
         if (!cancelled) {
-          setBlog(b);
-          setRecentPosts(all.filter((p) => p.id !== b.id).slice(0, 3));
+          setBlog(fullBlog);
+          setRecentPosts(
+            recent.filter((post) => post.id !== fullBlog.id).slice(0, 3)
+          );
           setError(null);
         }
       })
       .catch((err) => {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : t("blogs.failedToLoadBlog", "Failed to load blog"));
+          setError(
+            err instanceof Error
+              ? err.message
+              : t("blogs.failedToLoadBlog", "Failed to load blog")
+          );
         }
       })
       .finally(() => {

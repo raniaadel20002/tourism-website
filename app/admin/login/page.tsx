@@ -5,18 +5,18 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { login } from "@/api/auth";
 import LoginGuard from "@/components/Admin/LoginGuard";
+import { useToast } from "@/context/ToastContext";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
       // Redirect to Dashboard
       router.push("/admin");
     } catch (err: any) {
-      setError(err.message || "Failed to login. Please check your credentials.");
+      toast.error(err.message || "Failed to login. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -101,12 +101,6 @@ export default function AdminLoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
-                {error}
-              </div>
-            )}
-
             <div className="space-y-2">
               <label className="block text-sm font-bold text-[#004560]">
                 Email
