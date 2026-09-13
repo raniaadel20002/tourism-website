@@ -171,7 +171,7 @@ export async function getBookingById(
 /** POST /api/Bookings — requires auth token */
 export async function createBooking(
   body: CreateBookingRequest,
-  token: string
+  // token: string
 ): Promise<Booking> {
   return parseResponse<Booking>(
     await authFetch("/api/Bookings", {

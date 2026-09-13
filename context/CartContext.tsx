@@ -422,14 +422,14 @@ export function CartProvider({
     /*
      * Use the existing authentication token.
      */
-    const token =
-      localStorage.getItem("admin_access_token");
+    // const token =
+    //   localStorage.getItem("admin_access_token");
 
-    if (!token) {
-      throw new Error(
-        "You must be logged in to complete the booking."
-      );
-    }
+    // if (!token) {
+    //   throw new Error(
+    //     "You must be logged in to complete the booking."
+    //   );
+    // }
 
     const bookingPayload = {
       firstName: billingData.firstName,
@@ -463,7 +463,7 @@ export function CartProvider({
 
     const booking: ApiBooking = await createBooking(
       bookingPayload,
-      token
+      // token
     );
 
     /*
