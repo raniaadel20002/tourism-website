@@ -485,9 +485,8 @@ export function CartProvider({
           : activeBooking.totalAmount,
 
       customerName:
-        `${billingData.firstName || ""} ${
-          billingData.lastName || ""
-        }`.trim(),
+        `${billingData.firstName || ""} ${billingData.lastName || ""
+          }`.trim(),
 
       email: billingData.email,
       phone: billingData.phone,
@@ -506,6 +505,8 @@ export function CartProvider({
         error
       );
     }
+
+    removeItem(`${activeBooking.tripId}-${activeBooking.tourDate}`);
 
     return newConfirmed;
   };
