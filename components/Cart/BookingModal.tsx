@@ -72,7 +72,7 @@ export default function BookingModal() {
           ? `${t("booking.onlyAvailableOn", "This trip is only available on:")} ${available.join(", ")}.`
           : t("booking.noDaysConfigured", "This trip has no available days configured. Please contact support.");
 
-      alert(dayMsg);
+      toast.warning(dayMsg);
       updateActiveBooking({ tourDate: "" });
       return;
     }
