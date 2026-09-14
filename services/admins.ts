@@ -14,7 +14,6 @@ export type { Admin, AdminCreateDto, AdminUpdateDto, GetAdminsParams };
 
 /** GET /api/Admins — list all admins (paginated) */
 export async function getAdmins(
-  token: string,
   params: GetAdminsParams = {}
 ): Promise<Admin[]> {
   const query = new URLSearchParams();
@@ -46,8 +45,7 @@ export async function getAdmins(
 
 /** GET /api/Admins/{id} — get a single admin */
 export async function getAdminById(
-  id: number,
-  token: string
+  id: number
 ): Promise<Admin> {
   const res = await authFetch(`/api/Admins/${id}`, {
     method: "GET"
@@ -68,8 +66,7 @@ export async function getAdminById(
 
 /** POST /api/Admins — create a new admin */
 export async function createAdmin(
-  dto: AdminCreateDto,
-  token: string
+  dto: AdminCreateDto
 ): Promise<Admin> {
   const res = await authFetch("/api/Admins", {
     method: "POST",
@@ -94,8 +91,7 @@ export async function createAdmin(
 
 /** PUT /api/Admins — update an existing admin */
 export async function updateAdmin(
-  dto: AdminUpdateDto,
-  token: string
+  dto: AdminUpdateDto
 ): Promise<Admin> {
   const res = await authFetch("/api/Admins", {
     method: "PUT",
@@ -120,8 +116,7 @@ export async function updateAdmin(
 
 /** DELETE /api/Admins/{id} — delete an admin */
 export async function deleteAdmin(
-  id: number,
-  token: string
+  id: number  
 ): Promise<void> {
   const res = await authFetch(`/api/Admins/${id}`, {
     method: "DELETE",
