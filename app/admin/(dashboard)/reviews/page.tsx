@@ -39,7 +39,7 @@ export default function ReviewsPage() {
         throw new Error("Admin authentication token not found.");
       }
 
-      const data = await getReviews(token, {
+      const data = await getReviews( {
         PageNumber: pageNumber,
         PageSize: pageSize,
         ...(tripId !== undefined ? { TripId: tripId } : {}),
@@ -99,7 +99,7 @@ export default function ReviewsPage() {
         throw new Error("Admin authentication token not found.");
       }
 
-      await deleteReview(id, token);
+      await deleteReview(id);
       toast.success("Review deleted successfully");
       await fetchReviews();
     } catch (err) {
