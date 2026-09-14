@@ -107,7 +107,7 @@ export default function TripDetailsPage() {
       setReviewError(null);
 
       const [reviewsData, averageData] = await Promise.all([
-        getReviews(undefined, {
+        getReviews( {
           PageNumber: 1,
           PageSize: 100,
           TripId: trip.id,

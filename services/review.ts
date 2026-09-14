@@ -73,7 +73,6 @@ async function parseResponse<T>(
 }
 
 export async function getReviews(
-  token?: string,
   params: GetReviewsParams = {}
 ): Promise<Review[]> {
   const q = new URLSearchParams();
@@ -103,8 +102,7 @@ export async function getReviews(
 }
 
 export async function getReviewById(
-  id: number,
-  token?: string
+  id: number
 ): Promise<Review> {
   const res = await authFetch(`/api/Reviews/${id}`, {
     method: "GET",
@@ -114,8 +112,7 @@ export async function getReviewById(
 }
 
 export async function createReview(
-  body: CreateReviewRequest,
-  token?: string
+  body: CreateReviewRequest
 ): Promise<Review> {
   const res = await authFetch("/api/Reviews", {
     method: "POST",
@@ -129,8 +126,7 @@ export async function createReview(
 }
 
 export async function deleteReview(
-  id: number,
-  token: string
+  id: number  
 ): Promise<string> {
   const res = await authFetch(`/api/Reviews/${id}`, {
     method: "DELETE",
@@ -140,8 +136,7 @@ export async function deleteReview(
 }
 
 export async function getTripReviewAverage(
-  tripId: number,
-  token?: string
+  tripId: number
 ): Promise<{
   averageRate: number;
   totalReviews: number;
